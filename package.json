@@ -1,0 +1,24 @@
+{
+  "name": "zenn.dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "zenn": "zenn",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kkeeth/zenn.dev.git"
+  },
+  "keywords": [],
+  "author": "k-kuwahara <zensin0082@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkeeth/zenn.dev/issues"
+  },
+  "homepage": "https://github.com/kkeeth/zenn.dev#readme",
+  "dependencies": {
+    "zenn-cli": "^0.1.21"
+  }
+}
