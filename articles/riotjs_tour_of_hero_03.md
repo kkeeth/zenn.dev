@@ -1,6 +1,6 @@
 ---
 title: 'Riot.js で Tour of Heroes を試す - Part3 リストの表示'
-emoji: '🎉'
+emoji: '📝'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'tutorial', 'ToH']
 published: true
