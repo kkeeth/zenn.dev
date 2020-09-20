@@ -3,7 +3,7 @@ title: 'Riot.js で Tour of Heroes を試す - Part3 リストの表示'
 emoji: '🎉'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'tutorial', 'ToH']
-published: false
+published: true
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
