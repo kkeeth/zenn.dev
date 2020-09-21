@@ -3,7 +3,7 @@ title: 'Riot.js で Tour of Heroes を試す - Part4 フィーチャーコンポ
 emoji: '📝'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'tutorial', 'ToH']
-published: false
+published: true
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
@@ -55,7 +55,7 @@ published: false
 
 ```html
 <hero-detail>
-  <div if="{" hero }>
+  <div if={ hero }>
     <h2>{ hero.name.toUpperCase() } Details</h2>
     <div><span>id: </span>{ hero.id }</div>
     <div>
@@ -63,9 +63,9 @@ published: false
         >name:
         <input
           type="text"
-          value="{ hero.name }"
+          value={ hero.name }
           placeholder="name"
-          oninput="{ handleInput }"
+          oninput={ handleInput }
         />
       </label>
     </div>
