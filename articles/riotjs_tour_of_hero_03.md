@@ -65,7 +65,7 @@ export const HEROES = [
 
 ![](https://storage.googleapis.com/zenn-user-upload/s9yz51ykh0ql8rukmw6cq1wsp7cd)
 
-モックデータが読み込めていることを確認できましたので，一覧表示していきましょう！同ファイルに以下のように変更してください．
+モックデータが読み込めていることを確認できましたので，一覧表示していきましょう！同ファイルを以下のように変更してください．
 
 ```diff
  <heroes>
@@ -161,7 +161,7 @@ export const HEROES = [
 -    <li each={ hero in heroes }>
 +    <li
 +      each={ hero in heroes }
-+      onclick={ handleSelect}
++      onclick={ handleSelect }
 +      data={ hero }
 +    >
        <span class="badge">{ hero.id }</span> { hero.name }
@@ -271,7 +271,7 @@ export const HEROES = [
      <li
        each={ hero in heroes }
 +      class={ hero === selectedHero && 'selected' }
-       onclick={ handleSelect}
+       onclick={ handleSelect }
        data={ hero }
      >
 ```
