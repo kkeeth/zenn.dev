@@ -2,7 +2,7 @@
 title: 'Riot.js 5.2.0 がリリース🎉 旧バージョンの文法もサポート'
 emoji: '🔥'
 type: 'tech' # tech: 技術記事 / idea: アイデア
-topics: ['riotjs', 'tutorial']
+topics: ['riotjs', 'JavaScript', 'update']
 published: true
 ---
 
@@ -105,14 +105,8 @@ this.on('mount', () => {
   <button onclick="{onClick}">Click Me</button>
 
   <!-- error -->
-  this.onBeforeMount = () => {
-    this.state.message = 'Hello'
-  }
-  this.onClick = () => {
-    this.update({
-      message: 'Goodbye',
-    })
-  }
+  this.onBeforeMount = () => { this.state.message = 'Hello' } this.onClick = () => {
+  this.update({ message: 'Goodbye', }) }
 </old-syntax>
 ```
 
@@ -126,4 +120,4 @@ this.on('mount', () => {
 
 この先のアップデートで、もしかしたら復活する機能もあるかもしれませんので、淡い期待をしておきつつ本記事を締めさせていただきます w （本音を言えば mixin がほしいなぁ）
 
-ではでは(=ﾟωﾟ)ﾉ
+ではでは(=ﾟ ω ﾟ)ﾉ
