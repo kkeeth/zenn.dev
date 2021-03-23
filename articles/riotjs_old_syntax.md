@@ -39,7 +39,7 @@ https://twitter.com/riotjs_/status/1355974386721943554?s=20
 </old-syntax>
 ```
 
-なるほど。`export default {}` を書かなくても良くなったようですね。ちろんですが書いても動作することは確認しました。ちなみに現在の書き方は以下のようになりますので、比較のために書いておきます。
+なるほど。`export default {}` を書かなくても良くなったようですね。もちろんですが書いても動作することは確認しました。ちなみに現在の書き方は以下のようになりますので、比較のために書いておきます。
 
 ```html
 <current-syntax>
@@ -105,8 +105,15 @@ this.on('mount', () => {
   <button onclick="{onClick}">Click Me</button>
 
   <!-- error -->
-  this.onBeforeMount = () => { this.state.message = 'Hello' } this.onClick = () => {
-  this.update({ message: 'Goodbye', }) }
+  this.onBeforeMount = () => {
+    this.state.message = 'Hello'
+  }
+
+  this.onClick = () => {
+    this.update({
+      message: 'Goodbye'
+    })
+  }
 </old-syntax>
 ```
 
