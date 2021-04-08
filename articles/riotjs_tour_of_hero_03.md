@@ -38,7 +38,7 @@ export const HEROES = [
   { id: 18, name: 'Dr IQ' },
   { id: 19, name: 'Magma' },
   { id: 20, name: 'Tornado' },
-];
+]
 ```
 
 以上でモックデータの作成は完了です．
@@ -282,4 +282,4 @@ export const HEROES = [
 
 以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，Part4「フィーチャーコンポーネントの作成」に続きます．
+では，[Part4「フィーチャーコンポーネントの作成」](https://zenn.dev/kkeeth/articles/riotjs_tour_of_hero_04)に続きます．
