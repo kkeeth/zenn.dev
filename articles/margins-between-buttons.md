@@ -2,7 +2,7 @@
 title: '複数の button タグの間に謎の余白が作られる'
 emoji: '💠'
 type: 'tech' # tech: 技術記事 / idea: アイデア
-topics: ['css', 'tips']
+topics: ['css', 'tips', 'スタイリング']
 published: true
 ---
 
@@ -22,10 +22,12 @@ published: true
 
 当方のメインブラウザは Google Chrome となっておりますので，比較のため別ブラウザも見てみたいと思います．こちらは画面のキャプチャとなりますので，ご了承ください．
 
-![各ブラウザの挙動](https://storage.googleapis.com/zenn-user-upload/onleo3kytys0ji8bg44vub70rt84)
+![各ブラウザの挙動1](https://storage.googleapis.com/zenn-user-upload/onleo3kytys0ji8bg44vub70rt84)
 
-概ね全ブラウザ問題なさそうですね．なお，Edge については Chronium ベースとなったため，Chrome で代用とします．ちなみに，`border, background` の設定を外すと，Firefox, Safari ともにブラウザ固有のスタイリング（今回は `border`）が設定されるため，余白が生じますのでご注意ください．
+概ね全ブラウザ問題なさそうですね．なお，Edge については Chronium ベースとなったため，Chrome で代用とします．
 
-![](https://storage.googleapis.com/zenn-user-upload/a59978002f1tzc23mpo84j0ycwb3)
+ちなみに，`border, background` の設定を外すと，Firefox, Safari ともにブラウザ固有のスタイリング（今回は `border`）が設定されるため，余白が生じますのでご注意ください．
+
+![各ブラウザの挙動2](https://storage.googleapis.com/zenn-user-upload/a59978002f1tzc23mpo84j0ycwb3)
 
 ではでは(=ﾟ ω ﾟ)ﾉ
