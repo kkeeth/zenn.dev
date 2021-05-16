@@ -186,6 +186,29 @@ const postData = atom(async (get) => {
 })
 ```
 
+## `Provider` で初期値を与える
+
+Redux の Provider と同様に，Jotai にも Provider があり，その下のコンポーネント全体でアクセスできる atom を設定することができます．まずは定義から．
+
+```js
+const Provider: React.FC<{
+  initialValues?: Iterable<readonly [AnyAtom, unknown]>
+  scope?: Scope
+}>
+```
+
+`initialValues` というアトリビュートで設定すれば良さそうですね．Iterable な値にすることに注意．
+
+```jsx
+const countAtom = atom(0)
+
+const Root = () => (
+  <Provider initialValues={[countAtom, 1]]}>
+    <Component />
+  </Provider>
+)
+```
+
 # その他のライブラリとの違い
 
 サイズ比較で名前を上げた２つ（react-redux は redux と同じなので無視）との違いを軽く書き残します．
@@ -203,7 +226,7 @@ Redux にあった以下の４つの機能・仕様が Jotai にはありませ�
 
 それにより，ライブラリ本体のサイズも小さくなりますし，開発するときのコードの記述量も減ります．その分，ルールがないとみんなが思い思いの atom を作ったり，`useState` で良いところを atom を生成してしまったりなど，カオスになる可能性もあるかなと思います 🤔
 
-### ▼ `Recoil` との違い
+## ▼ `Recoil` との違い
 
 公式リポジトリの README に以下のように記載がありました．
 
