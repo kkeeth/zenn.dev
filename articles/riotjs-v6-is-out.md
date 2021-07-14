@@ -1,10 +1,12 @@
 ---
-title: 'Riot.js v6 is out🎉'
+title: 'Riot.js v6 is out🎉 ※後ほど更新します'
 emoji: '✊'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'JavaScript', 'release']
-published: false
+published: true
 ---
+
+# 🚧 2021-07-14 記事内ではまだアプリが動いていないため，対応後更新します 🚧
 
 https://twitter.com/riotjs_/status/1414206624496037888
 
@@ -19,6 +21,10 @@ https://twitter.com/riotjs_/status/1414206624496037888
 > If you are not a typescript user this release doesn't introduce any braking change.
 
 とあるように，今回の更新にも**破壊的変更が含まれており**，riot を更新して `TypeScript` を導入する場合は riot の型が更新されています．
+
+今までは手動で `TypeScript` を導入（`*.d.ts` 含む）しなければならず，一応公式のサンプルリポジトリにも typescript の例は作成されていましたので，こちらをコピーして利用するかぐらいでしたが，今度からはデフォルトで使えるのでこれはありがたいです．
+
+https://github.com/riot/examples/tree/gh-pages/typescript
 
 # v6 での `TypeScript` の導入の仕方
 
@@ -78,7 +84,7 @@ https://github.com/riot/riot/blob/main/package.json
 $ npm init riot
 ```
 
-ボイラープレートができたので，package.json を確認すると（一部抜粋），
+ボイラープレートができたので，package.json（一部抜粋）を確認すると，
 
 ```json
 "devDependencies": {
@@ -95,7 +101,7 @@ $ npm init riot
   }
 ```
 
-riot 本体とその他モジュールのバージョンが v6 に合わせて更新されていますが，テンプレートにまだ反映されていないのでアップグレードします．
+riot 本体とその他モジュールのバージョンが v6 に合わせてテンプレートがまだ反映されていないようですのでアップグレードします．
 
 ```bash
 $ npm i riot@latest @riotjs/route@latest @riotjs/hot-reload@latest @riotjs/compiler@latest @riotjs/webpack-loader@latest
@@ -126,8 +132,59 @@ $ npm start
 
 ![](https://storage.googleapis.com/zenn-user-upload/c1fc9548edfd1ced05482e4d.png)
 
-よし．では `TypeScript` を導入していきます．
+よし．では `TypeScript` を導入していきます．今回は `src/components/global/sidebar/sidebar.riot` ファイルを先程の例とほぼ同様に変更します．
 
 ```diff
+- <script>
++ <script lang="ts">
+
+...
+
+  // このコンポーネントでは props がないため空オブジェクト
++ export type MyComponentProps = {}
++
++ export type MyComponentState = {
++   name: string,
++   showUser: boolean
++ }
++
++ export type MyComponent = RiotComponent<MyComponentProps, MyComponentState>
++
+- export default {
++ export default withTypes<MyComponent>({
+
+...
+
+- }
++ })
+```
+
+では保存，実行！
+
+…
+
+エラー発生
 
 ```
+Uncaught Error: Module parse failed: Unexpected token (4:7)
+File was processed with these loaders:
+ * ./node_modules/@riotjs/webpack-loader/dist/riot-webpack-loader.cjs.js
+You may need an additional loader to handle the result of these loaders.
+| import User from '../../includes/user/user.riot'
+|
+> export type MyComponentProps = {}
+|
+| export type MyComponentState = {
+```
+
+こちらは現在原因調査中です．ぱっと見た感じでは `@riotjs/webpack-loader` の原因っぽいですが，海外の方のエラーや公式の [Discord](https://discord.com/invite/PagXe5Y) チャンネルでのやり取りを見たところ．`babel` か `preset` 周りの設定か対応不足ではないかな？とも思えています．
+
+> SyntaxError: Unexpected token 'export'
+
+というエラーも出てますので．ここは後ほど更新したいと思います．
+
+# issues
+
+やはりリリースしたばかりのため，GitHub でも [issue](https://github.com/riot/cli/issues/51) が上がってました．プロダクションで使うにはまだ時間がかかりそうですね 💦
+
+ではでは．
