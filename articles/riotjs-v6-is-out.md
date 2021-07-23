@@ -137,6 +137,8 @@ $ npm start
 ```diff
 - <script>
 + <script lang="ts">
++   import { withTypes, RiotComponent } from 'riot'
+    import User from '../../includes/user/user.riot'
 
 ...
 
