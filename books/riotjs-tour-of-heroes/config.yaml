@@ -1,5 +1,9 @@
 title: "Riot.js で Tour of Heroes を試す"
-summary: ""
+summary: "Riot.js のチュートリアル用の書籍です．Google 社謹製の JavaScript フレームワーク Angular のチュートリアル「Tour of Heroes」を Riot.js で通してみるものです！"
 topics: ["riotjs", "ToH", "tutorial"]
 published: false
 price: 0 # 有料の場合200〜5000
+chapters:
+  - 1
+  - 2
+  - 3
