@@ -1,7 +1,13 @@
 title: "Riot.js で Tour of Heroes を試す"
 summary: |-
 
-  Riot.js のチュートリアル用の書籍です．Google 社謹製の JavaScript フレームワーク Angular のチュートリアル [Tour of Heroes](https://angular.io/tutorial) を Riot.js で通してみるものです！
+  Riot.js のチュートリアル用の書籍です．Google 社謹製の JavaScript フレームワーク Angular のチュートリアル「Tour of Heroes」 を Riot.js で通してみるものです！
+
+  https://angular.io/tutorial
+
+  完成版のソースコードは GitHub にアップしておりますので，何かわからないことがあればこちらのコードを参考にしていただければと思いますー．
+
+  https://github.com/kkeeth/riot-toh-demo
 
 topics: ["riotjs", "ToH", "tutorial"]
 published: false
