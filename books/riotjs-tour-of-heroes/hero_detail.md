@@ -108,7 +108,7 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
 ヒーローの詳細を表示はできましたが，現状では `name` のテキストボックスを変更しても画面には反映されません．
 
-というのも，`hero-detail` コンポーネントの 11 行目で `oninput` イベントハンドラとして `handleInput` というハンドラをセットしていますが，こちらのハンドラは元々 `heroes` コンポーネントで生成しており，これを `hero-detail` コンポーネントので，これを修正していきましょう．
+というのも，`hero-detail` コンポーネントの 11 行目で `oninput` イベントハンドラとして `handleInput` というハンドラをセットしていますが，こちらのハンドラは元々 `heroes` コンポーネントで生成しており，これを `hero-detail` コンポーネントに渡せていないので，こちらを修正していきましょう．
 
 **hero-detail.riot**
 
@@ -131,9 +131,21 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
    <script>
      import { HEROES } from '../../../mock-heroes';
+
+     (中略)
+
+     handleInput(e) {
+       this.selectedHero.name = e.target.value;
++      this.heroes.forEach((item) => {
++        if (item.id === this.selectedHero.id) {
++          item.name = e.target.value;
++        }
++      });
+       this.update();
+     },
 ```
 
-ここまでできましたら，前回と同じ状態のアプリケーションが出来上がっているかと思いますので，ご確認ください．
+ここまでできましたら，前回と同じ状態のアプリケーションが出来上がっているかと思いますが，入力フォームの値を自由に変更すると，タイトルの部分と上部のリストの名前も同時に変更されるかと思いますのでご確認ください．
 
 ![](https://storage.googleapis.com/zenn-user-upload/pxgp3khy914o4gmnr73j0hndgwqp)
 
