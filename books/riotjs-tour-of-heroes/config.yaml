@@ -7,8 +7,8 @@ topics: ["riotjs", "ToH", "tutorial"]
 published: false
 price: 0 # 有料の場合200〜5000
 chapters:
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
+  - environment
+  - hero_component
+  - show_list
+  - hero_detail
+  - asynchronous_message
