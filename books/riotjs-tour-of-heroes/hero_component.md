@@ -1,5 +1,5 @@
 ---
-title: 'Part2 ヒーローエディター'
+title: 'Part2 ヒーローコンポーネント'
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
@@ -124,7 +124,7 @@ title: 'Part2 ヒーローエディター'
 -  <div><span>name: </span>{ hero.name }</div>
 +  <div>
 +    <label>name:
-+      <input type="texts" value={ hero.name } placeholder="name" />
++      <input type="text" value={ hero.name } placeholder="name" />
 +    </label>
 +  </div>
 ```
@@ -137,17 +137,17 @@ title: 'Part2 ヒーローエディター'
 
 ```diff
    <div><span>id: </span>{ hero.id }</div>
--  <div><span>name: </span>{ hero.name }</div>
-+  <div>
-+    <label>name:
+   <div>
+     <label>name:
+-      <input type="text" value={ hero.name } placeholder="name" />
 +      <input
 +        type="text"
 +        value={ hero.name }
 +        placeholder="name"
 +        oninput={ handleInput }
 +      />
-+    </label>
-+  </div>
+     </label>
+   </div>
 
    <script>
      export default {
