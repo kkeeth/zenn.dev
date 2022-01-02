@@ -51,21 +51,17 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
 ```html
 <hero-detail>
-  <div if="{" hero }>
+  <div if={ hero.id }>
     <h2>{ hero.name.toUpperCase() } Details</h2>
     <div><span>id: </span>{ hero.id }</div>
     <div>
-      <label
-        >name:
+      <label>
+        name:
         <input
           type="text"
-          value="{"
-          hero.name
-          }
+          value={ hero.name }
           placeholder="name"
-          oninput="{"
-          handleInput
-          }
+          oninput={ handleInput }
         />
       </label>
     </div>
@@ -73,7 +69,7 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
   <script>
     export default {
-      hero: null,
+      hero: {},
       onBeforeUpdate(props) {
         this.hero = props.hero
       },
