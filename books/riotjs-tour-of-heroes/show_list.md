@@ -20,7 +20,7 @@ title: 'Part3 リストの表示'
 
 ## ヒーローのモックを作成する
 
-まずはチュートリアルで用意されているデータを利用させていただきます．今回は構成はあまり考えず `src` ディレクトリ下に `mock-heroes.js` ファイルを生成し，以下を追記します．
+まずはチュートリアルで用意されているデータを利用させていただきます．今回は構成はあまり考えず `src/components/global/heroes` ディレクトリ下に `mock-heroes.js` ファイルを生成し，以下を追記します．
 
 ```js
 export const HEROES = [
@@ -45,7 +45,7 @@ export const HEROES = [
 
 ```diff
    <script>
-+    import { HEROES } from '../../../mock-heroes';
++    import { HEROES } from './mock-heroes';
 +    console.log(HEROES);
 +
      export default {
@@ -171,7 +171,9 @@ export const HEROES = [
          this.update();
 +      },
 +      handleSelect(e) {
-+        console.log(e.target.data)
++        this.hero.id = e.target.data.id;
++        this.hero.name = e.target.data.name;
+         this.update();
        }
      }
    </script>
@@ -181,7 +183,7 @@ export const HEROES = [
 
 ## 詳細セクションを追加する
 
-そうしましたら，次は選択したヒーローの詳細を表示するように変更していきましょう．今まで使用してきた `hero` 変数は削除し，代わりに `selectedHero` 変数を追加します．画面描画時は何も選択されていないので初期値は `null` とします．
+そうしましたら，次は選択したヒーローの詳細を表示するように変更していきましょう．今まで使用してきた `hero` 変数は削除し，代わりに `selectedHero` 変数を追加します．画面描画時は何も選択されていないので初期値は `{}` とします．
 
 ```diff
    </ul>
@@ -202,24 +204,31 @@ export const HEROES = [
 
 ...（中断）
 
-     import { HEROES } from '../../../mock-heroes';
+     import { HEROES } from './mock-heroes';
 
      export default {
--       hero: {
--         id: 1,
--         name: 'Windstorm'
--       },
+-      hero: {
++      selectedHero: {
+         id: 1,
+         name: 'Windstorm'
+       },
        heroes: HEROES,
-+      selectedHero: null,
++      selectedHero: {},
        handleInput(e) {
 -        this.hero.name = e.target.value;
 +        this.selectedHero.name = e.target.value;
          this.update();
        },
        handleSelect(e) {
+-        this.hero.id = e.target.data.id;
+-        this.hero.name = e.target.data.name;
++        this.selectedHero.id = e.target.data.id;
++        this.selectedHero.name = e.target.data.name;
+         this.update();
+       }
 ```
 
-ここまで変更しますと，ブラウザのコンソールにエラーが表示されるはずです．理由はもちろん `selectedHero` の初期値が `null` ですので，`id` や `name` にアクセスしようとしても `null` だからです．
+ここまで変更しますと，ブラウザのコンソールにエラーが表示されるはずです．理由はもちろん `selectedHero` の `name` プロパティの初期値が `null` ですので，`name` を `toUpperCase()` メソッドで変更しようとしてもできないからです．
 
 したがって，初期値がセットされていない場合はそもそも詳細部分をレンダリングしないように変更します．
 
@@ -238,7 +247,7 @@ export const HEROES = [
 -        oninput={ handleInput }
 -      />
 -    </label>
-+  <div if={ selectedHero }>
++  <div if={ selectedHero.id }>
 +    <h2>{ selectedHero.name.toUpperCase() } Details</h2>
 +    <div><span>id: </span>{ selectedHero.id }</div>
 +    <div>
@@ -266,7 +275,7 @@ export const HEROES = [
 ```diff
      <li
        each={ hero in heroes }
-+      class={ hero === selectedHero && 'selected' }
++      class={ hero.id === selectedHero.id && 'selected' }
        onclick={ handleSelect }
        data={ hero }
      >
