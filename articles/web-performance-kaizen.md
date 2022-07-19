@@ -14,8 +14,6 @@ URL: https://lawsofux.com/en/doherty-threshold/
 
 # CSS 周り
 
-@[Two lines of CSS that boosts 7x rendering performance!](https://dev.to/mnathani/two-lines-of-css-that-boosts-7x-rendering-performance-4mjd)
-
 https://dev.to/mnathani/two-lines-of-css-that-boosts-7x-rendering-performance-4mjd
 
 ```css
