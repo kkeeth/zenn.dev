@@ -6,6 +6,11 @@ topics: ["Performance"]
 published: false
 ---
 
+> In 1982 Walter J. Doherty and Ahrvind J. Thadani published, in the IBM Systems Journal, a research paper that set the requirement for computer response time to be 400 milliseconds, not 2,000 (2 seconds) which had been the previous standard. When a human being’s command was executed and returned an answer in under 400 milliseconds, it was deemed to exceed the Doherty threshold, and use of such applications were deemed to be “addicting” to users.
+
+URL: https://lawsofux.com/en/doherty-threshold/
+
+このように，コンピュータの応答時間の理想は 400ms という主張もあるそうです．
 
 # CSS 周り
 
