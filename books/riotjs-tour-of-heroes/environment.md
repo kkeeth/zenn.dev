@@ -71,7 +71,7 @@ Is this OK? (yes) y
 $ npm install
 
 # yarn をご利用の方
-$ yarn
+$ yarn install
 ```
 
 ※これ以降筆者は `npm` コマンドで統一していきますので，`yarn` をご利用の方は適宜読み替えてください．
@@ -79,6 +79,9 @@ $ yarn
 インストールが完了しましたら，いよいよ起動してみます．以下のコマンドを実行してください.
 
 ```bash
+$ npm run start
+
+# yarn をご利用の方
 $ yarn start
 ```
 
