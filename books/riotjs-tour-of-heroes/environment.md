@@ -146,6 +146,38 @@ $ npm install --save-dev ress
 +import "ress";
 ```
 
+この状態ですと，`css` ファイルの読み込みと `<link>` タグへの CSS の展開がされないので，`css-loader`, `style-loader` をインストールして設定します．
+
+```bash
+$ npm install -D css-loader style-loader
+```
+
+続いて，webpack.config.js に以下を追記します．
+
+```diff
+      {
+        test: /\.riot$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "@riotjs/webpack-loader",
+            options: {
+              hot: true,
+            },
+          },
+        ],
+      },
++     {
++       test: /\.css$/,
++       use: [
++         "style-loader",
++         {
++           loader: "css-loader",
++         },
++       ],
++     },
+```
+
 ここまでできますと，以下の画像のようにスタイリングがあたっていない画面が表示されると思います．
 
 ![リセットCSS適用後](https://storage.googleapis.com/zenn-user-upload/xassl1mdrjsijd4nkkacw4hwzm8s)
@@ -154,7 +186,7 @@ $ npm install --save-dev ress
 
 ## アプリケーションのベーススタイルを追加
 
-では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し以下の内容追記してください．
+では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し以下の内容を追記してください．
 
 ```css
 /* Application-wide Styles */
@@ -184,8 +216,19 @@ button {
 }
 ```
 
+追記できましたらこのファイルを読み込みます．
+
+```diff
+  import "@riotjs/hot-reload";
+  import { component } from "riot";
+  import App from "./app.riot";
+  import registerGlobalComponents from "./register-global-components";
+  import "the-new-css-reset";
++ import "./style.css";
+```
+
 ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Part1「新規プロジェクトの作成」は完了です！
 
 ![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
 
-では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/2)に続きます．
+では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component)に続きます．
