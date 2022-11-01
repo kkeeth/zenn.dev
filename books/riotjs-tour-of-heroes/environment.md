@@ -186,49 +186,46 @@ $ npm install -D css-loader style-loader
 
 ## アプリケーションのベーススタイルを追加
 
-では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し以下の内容を追記してください．
-
-```css
-/* Application-wide Styles */
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
-}
-h2,
-h3 {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: lighter;
-}
-body {
-  margin: 2em;
-}
-body,
-input[type='text'],
-button {
-  color: #333;
-  font-family: Cambria, Georgia;
-}
-/* everywhere else */
-* {
-  font-family: Arial, Helvetica, sans-serif;
-}
-```
-
-追記できましたらこのファイルを読み込みます．
+では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` を以下の様に変更してください．
 
 ```diff
-  import "@riotjs/hot-reload";
-  import { component } from "riot";
-  import App from "./app.riot";
-  import registerGlobalComponents from "./register-global-components";
-  import "the-new-css-reset";
-+ import "./style.css";
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
++ /* Application-wide Styles */
++ h1 {
++   color: #369;
++   font-family: Arial, Helvetica, sans-serif;
++   font-size: 250%;
++ }
++ h2,
++ h3 {
++   color: #444;
++   font-family: Arial, Helvetica, sans-serif;
++   font-weight: lighter;
++ }
++ body {
++   margin: 2em;
++ }
++ body,
++ input[type='text'],
++ button {
++   color: #333;
++   font-family: Cambria, Georgia;
++ }
++
++ /* everywhere else */
++ * {
++   font-family: Arial, Helvetica, sans-serif;
++ }
 ```
 
 ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Part1「新規プロジェクトの作成」は完了です！
 
 ![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
 
-では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component)に続きます．
+では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component%252Emd)に続きます．

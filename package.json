@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/kkeeth/zenn.dev#readme",
   "dependencies": {
-    "zenn-cli": "^0.1.72"
+    "zenn-cli": "^0.1.131"
   }
 }
