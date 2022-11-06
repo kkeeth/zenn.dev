@@ -104,6 +104,7 @@ function draw() {
 ```js:コードの一部抜粋
   const arr = $.map((v, i) => {
     stroke(i, i / 3, i / 5);
+    // 後述しますが，ここはプロットの位置調整のみで処理自体には影響はありません
     point(v.copy().add(2, 1.6).mult(135));
     r = 1; //((v.x * 2 + 2.5) ^ (v.y + 2)) * 8;
 
@@ -173,8 +174,10 @@ createVector(random(), random(), random() * 2 - 1)
 
 ![createVector でのプロット](https://storage.googleapis.com/zenn-user-upload/0587dd9d526e-20221106.png)
 
+::::message
+余談 `p5.Vector.random2D()` メソッドについても見ていきましょう．
 
-:::details 余談（`p5.Vector.random2D()` メソッド）
+:::details
 勘の良い方は，今回は結局 2D の絵を描いているのだから `p5.Vector.random2D()` というメソッドを用いれば良くない？と思われたかと思います．そのご指摘はまっこと仰るとおりで実際に私も試してみましたが，どうもこちらでも違ったプロットになってしまいました．
 
 ![](https://storage.googleapis.com/zenn-user-upload/c86ec459f0b5-20221106.png)
@@ -294,11 +297,10 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
 };
 ```
 
-こちらは `random3D()` メソッドよりも直接的で，`sin, cos` の値を引数にベクトルのインスタンスを生成していました．
-
-どちらも共通しているのは初期生成するベクトルの座標は円の表現をするためのものでした．
+こちらは `random3D()` メソッドよりも直接的で，`sin, cos` の値を引数にベクトルのインスタンスを生成していました．どちらも共通しているのは初期生成するベクトルの座標は円の表現をするためのものでした．
 
 :::
+::::
 
 ## ② `^` （排他的論理和）
 
