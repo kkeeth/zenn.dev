@@ -164,7 +164,7 @@ p5.Vector.random3D = function random3D() {
 };
 ```
 
-ん〜なるほど！ランダムで `TWO_PI(2π)` までの値を取得していること，またこちらの式 `Math.sqrt(1 - vz * vz)` なんてまさに __原点を中心とした半径１の円の方程式__[^2] にしか見えませんw また `vx, vy` も，これはどう見ても __極座標__[^3] ですのでもろに円ですね😂
+ん〜なるほど！ランダムで `TWO_PI(2π)` までの値を取得していること，またこちらの式 `Math.**sqrt**(1 - vz * vz)` なんてまさに __原点を中心とした半径１の円の方程式__[^2] にしか見えませんw また `vx, vy` も，これはどう見ても __極座標__[^3] ですのでもろに円ですね😂
 
 [^3]: 参考リンク: [極座標系（wikipedia）](https://ja.wikipedia.org/wiki/極座標系)
 
@@ -182,10 +182,7 @@ createVector(random(), random(), random() * 2 - 1)
 
 ![createVector でのプロット](https://storage.googleapis.com/zenn-user-upload/0587dd9d526e-20221106.png)
 
-:::message
-余談 `p5.Vector.random2D()` メソッドについても見ていきましょう．
-:::
-
+### 余談 `p5.Vector.random2D()` メソッドについても見ていきましょう．
 
 :::details
 勘の良い方は，今回は結局 2D の絵を描いているのだから `p5.Vector.random2D()` というメソッドを用いれば良くない？と思われたかと思います．そのご指摘はまっこと仰るとおりで実際に私も試してみましたが，どうもこちらでも違ったプロットになってしまいました．
