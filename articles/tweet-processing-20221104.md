@@ -182,9 +182,8 @@ createVector(random(), random(), random() * 2 - 1)
 
 ![createVector でのプロット](https://storage.googleapis.com/zenn-user-upload/0587dd9d526e-20221106.png)
 
-### 余談 `p5.Vector.random2D()` メソッドについても見ていきましょう．
 
-:::details
+:::details 余談: `p5.Vector.random2D()` メソッドについても見てみましょう
 勘の良い方は，今回は結局 2D の絵を描いているのだから `p5.Vector.random2D()` というメソッドを用いれば良くない？と思われたかと思います．そのご指摘はまっこと仰るとおりで実際に私も試してみましたが，どうもこちらでも違ったプロットになってしまいました．
 
 ![](https://storage.googleapis.com/zenn-user-upload/c86ec459f0b5-20221106.png)
