@@ -3,7 +3,7 @@ title: "私が感動した Processing 製の作品のソースコードを解析
 emoji: "🎨"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["p5js", "processing", "JavaScript"]
-published: false
+published: true
 ---
 
 本記事は [Processing Advent Calendar 2022](https://adventar.org/calendars/7370) の第14日目の記事となります．
