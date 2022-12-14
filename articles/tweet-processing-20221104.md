@@ -6,7 +6,11 @@ topics: ["p5js", "processing", "JavaScript"]
 published: false
 ---
 
-こんにちは．Twitter には `#つぶやきProcessing` という魅力的なタグがあり，毎日数々の美しい作品がこのタグを付けて投稿されています．これを眺めるだけでも一日中過ごせるくらいです（個人の感覚です）．
+本記事は [Processing Advent Calendar 2022](https://adventar.org/calendars/7370) の第14日目の記事となります．
+
+https://adventar.org/calendars/7370
+
+こんにちは．株式会社ゆめみの Keeth こと桑原です．Twitter には `#つぶやきProcessing` という魅力的なタグがあり，毎日数々の美しい作品がこのタグを付けて投稿されています．これを眺めるだけでも一日中過ごせるくらいです（個人の感覚です）．
 
 今日はその中でも特に度肝を抜かれ，かつ感動した作品が 2022/11/04 に投稿されておりましたので，個人の拙い能力で解析に挑戦してみました💁
 
