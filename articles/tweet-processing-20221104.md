@@ -55,7 +55,7 @@ draw = (_) => {
 
 これでも良いですが，もっと分かりやすいコードを [@youtoy さんが Qiita で書かれていました](https://qiita.com/youtoy/items/263f407021c4b3003365) ので，コードをお借りしました💁
 
-```js:愚直に書き出し
+```js:youtoyさんのコード
 let $ = [];
 const num = 2e3;
 
