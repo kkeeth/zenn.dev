@@ -6,7 +6,7 @@ topics: ["p5js", "processing", "JavaScript"]
 published: true
 ---
 
-:::message alert
+:::message
 本記事は [Processing Advent Calendar 2022](https://adventar.org/calendars/7370) の第14日目の記事となります．
 :::
 
