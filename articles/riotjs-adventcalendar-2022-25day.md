@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "2022 年の JS 界隈を振り返りつつ Riot.js の今後についてを軽く妄想する"
 emoji: "👏"
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ["riotjs", "ポエム", "アドベントカレンダー", "adventcalendar", "JavaScript"]
