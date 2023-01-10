@@ -10,6 +10,8 @@ published: false
 
 本記事は [Riot.js Advent Calendar 2022](https://qiita.com/advent-calendar/2022/riotjs) の __第25日（トリ）に投稿しようとした__ 記事となります．「もう新年明けてもうてるやないかい！」というツッコミはありがたく頂戴致します🙇
 
+https://qiita.com/advent-calendar/2022/riotjs
+
 また本記事はポエム調ですので悪しからず．
 
 # 2022 年に流行した JS ライブラリ
@@ -22,11 +24,8 @@ published: false
 >
 >
 > ・Retention: would use again / (would use again + would not use again)
->
 > ・Interest: want to learn / (want to learn + not interested)
->
 > ・Usage: (would use again + would not use again) / total
->
 > ・Awareness: (total - never heard) / total
 
 
@@ -43,7 +42,7 @@ published: false
 
 パフォーマンスに関する根本思想については [こちらの記事](https://ryansolid.medium.com/solidjs-the-tesla-of-javascript-ui-frameworks-6a1d379bc05e) を見てみてください．
 
-:::details 触ってみた感想
+:::details 雑に触ってみた雑な感想
 
 軽く触ってみたところ，確かに React ライクだなと強く感じました．それでいて開発・実行パフォーマンスもよく，今のところ体験はとても良いです．React Hooks，例えば `useState()` に当たるものが Solid.js では `createSignal` という名前で存在します．
 
