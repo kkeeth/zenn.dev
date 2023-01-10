@@ -12,11 +12,13 @@ published: false
 
 https://qiita.com/advent-calendar/2022/riotjs
 
-また本記事はポエム調ですので悪しからず．
+また本記事は前半ポエム調，後半で少し技術の話の構成ですので悪しからず．
 
-# 2022 年に流行した JS ライブラリ
+# State of JS 2021 の結果
 
-2022 年の終わりに 2021 年の [State of JS 2021](https://2021.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking) アンケート結果を見るのもどうかと思いますが，個人的にはインパクトがあったので引用させていただきます．
+いきなり余談から入ります．2022 年の終わりに 2021 年の [State of JS 2021](https://2021.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking) アンケート結果を見るのもどうかと思いますが，個人的にはインパクトがあったので引用させていただきます．[^2]
+
+[^2]: 本当は 2022 の結果を見たかったのですが，2023/01/11 時点ではまだ集計結果が公開されていなかったため
 
 昨年は以下の４つの観点
 
@@ -34,17 +36,19 @@ https://qiita.com/advent-calendar/2022/riotjs
 
 ![Retention](https://storage.googleapis.com/zenn-user-upload/bd41121e79a1-20230111.png)
 
-今まで聞いたことがなかった [Solid.js](https://www.solidjs.com/) というライブラリが１位に躍り出ていたので，新年早々驚きました．公式ドキュメントを読んで見ると
+今まで聞いたことがなかった [Solid.js](https://www.solidjs.com/) というライブラリが１位に躍り出ていたので，新年早々驚きました．`Retension` で１位ということで，世界では１回は使ってみた方が多いという証拠でもあり，以下に自分が情弱だったかを思い知らされました．
+
+公式ドキュメントを読んで見ると
 
 * `React` ライクなシンタックス（`React Hooks` のような機能）
-* コストのかかる仮想DOMを用いず，ハイパフォーマンス
+* コストのかかる仮想 DOM を用いず，ハイパフォーマンス
 * チュートリアルやドキュメントが充実
 
 パフォーマンスに関する根本思想については [こちらの記事](https://ryansolid.medium.com/solidjs-the-tesla-of-javascript-ui-frameworks-6a1d379bc05e) を見てみてください．
 
 :::details 雑に触ってみた雑な感想
 
-軽く触ってみたところ，確かに React ライクだなと強く感じました．それでいて開発・実行パフォーマンスもよく，今のところ体験はとても良いです．React Hooks，例えば `useState()` に当たるものが Solid.js では `createSignal` という名前で存在します．
+軽く触ってみたところ，確かに `React` ライクだなと強く感じました．それでいて開発・実行パフォーマンスもよく，今のところ体験はとても良いです．`React Hooks`，例えば `useState()` に当たるものが Solid.js では `createSignal` という名前で存在します．
 
 参考程度に [公式チュートリアル](https://www.solidjs.com/tutorial/introduction_signals?solved) のコードを転載します．
 
@@ -68,13 +72,29 @@ render(() => <Counter />, document.getElementById('app'));
 :::
 
 ![Interest](https://storage.googleapis.com/zenn-user-upload/5589c2ca40a8-20230111.png)
+
+続いて `Interest` ですが，こちらは予想通り `Svelte` がトップ．ただ，Svelte は `Retention` も含めて１位だと思っていたので少し意外でした．
+
 ![Usage](https://storage.googleapis.com/zenn-user-upload/91cd23be38cf-20230111.png)
+
+続いて `Usage`．良い悪い含めて１度は使ったことあるものの数字ですが，まぁ React に軍配が上がったのは当然でしょう．毎年 DL 数も利用事例や関連記事，AWS 等の各種サービスのサンプルコードでも頻繁に使われており，名実ともに Web フロントエンドのライブラリではここ数年トップに君臨しているだけあるなと思います．
+
+毎年開発者に寄り添った機能や，ユーザー（ここでは開発者のこと）のエコシステム，React 製のアプリケーションの体験など，幅広く考えたアップデートがリリースされていることも素晴らしいですね．
+
+第２位が `Angular` だったのは個人的には意外で，てっきり `Vue.js` だと思いきや，世界では `Angular` の方が事例は多いんですね．[^1]
+
+[^1]: こちらはおそらく `AngularJS` と `Angular` の両方の数字が合算されていると予想します．
+
 ![Awareness](https://storage.googleapis.com/zenn-user-upload/bb47d3ec157e-20230111.png)
 
-（以上４画像はこちらから引用）
+最後に `Awareness` ですが，総数から聞いたことがないものを引いた数字ということで，やはり `React` がトップでした．しかしこちらは `Vue.js` が２位，`Angular` が３位でした．個人的には昨年・一昨年の伸びから `Svelte` が３位に食い込むかな？と思っていましたが，`Angular` が根強いですね．
+
+以上，４画像は以下公式サイトから引用させていただきました．
 
 https://2021.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking
 
+
+# 2022 年に流行した JS ライブラリ
 
 # 実際の DL 数比較
 
