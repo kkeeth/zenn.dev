@@ -16,7 +16,7 @@ published: false
 
 __正葉曲線，別名バラ曲線（rose curve）__ とは，ざっくり言うと極座標 `(r, θ)` において，以下の方程式で表される曲線のことです💁
 
-![バラ曲線の方程式](https://vantan-techford-p5js-slide.vercel.app/13/assets/rose-equation.600a7b37.png =350px)
+![バラ曲線の方程式](https://vantan-techford-p5js-slide.vercel.app/13/assets/rose-equation.600a7b37.png =350x)
 
 極座標ですので，直交座標（厳密にはデカルト座標）に変換してあげなくはならず，上記の式で導出された `r` を用いて以下の式で直交座標に戻してあげます．
 
