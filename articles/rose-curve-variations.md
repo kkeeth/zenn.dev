@@ -16,15 +16,19 @@ published: false
 
 __正葉曲線，別名バラ曲線（rose curve）__ とは，ざっくり言うと極座標 `(r, θ)` において，以下の方程式で表される曲線のことです💁
 
-![バラ曲線の方程式](https://vantan-techford-p5js-slide.vercel.app/13/assets/rose-equation.600a7b37.png =350x)
+![バラ曲線の方程式](https://vantan-techford-p5js-slide.vercel.app/13/assets/rose-equation.600a7b37.png =300x)
 
-極座標ですので，直交座標（厳密にはデカルト座標）に変換してあげなくはならず，上記の式で導出された `r` を用いて以下の式で直交座標に戻してあげます．
+極座標ですので，直交座標（厳密にはデカルト座標）に変換する必要があり，上記の式で導出された `r` を用いて以下の式で直交座標に戻してあげます．[^1]
 
-//ここに座標のリンクを貼る
+[^1]: 今回は２次元のみ言及しています
 
-これを画面上にプロットすると，以下のような表示になります．
+![極座標から直交座標への変換式](https://vantan-techford-p5js-slide.vercel.app/8/assets/poler-coordinates.69e44a76.png)
 
-//wikipediaの画像のリンクを貼る
+上記の式を画面上にプロットすると，以下のような表示になります．
+
+![バラ曲線のプロット](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Rose.svg/512px-Rose.svg.png)
+
+[画像出典：WIKIMEDIA COMMONS](https://commons.wikimedia.org/wiki/File:Rose.svg)
 
 後はこの数式をソースコードに落とし込む作業です 💻
 
@@ -34,9 +38,8 @@ __正葉曲線，別名バラ曲線（rose curve）__ とは，ざっくり言�
 
 ```js:バラ曲線の単なるプロット
 const radius = 150;
-const n = 9;
-const d = 4;
-
+let n = 9;
+let d = 4;
 let x = 0;
 let y = 0;
 let range = 0;
@@ -62,24 +65,18 @@ function draw() {
 }
 ```
 
-こんな感じの表示になります．後は `n, d` の値を自由に変更すればそれぞれの曲線が描かれます．
+こんな感じの表示になります．後は `n, d` の値を自由に変更すればそれぞれの曲線が描かれます．ちなみにオンラインエディタは[こちら](https://editor.p5js.org/kkeeth/sketches/Hg4iyFUKx)です．
 
-// ここにeditorの画像を貼る
-
+![バラ曲線のコードと実行結果](https://storage.googleapis.com/zenn-user-upload/fcb718e760f4-20230116.png)
 # 色々弄って遊ぶ
 ここから少しずつ色々弄ってみます 🙋
 
 ## アニメーション化
 
-これでも十分美しいですが，ぱっと表示されただけだと見ていて面白くなかったのでアニメーションで少しずつ描くように変更してみました 💁
+これでも十分美しいですが，ぱっと表示されただけだと見ていて面白くなかったのでアニメーションで少しずつ描くように変更してみました💁オンラインエディタは[こちら](https://editor.p5js.org/kkeeth/sketches/4Pyx0YGrP)です．
 
-```diff
+```diff:点描でアニメーション化
 + let angle = 0;
-
-  function setup() {
-    （中略）
-+   angleMode(DEGREES);
-  }
 
   function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -87,6 +84,7 @@ function draw() {
     strokeWeight(4);
 -   frameRate(1);
 +   background(0);
++   angleMode(DEGREES);
   }
 
   function draw() {
@@ -107,16 +105,18 @@ function draw() {
   }
 ```
 
-以下のような表示になっていればOKです👍
+以下のような表示になっていればOKです👍[^2]
 
-//ここに動画を貼る
+[^2]: 本当は動画（厳密には gif）を貼りたかったですが，サイズが大きくなってしまったので…見たい方はコードを直接ご覧ください🙇
+
+![バラ曲線のアニメーションのキャプチャ](https://vantan-techford-p5js-slide.vercel.app/13/assets/rose-curve-dotted.0fa7c47b.png)
 
 ## 「点描」から「線描」に変更
 
 点描でも美しいですが，やはり曲線を描きたい（笑）ので線描に変更します🙋
-ついでに若干描画速度も上げます．
+ついでに若干描画速度も上げます．オンラインエディタは[こちら](https://editor.p5js.org/kkeeth/sketches/_b5cWOw8s)です．
 
-```diff
+```diff:線描に書き換え
   let x = 0;
   let y = 0;
 + let bx = 0;
@@ -131,26 +131,26 @@ function draw() {
    y = range * sin(angle);
 -  point(x, y);
 +  line(bx, by, x, y);
--  angle += 2;
-+  angle += 4;
+-  angle++;
++  angle += 3;
   }
 ```
 
 以下のような表示になっていればOKです👍
 
-// ここに動画を貼る
+![線描のバラ曲線のアニメーション](/images/lined_rose_curve_animation.png)
 
 :::message
-一点注意：上記のコードにも書いておりますが，`x, y` の変更の前に書かないと `bx, by` の値が `x, y` とおなじになるため， `line()` 関数が何も描かなくなります．
+上記のコードにも書いておりますが，`x, y` の変更の前に書かないと `bx, by` の値が `x, y` とおなじになるため， `line()` 関数が何も描かなくなります．
 :::
 
 余談ですが，最後に `rotate()` とか，`translate()` の座標位置を変更していくと，どんどん曲線が変化し予想しない絵を味わえるのでこれはこれでまた面白いです💁
 
 ## 線に色を付ける
 
-ジェネラティブアートをやられている方なら，__とりあえず色をつけたくなると思います__（笑）ということで，色を付けていきます．お決まりの `HSB` モードでランダムにします😂
+ジェネラティブアートをやられている方なら，__とりあえず色をつけたくなると思います__（笑）ということで，色を付けていきます．お決まりの `HSB` モードでランダムにします😂オンラインエディタは[こちら](https://editor.p5js.org/kkeeth/sketches/bBCPGpGYa)です．
 
-```diff
+```diff:HSBモードで色付け
   function setup() {
     createCanvas(windowWidth, windowHeight);
 -   stroke(255)
@@ -169,7 +169,7 @@ function draw() {
 
 こうなっていればOK👍時間経過によって線が上書きされていく様を見ることができますね．
 
-// 後で動画を貼る
+![色付けしたバラ曲線のアニメーション](/images/colorful_rose_curve_animation.png)
 
 ## `angle`　の値を大きくする
 
@@ -181,11 +181,14 @@ function draw() {
 
 試しに `n = 9, d = 4, angle = 10` にした図がこちらです．
 
-//ここに画像を貼る
+![angle を大きくした場合のバラ曲線のプロット](/images/big_angle_rose_curve.png)
 
-上手いことカクついたそれぞれの頂点が重なり合って __結晶のように見えませんか？__ さらにこの値を大きくしてみましょう．`angle = 25, 28, 34, 39` 辺りが個人的には好きなのでキャプチャを貼っつけます 💁
 
-// ここに画像を貼る
+上手いことカクついたそれぞれの頂点が重なり合って __結晶のように見えませんか？__ さらにこの値を大きくしてみましょう．`angle = 22, 28, 32, 35` 辺りが個人的には好きなのでキャプチャを貼っつけます💁[^3]
+
+[^3]: 綺麗な絵を描きたいので，ついでに線の太さを細くしています．
+
+![色々なangleのバラ曲線](/images/various_rose_curve.png)
 
 今度は重なる周期がかなり遅くなってしまいますが，何度も塗りつぶされることで __魔法陣・エンブレム__ のような見た目に大変身したではないですか．個人的にはこの絵が描かれる過程も見ていて面白かったです😄
 
