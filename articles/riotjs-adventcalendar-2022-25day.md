@@ -6,37 +6,37 @@ topics: ["riotjs", "ポエム", "アドベントカレンダー", "adventcalenda
 published: false
 ---
 
-新年明けましておめでとうございます←
+2023年も早くも２月を折り返しました，新年明けましておめでとうございます←
+今年も何卒 `Riot.js` をよろしくお願い申し上げます．
 
 本記事は [Riot.js Advent Calendar 2022](https://qiita.com/advent-calendar/2022/riotjs) の __第25日（トリ）に投稿しようとした__ 記事となります．「もう新年明けてもうてるやないかい！」というツッコミはありがたく頂戴致します🙇
 
 https://qiita.com/advent-calendar/2022/riotjs
 
-また本記事は前半ポエム調，後半で少し技術の話の構成ですので悪しからず．
+また本記事は基本ポエム調ですので悪しからず．
 
-# State of JS 2021 の結果
+# State of JS 2022 の結果
 
-いきなり余談から入ります．2022 年の終わりに 2021 年の [State of JS 2021](https://2021.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking) アンケート結果を見るのもどうかと思いますが，個人的にはインパクトがあったので引用させていただきます．[^2]
+いきなり余談から入ります．毎年恒例 `State of JS` の 2022年版 [State of JS 2022](https://2022.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking) のアンケート結果が公開されておりますので，こちらを引用致します．
 
-[^2]: 本当は 2022 の結果を見たかったのですが，2023/01/11 時点ではまだ集計結果が公開されていなかったため
 
 昨年は以下の４つの観点
 
-> Technologies with less than 10% awareness not included. Each ratio is defined as follows:
+> 認知度が10％以下の技術は含めていません。度合いは次のように定義しています。
 >
->
-> ・Retention: would use again / (would use again + would not use again)
-> ・Interest: want to learn / (want to learn + not interested)
-> ・Usage: (would use again + would not use again) / total
-> ・Awareness: (total - never heard) / total
+> 満足度：また使いたい vs もう使わない
+> 興味：学びたい vs 興味がない
+> 利用率：また使いたい + もう使わない vs 認知度
+> 認知度：総数 － 聞いたことがない
 
 
 で集計されていました．記載の通り，認知度が10％未満の技術は載っていないそうですね．
 
+## 満足度
 
-![Retention](https://storage.googleapis.com/zenn-user-upload/bd41121e79a1-20230111.png)
+![満足度](https://storage.googleapis.com/zenn-user-upload/8b82f640995d-20230217.png)
 
-今まで聞いたことがなかった [Solid.js](https://www.solidjs.com/) というライブラリが１位に躍り出ていたので，新年早々驚きました．`Retension` で１位ということで，世界では１回は使ってみた方が多いという証拠でもあり，以下に自分が情弱だったかを思い知らされました．
+今まで聞いたことがなかった [Solid.js](https://www.solidjs.com/) というライブラリが１位に躍り出ていたので，新年早々驚きました．`満足度` で１位ということで，世界では１回は使ってみた方が多いという証拠でもあり，以下に自分が情弱だったかを思い知らされました．
 
 公式ドキュメントを読んで見ると
 
@@ -71,13 +71,17 @@ render(() => <Counter />, document.getElementById('app'));
 `Vite` を用いた [様々なテンプレート](https://github.com/solidjs/templates) が用意されていたり，`Next.js` のようなラッパー [degit](https://github.com/Rich-Harris/degit) も用意されているなど，入門もしやすいですね．
 :::
 
-![Interest](https://storage.googleapis.com/zenn-user-upload/5589c2ca40a8-20230111.png)
+## 興味
 
-続いて `Interest` ですが，こちらは予想通り `Svelte` がトップ．ただ，Svelte は `Retention` も含めて１位だと思っていたので少し意外でした．
+![興味](https://storage.googleapis.com/zenn-user-upload/6debfe720902-20230217.png)
 
-![Usage](https://storage.googleapis.com/zenn-user-upload/91cd23be38cf-20230111.png)
+続いて `興味` ですが，こちらは予想通り `Svelte` がトップ．ただ，Svelte は `満足度` も含めて１位だと思っていたので正直少し意外でした．
+## 利用率
 
-続いて `Usage`．良い悪い含めて１度は使ったことあるものの数字ですが，まぁ React に軍配が上がったのは当然でしょう．毎年 DL 数も利用事例や関連記事，AWS 等の各種サービスのサンプルコードでも頻繁に使われており，名実ともに Web フロントエンドのライブラリではここ数年トップに君臨しているだけあるなと思います．
+![利用率](https://storage.googleapis.com/zenn-user-upload/2f96dd45e1da-20230217.png)
+
+
+続いて `利用率`．良い悪い含めて１度は使ったことあるものの数字ですが，まぁ React に軍配が上がったのは当然でしょう．毎年 DL 数も利用事例や関連記事，AWS 等の各種サービスのサンプルコードでも頻繁に使われており，名実ともに Web フロントエンドのライブラリではここ数年トップに君臨しているだけあるなと思います．
 
 毎年開発者に寄り添った機能や，ユーザー（ここでは開発者のこと）のエコシステム，React 製のアプリケーションの体験など，幅広く考えたアップデートがリリースされていることも素晴らしいですね．
 
@@ -85,43 +89,61 @@ render(() => <Counter />, document.getElementById('app'));
 
 [^1]: こちらはおそらく `AngularJS` と `Angular` の両方の数字が合算されていると予想します．
 
-![Awareness](https://storage.googleapis.com/zenn-user-upload/bb47d3ec157e-20230111.png)
+## 認知度
 
-最後に `Awareness` ですが，総数から聞いたことがないものを引いた数字ということで，やはり `React` がトップでした．しかしこちらは `Vue.js` が２位，`Angular` が３位でした．個人的には昨年・一昨年の伸びから `Svelte` が３位に食い込むかな？と思っていましたが，`Angular` が根強いですね．
+![認知度](https://storage.googleapis.com/zenn-user-upload/eaa9a2f45fdc-20230217.png)
+
+最後に `認知度` ですが，総数から聞いたことがないものを引いた数字ということで，やはり `React` がトップでした．しかしこちらは `Vue.js` が２位，`Angular` が３位でした．個人的には昨年・一昨年の伸びから `Svelte` が３位に食い込むかな？と思っていましたが，`Angular` が根強いですね．
 
 以上，４画像は以下公式サイトから引用させていただきました．
 
 https://2021.stateofjs.com/en-US/libraries/front-end-frameworks/#front_end_frameworks_experience_ranking
 
 
-# 2022 年に流行した JS ライブラリ
-
 # 実際の DL 数比較
 
-実際の DL 数を npm の API をコールして見ました．
+実際の DL 数を npm の API をコールして見ました．手前味噌ですが，私が作った CLI ツール [check-stats-modules](https://www.npmjs.com/package/check-stats-modules) で取得しています（いい加減メンテせねば）．
 
 ```sh
-$ csm -t react vue @angular/core angular svelte solid-js remix astro @builder.io/qwik
+$ csm solid-js vue react @builder.io/qwik angular @angular/core preact @stencil/core ember lit-element svelte alpinejs -s 2022-01-01 -e 2022-12-31
 
 ╔═══════════╤════════════╤════════════╤══════════════════╗
 ║ downloads ║ start      ║ end        ║ package          ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 742231548 ║ 2022-01-01 ║ 2022-11-29 ║ react            ║
+║ 820923785 ║ 2022-01-01 ║ 2022-12-31 ║ react            ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 154835300 ║ 2022-01-01 ║ 2022-11-29 ║ vue              ║
+║ 326294093 ║ 2022-01-01 ║ 2022-12-31 ║ vue              ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 140478869 ║ 2022-01-01 ║ 2022-11-29 ║ @angular/core    ║
+║ 154426026 ║ 2022-01-01 ║ 2022-12-31 ║ @angular/core    ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 60448440  ║ 2022-01-01 ║ 2022-11-29 ║ svelte           ║
+║ 76896067  ║ 2022-01-01 ║ 2022-12-31 ║ preact           ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 24637946  ║ 2022-01-01 ║ 2022-11-29 ║ angular          ║
+║ 64779063  ║ 2022-01-01 ║ 2022-12-31 ║ svelte           ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 1390052   ║ 2022-01-01 ║ 2022-11-29 ║ solid-js         ║
+║ 38644572  ║ 2022-01-01 ║ 2022-12-31 ║ lit-element      ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 874394    ║ 2022-01-01 ║ 2022-11-29 ║ remix            ║
+║ 27242157  ║ 2022-01-01 ║ 2022-12-31 ║ angular          ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 834456    ║ 2022-01-01 ║ 2022-11-29 ║ astro            ║
+║ 19585624  ║ 2022-01-01 ║ 2022-12-31 ║ @stencil/core    ║
 ╟───────────┼────────────┼────────────┼──────────────────╢
-║ 87878     ║ 2022-01-01 ║ 2022-11-29 ║ @builder.io/qwik ║
+║ 5141667   ║ 2022-01-01 ║ 2022-12-31 ║ alpinejs         ║
+╟───────────┼────────────┼────────────┼──────────────────╢
+║ 1625020   ║ 2022-01-01 ║ 2022-12-31 ║ solid-js         ║
+╟───────────┼────────────┼────────────┼──────────────────╢
+║ 130854    ║ 2022-01-01 ║ 2022-12-31 ║ ember            ║
+╟───────────┼────────────┼────────────┼──────────────────╢
+║ 116075    ║ 2022-01-01 ║ 2022-12-31 ║ @builder.io/qwik ║
 ╚═══════════╧════════════╧════════════╧══════════════════╝
 ```
+
+DL されているからと行って利用されているとは限りませんが，一番適切な比較が `利用率` と判断し，こちらのグラフと比較してみましょう💁再掲します．
+
+![利用率](https://storage.googleapis.com/zenn-user-upload/2f96dd45e1da-20230217.png)
+
+こうやって見てみると，やはり State of JS の調査に参加していない人と少し乖離がある感がありますね🤔React が頭２つほど抜けているのは良いとして，桁数として年間 DL 数が億に到達する Vue, Angular が追随するのは流石の一言．
+
+Svelte はもうだいぶ熟成してきており，かつ sveltekit も良い感じでエコシステムも揃ってきているためこちらも抜け出すかな？と思っていたりしましたが，先の３大JSフレームワークの牙城を崩せる程ではないそうですね．
+
+続いて，lit-element．正直想像以上に DL されていることが分かりますね！１年間で3000万 DL は素晴らしい…そして近い数字 DL されている Angular.js や Stencil が根強い👏ここまで長く使われているという実績が色んなことを物語っていますよねぇ．
+
+残りのライブラリたちも桁数は下がりつつも今回の調査の上位にランクインしており，その中でも Qwik, Solid.js は今後が楽しみな顔ぶれです．特に Qwik が私個人としては😄 __速いは正義！__ Ember さんはもう殿堂入りで引退していただいて…🙏と言ってもまだ使われているサイトもあるんでしょうね（色んな意味で驚愕）
