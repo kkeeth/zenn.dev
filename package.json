@@ -6,7 +6,7 @@
   "scripts": {
     "init": "zenn init",
     "preview": "zenn preview",
-    "article": "zenn new:article",
+    "article": "zenn new:article --slug",
     "book": "zenn new:book"
   },
   "repository": {
