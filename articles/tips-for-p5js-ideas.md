@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "クリエイティブコーディングで使えそうなノイズを集めてみた"
 emoji: "🎨"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["Tips", "Collection", "p5js"]
