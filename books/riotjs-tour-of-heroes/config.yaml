@@ -17,4 +17,5 @@ chapters:
   - hero_component
   - show_list
   - hero_detail
-  - asynchronous_message
+  - get_hero_services
+  - dashboard

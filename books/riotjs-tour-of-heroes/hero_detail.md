@@ -1,5 +1,5 @@
 ---
-title: 'Part4 フィーチャーコンポーネントの作成'
+title: "Part4 フィーチャーコンポーネントの作成"
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
@@ -51,7 +51,7 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
 ```html
 <hero-detail>
-  <div if={ hero.id }>
+  <div if="{" hero.id }>
     <h2>{ hero.name.toUpperCase() } Details</h2>
     <div><span>id: </span>{ hero.id }</div>
     <div>
@@ -59,9 +59,13 @@ title: 'Part4 フィーチャーコンポーネントの作成'
         name:
         <input
           type="text"
-          value={ hero.name }
+          value="{"
+          hero.name
+          }
           placeholder="name"
-          oninput={ handleInput }
+          oninput="{"
+          handleInput
+          }
         />
       </label>
     </div>
@@ -71,9 +75,9 @@ title: 'Part4 フィーチャーコンポーネントの作成'
     export default {
       hero: {},
       onBeforeUpdate(props) {
-        this.hero = props.hero
+        this.hero = props.hero;
       },
-    }
+    };
   </script>
 </hero-detail>
 ```
@@ -151,4 +155,4 @@ title: 'Part4 フィーチャーコンポーネントの作成'
 
 以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，Part5「非同期とメッセージの作成」に続きます．
+では，[Part5「データ取得用のサービスの作成」](https://zenn.dev/kkeeth/books/get_hero_services)に続きます．
