@@ -1,5 +1,5 @@
 ---
-title: 'Part1 新規プロジェクトの作成'
+title: "Part1 新規プロジェクトの作成"
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
@@ -228,4 +228,4 @@ $ npm install -D css-loader style-loader
 
 ![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
 
-では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component%252Emd)に続きます．
+では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component.md)に続きます．

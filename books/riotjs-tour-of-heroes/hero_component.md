@@ -1,10 +1,10 @@
 ---
-title: 'Part2 ヒーローコンポーネント'
+title: "Part2 ヒーローコンポーネント"
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
 
-[前回](https://zenn.dev/kkeeth/articles/6bb9ef33a467f70ca755) に引き続き，今回はより具体的にヒーローコンポーネントを作成していきます．
+[前回](/books/riotjs-tour-of-heroes/environment.md) に引き続き，今回はより具体的にヒーローコンポーネントを作成していきます．
 
 では今回もやっていきましょう！
 
@@ -16,13 +16,13 @@ title: 'Part2 ヒーローコンポーネント'
 
 まずはいくつかのディレクトリやファイルのリネームを行います．`src/components/global` ディレクトリ以下の `my-component` と名前がつくものを全て `heroes` に変更します．具体的には以下となります．
 
-- `src/components/global/my-component` ディレクトリ
-- `src/components/global/my-component/my-component.riot` ファイル
-- `src/components/global/my-component/my-component.spec.js` ファイル
+- `src/components/components/my-component` ディレクトリ
+- `src/components/components/my-component/my-component.riot` ファイル
 
-さらに，`heroes.riot` ファイルと `heroes.spec.js` ファイル の `my-component` を `heroes` に変更します．
+さらに，`heroes.riot` ファイルの `my-component` を `heroes` に変更します．
 
-__heroes.riot__
+**heroes.riot**
+
 ```diff
 - <my-component>
 + <heroes>
@@ -31,7 +31,8 @@ __heroes.riot__
 + </heroes>
 ```
 
-__heroes.spec.js__
+**heroes.spec.js**
+
 ```diff
 - import MyComponent from './my-component.riot'
 + import Heroes from './heroes.riot'
@@ -70,6 +71,7 @@ __heroes.spec.js__
 +          <div is="heroes" data-riot-component message="Hello There"></div>
          </main>
 ```
+
 ## 不要なコンポーネントの削除
 
 次に，ボイラープレートで追加されている不要なコンポーネントがあるため，削除していきます．今回は `src/components/global` ディレクトリ以下の `sidebar` ディレクトリと，`src/components` ディレクトリ以下の `includes` ディレクトリですね．こちらを丸っと削除しちゃいましょう．
@@ -257,4 +259,4 @@ __heroes.spec.js__
 
 以上で Part2「ヒーローエディタ」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，[Part3「リストの表示」](/books/riotjs-tour-of-heroes/show_list%252Emd)に続きます．
+では，[Part3「リストの表示」](/books/riotjs-tour-of-heroes/show_list.md)に続きます．

@@ -4,7 +4,7 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
 
-[前回](https://zenn.dev/kkeeth/articles/riotjs_tour_of_hero_03) に引き続き，今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
+[前回](/books/riotjs-tour-of-heroes/show_list.md) に引き続き，今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
 
 では今回もやっていきましょう！
 
@@ -13,9 +13,8 @@ title: "Part4 フィーチャーコンポーネントの作成"
 それではまずはヒーローの詳細を表示するためのコンポーネントと，それを格納するディレクトリを作成していきます．具体的には以下です．
 ※`spec.js` ファイルはテスト用ファイルですが，後の回にて説明しますので，一旦空ファイルのままで良いです．
 
-- `src/components/global/hero-detail` ディレクトリ
-- `src/components/global/hero-detail/hero-detail.riot` ファイル
-- `src/components/global/hero-detail/hero-detail.spec.js` ファイル
+- `src/components/heroes/hero-detail` ディレクトリ
+- `src/components/heroes/hero-detail/hero-detail.riot` ファイル
 
 作成できましたら，それぞれのファイルの中身を書いていきましょう．
 
@@ -36,8 +35,8 @@ title: "Part4 フィーチャーコンポーネントの作成"
 -      <label>name:
 -        <input
 -          type="text"
--          value={ selectedHero.name }
 -          placeholder="name"
+-          value={ selectedHero.name }
 -          oninput={ handleInput }
 -        />
 -      </label>
@@ -86,7 +85,7 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 # hero-detail コンポーネントを表示する
 
-それでは作成した `hero-detail` コンポーネントを表示していきましょう．まずは `heroes` コンポーネントにて読み込みます．
+それでは作成した `hero-detail` コンポーネントを表示していきましょう．`heroes` コンポーネントにて，`hero-detail` コンポーネントを読み込み，配置します．
 
 ```diff
      </li>
@@ -104,7 +103,7 @@ title: "Part4 フィーチャーコンポーネントの作成"
        heroes: HEROES,
 ```
 
-読み込みと一緒に，`hero` というキーで `props` として選択したヒーロー `selectedHero` オブジェクトを渡しています．ここまでできますと，画面からも選択したヒーローの詳細情報が表示されるようになります．
+読み込みと一緒に，`hero` というキーで `props` として選択した `selectedHero` オブジェクトを渡しています．ここまでできますと，画面からも選択したヒーローの詳細情報が表示されるようになります．
 
 ![](https://storage.googleapis.com/zenn-user-upload/5wii4nxtx04t18dj4gftq848ies8)
 
@@ -155,4 +154,4 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，[Part5「データ取得用のサービスの作成」](https://zenn.dev/kkeeth/books/get_hero_services)に続きます．
+では，[Part5「データ取得用のサービスの作成」](/books/riotjs-tour-of-heroes/get_hero_services.md)に続きます．

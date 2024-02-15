@@ -1,10 +1,10 @@
 ---
-title: 'Part3 リストの表示'
+title: "Part3 リストの表示"
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
 
-[前回](https://zenn.dev/kkeeth/articles/922ae15f9aa376f3f529) に引き続き，今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装していきます．
+[前回](/books/riotjs-tour-of-heroes/hero_component.md) に引き続き，今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装していきます．
 
 では今回もやっていきましょう！
 
@@ -24,17 +24,17 @@ title: 'Part3 リストの表示'
 
 ```js
 export const HEROES = [
-  { id: 11, name: 'Dr Nice' },
-  { id: 12, name: 'Narco' },
-  { id: 13, name: 'Bombasto' },
-  { id: 14, name: 'Celeritas' },
-  { id: 15, name: 'Magneta' },
-  { id: 16, name: 'RubberMan' },
-  { id: 17, name: 'Dynama' },
-  { id: 18, name: 'Dr IQ' },
-  { id: 19, name: 'Magma' },
-  { id: 20, name: 'Tornado' },
-]
+  { id: 11, name: "Dr Nice" },
+  { id: 12, name: "Narco" },
+  { id: 13, name: "Bombasto" },
+  { id: 14, name: "Celeritas" },
+  { id: 15, name: "Magneta" },
+  { id: 16, name: "RubberMan" },
+  { id: 17, name: "Dynama" },
+  { id: 18, name: "Dr IQ" },
+  { id: 19, name: "Magma" },
+  { id: 20, name: "Tornado" },
+];
 ```
 
 以上でモックデータの作成は完了です．
@@ -287,4 +287,4 @@ export const HEROES = [
 
 以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，[Part4「フィーチャーコンポーネントの作成」](https://zenn.dev/kkeeth/articles/riotjs_tour_of_hero_04)に続きます．
+では，[Part4「フィーチャーコンポーネントの作成」](/books/riotjs-tour-of-heroes/hero_detail.md)に続きます．
