@@ -2,8 +2,6 @@
 title: "Part2 ヒーローコンポーネント"
 ---
 
-[Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
-
 [前回](/books/riotjs-tour-of-heroes/environment.md) に引き続き，今回はより具体的にヒーローコンポーネントを作成していきます．
 
 では今回もやっていきましょう！
@@ -258,5 +256,3 @@ title: "Part2 ヒーローコンポーネント"
 ![](https://storage.googleapis.com/zenn-user-upload/xkzwb2vj5b59fobs2a6si9cbpzva)
 
 以上で Part2「ヒーローエディタ」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
-
-では，[Part3「リストの表示」](/books/riotjs-tour-of-heroes/show_list.md)に続きます．

@@ -4,7 +4,7 @@ title: "Part1 新規プロジェクトの作成"
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
 
-本シリーズは，基本的に [Angular 公式サイトのチュートリアルページ](https://angular.jp/tutorial) を riot でなぞっていく記事になります．少々長いため，ここから何回かに分けてシリーズものとして書いていこうと思っていますので，riot 入門者のチュートリアルとして気長に見ていただければ幸いです 🙇
+本シリーズは，基本的に [Angular 公式のチュートリアル「Tour of Hero」](https://angular.jp/tutorial) を riot でなぞっていく本になります．少々長いため，ここから何回かに分けてシリーズものとして書いていこうと思っていますので，riot 入門者のチュートリアルとして気長に見ていただければ幸いです 🙇
 
 それではやっていきましょう！
 
@@ -227,5 +227,3 @@ $ npm install -D css-loader style-loader
 ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Part1「新規プロジェクトの作成」は完了です！
 
 ![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
-
-では，[Part2「ヒーローエディタ」](/books/riotjs-tour-of-heroes/hero_component.md)に続きます．

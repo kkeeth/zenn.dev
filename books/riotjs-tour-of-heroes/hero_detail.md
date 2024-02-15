@@ -2,8 +2,6 @@
 title: "Part4 フィーチャーコンポーネントの作成"
 ---
 
-[Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
-
 [前回](/books/riotjs-tour-of-heroes/show_list.md) に引き続き，今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
 
 では今回もやっていきましょう！
@@ -153,5 +151,3 @@ title: "Part4 フィーチャーコンポーネントの作成"
 ![](https://storage.googleapis.com/zenn-user-upload/pxgp3khy914o4gmnr73j0hndgwqp)
 
 以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
-
-では，[Part5「データ取得用のサービスの作成」](/books/riotjs-tour-of-heroes/get_hero_services.md)に続きます．

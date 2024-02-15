@@ -2,8 +2,6 @@
 title: "Part3 リストの表示"
 ---
 
-[Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
-
 [前回](/books/riotjs-tour-of-heroes/hero_component.md) に引き続き，今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装していきます．
 
 では今回もやっていきましょう！
@@ -286,5 +284,3 @@ export const HEROES = [
 ![](https://storage.googleapis.com/zenn-user-upload/s1drkgq77iaygv58j22w2j6e9rw8)
 
 以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
-
-では，[Part4「フィーチャーコンポーネントの作成」](/books/riotjs-tour-of-heroes/hero_detail.md)に続きます．
