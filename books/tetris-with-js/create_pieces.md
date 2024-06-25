@@ -7,6 +7,15 @@ title: "ステップ2: テトリスのピースを作成"
 各テトリスのピースを表すデータ構造を作成します．自分独自のピースを作成することも可能ですが，今回は標準のピースのみ作成します．
 
 ```js
+
+const createMatrix = (w, h) => {
+  const matrix = [];
+  while (h--) {
+    matrix.push(new Array(w).fill(0));
+  }
+  return matrix;
+}
+
 const createPiece = (type) => {
   if (type === 'T') {
     return [
