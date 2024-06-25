@@ -28,6 +28,18 @@ const update = (time = 0) => {
 }
 ```
 
+落下したピースを表示するため `draw` 関数に以下を追記します．
+
+```diff
+  function draw() {
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
++     drawMatrix(arena, {x: 0, y: 0});
++     drawMatrix(player.matrix, player.pos);
+  }
+```
+
 # 4.2 ピースの落下
 
 ピースを自然に落下させるロジックを実装します．

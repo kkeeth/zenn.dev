@@ -37,18 +37,6 @@ const player = {
 };
 ```
 
-落下したピースを表示するため `draw` 関数に以下を追記します．
-
-```diff
-  function draw() {
-      context.fillStyle = '#000';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-
-+     drawMatrix(arena, {x: 0, y: 0});
-+     drawMatrix(player.matrix, player.pos);
-  }
-```
-
 # 3.2 衝突判定の実装
 
 ピースが他のピースや壁と衝突するかどうかを判定する関数を作成します．

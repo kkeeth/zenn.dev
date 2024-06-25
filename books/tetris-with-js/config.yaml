@@ -16,7 +16,7 @@ summary: |-
   なんでテトリス？インターネットで何度か噂や記事を見たことがあって，これを機にやってみようかなーと思って，ご存知 ChatGPT 4o 君と一緒に 作ってみたので，books にまとめてみました．ご参考になれば幸いです！
 
 topics: ["JavaScript", "テトリス", "入門書"]
-published: false
+published: true
 price: 0
 chapters:
   - preparation
