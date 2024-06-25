@@ -71,3 +71,4 @@ const drawMatrix = (matrix, offset) => {
 }
 ```
 
+この時点では画面上は何も変化はありません．
