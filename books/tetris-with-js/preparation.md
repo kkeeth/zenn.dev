@@ -1,5 +1,5 @@
 ---
-title: "ステップ１：プロジェクトの準備"
+title: "ステップ1: プロジェクトの準備"
 ---
 
 # 1.1 必要なファイルを作成
@@ -63,6 +63,27 @@ canvas {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 20px;
+}
+```
+
+# 1.3 JavaScript の記述
+
+`tetris.js` を作成し，キャンバスの初期設定を行います．
+
+```js
+const canvas = document.querySelector('#tetris');
+const context = canvas.getContext('2d');
+context.scale(20, 20);
+```
+
+# 1.4 描画関数の実装
+
+キャンバスに色を塗る関数を追加します．
+
+```js
+const draw = () => {
+  context.fillStyle = '#000';
+  context.fillRect(0, 0, canvas.width, canvas.height);
 }
 ```
 

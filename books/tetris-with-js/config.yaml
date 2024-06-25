@@ -20,4 +20,5 @@ published: false
 price: 0
 chapters:
   - preparation
-  - example2
+  - create_pieces
+  - game_logic
