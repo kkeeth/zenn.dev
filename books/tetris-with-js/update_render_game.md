@@ -10,6 +10,7 @@ title: "ステップ4: ゲームの更新と描画"
 let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
+let animationId;
 
 // （中略）
 

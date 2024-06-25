@@ -20,6 +20,14 @@ const colors = [
   '#3877FF',
 ];
 
+const createMatrix = (w, h) => {
+  const matrix = [];
+  while (h--) {
+    matrix.push(new Array(w).fill(0));
+  }
+  return matrix;
+}
+
 const arena = createMatrix(12, 20);
 
 const player = {
@@ -27,6 +35,18 @@ const player = {
   matrix: null,
   score: 0,
 };
+```
+
+落下したピースを表示するため `draw` 関数に以下を追記します．
+
+```diff
+  function draw() {
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
++     drawMatrix(arena, {x: 0, y: 0});
++     drawMatrix(player.matrix, player.pos);
+  }
 ```
 
 # 3.2 衝突判定の実装
@@ -120,5 +140,3 @@ const playerRotate = (dir) => {
   }
 }
 ```
-
-ここまででも，まだ画面上は変化はありません．

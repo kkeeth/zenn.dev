@@ -37,8 +37,6 @@ document.addEventListener('keydown', event => {
 ゲームをリスタートするためのボタンを実装します．
 
 ```js
-document.getElementById('restartButton').addEventListener('click', restartGame);
-
 const restartGame = () => {
   arena.forEach(row => row.fill(0));
   player.score = 0;
@@ -47,5 +45,16 @@ const restartGame = () => {
   lastTime = 0;  // Reset lastTime for the animation frame
   update();
 }
+
+document.getElementById('restartButton').addEventListener('click', restartGame);
 ```
 
+# 5.4 実行
+
+では最後に，実行していきましょう．
+
+```js
+playerReset();
+updateScore();
+update();
+```
