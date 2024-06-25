@@ -22,3 +22,4 @@ chapters:
   - preparation
   - create_pieces
   - game_logic
+  - update_render_game
