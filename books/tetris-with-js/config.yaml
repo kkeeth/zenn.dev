@@ -21,6 +21,6 @@ price: 0
 chapters:
   - preparation
   - create_pieces
-  - game_logic
-  - update_render_game
+  - drop_collide_logic
+  - control_pieces
   - user_interface
