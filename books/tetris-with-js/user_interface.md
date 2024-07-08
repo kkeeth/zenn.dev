@@ -4,7 +4,7 @@ title: "ステップ5: ユーザーインターフェース"
 
 # 5.1 スコアの更新
 
-スコアを表示するためのロジックを実装します．
+では最後に，スコアを表示するためのロジックを実装します．`app.js` に以下を追記してください．
 
 ```js
 const updateScore = () => {
@@ -12,29 +12,38 @@ const updateScore = () => {
 }
 ```
 
-# 5.2 キーボード入力
+スコアの更新を画面に反映させましょう．
 
-キーボード入力でピースを操作するためのロジックを実装します．
-
-```js
-document.addEventListener('keydown', event => {
-  if (event.keyCode === 37) {
-    playerMove(-1);
-  } else if (event.keyCode === 39) {
-    playerMove(1);
-  } else if (event.keyCode === 40) {
-    playerDrop();
-  } else if (event.keyCode === 81) {
-    playerRotate(-1);
-  } else if (event.keyCode === 87) {
-    playerRotate(1);
+```diff
+  const playerDrop = () => {
+    player.pos.y++;
+    if (collide(arena, player)) {
+      player.pos.y--;
+      merge(arena, player);
+      playerReset();
++     arenaSweep();
++     updateScore();
+    }
+    dropCounter = 0;
   }
-});
+
+  const restartGame = () => {
+    arena.forEach(row => row.fill(0));
+    player.score = 0;
++   updateScore();
+    playerReset();
+    lastTime = 0;  // Reset lastTime for the animation frame
+    update();
+  }
 ```
+
+ここまでで，ゲームとしてはほぼ完成です💁
 
 # 5.3 リスタートボタン
 
-ゲームをリスタートするためのボタンを実装します．
+ゲームオーバー後，ゲームをリスタートするためのボタンクリック時の処理を実装します．
+
+※厳密には，いつでもボタンを押してリスタートできます
 
 ```js
 const restartGame = () => {
@@ -42,22 +51,16 @@ const restartGame = () => {
   player.score = 0;
   updateScore();
   playerReset();
-  lastTime = 0;  // Reset lastTime for the animation frame
+  lastTime = 0;
   update();
 }
 
 document.getElementById('restartButton').addEventListener('click', restartGame);
 ```
 
-# 5.4 実行
+今まで実装してきた初期化の処理を，`restartGame` 関数内でもう１回行っています．
 
-では最後に，実行していきましょう．
-
-```js
-playerReset();
-updateScore();
-update();
-```
+以上ですべての実装が完了です！一応完成版のコードも置いておきます💁
 
 # 完成版のコード
 
