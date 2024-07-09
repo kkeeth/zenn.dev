@@ -81,5 +81,32 @@ export const getHeroes = () => {
       handleInput(e) {
 ```
 
-これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．
+これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．ここから，Angular の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用していきますが，今回は非同期処理については割愛します．
+
+:::details riot で非同期処理の実装
+
+一応実装してみたいという方向けに，少し原始的ですがやり方を以下に記載しておきます．
+
+```js
+export default {
+  // レンダリング前に必ず実行
+  async onBeforeMount() {
+    const response = await fetch(/** URL */)
+    const data = response.json();
+  },
+  // 非同期の関数を定義しておき，適宜呼び出したいところで呼び出す
+  async myMethod(v) {
+    const response = await fetch(/** URL */)
+    const data = response.json();
+  }
+}
+
+// グローバルに非同期関数をモジュールとして定義
+export const myMethod = async () => {
+  const response = await fetch(/** URL */)
+  const data = response.json();
+}
+```
+:::
+
 以上で，非同期処理へのロジック変更は完了です．実際に動作させてみると，今まで実装したものと同じ挙動をすると思います．
