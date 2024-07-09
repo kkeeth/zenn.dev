@@ -16,8 +16,9 @@ title: "Part2 ヒーローコンポーネント"
 
 - `src/components/components/my-component` ディレクトリ
 - `src/components/components/my-component/my-component.riot` ファイル
+- `src/components/components/my-component/my-component. spec.js` ファイル
 
-さらに，`heroes.riot` ファイルの `my-component` を `heroes` に変更します．
+さらに，`heroes.riot`, `heroes.spec.js` ファイルの `my-component` を `heroes` に変更します．
 
 **heroes.riot**
 
@@ -72,7 +73,12 @@ title: "Part2 ヒーローコンポーネント"
 
 ## 不要なコンポーネントの削除
 
-次に，ボイラープレートで追加されている不要なコンポーネントがあるため，削除していきます．今回は `src/components/global` ディレクトリ以下の `sidebar` ディレクトリと，`src/components` ディレクトリ以下の `includes` ディレクトリですね．こちらを丸っと削除しちゃいましょう．
+次に，ボイラープレートで追加されている不要なコンポーネントがあるため，削除していきます．今回は
+
+*  `src/components/global/sidebar/` ディレクトリ
+*  `src/components/includes/` ディレクトリ
+
+ですね．こちらを丸っと削除しちゃいましょう💁
 
 さらにこのままだとエラーになりますので，直していきます．`index.html` ファイルを開き，以下の様に修正してください．
 
@@ -87,7 +93,7 @@ title: "Part2 ヒーローコンポーネント"
 
 ## `heroes` コンポーネントの実装
 
-では，`heroes` コンポーネントを作っていきます．まずはヒーローの名前を表示するところまでじっそうしてみましょう．`src/pages/heroes.riot` ファイルを以下のように変更してください．
+では，`heroes` コンポーネントを作っていきます．まずはヒーローの名前を表示するところまで実装してみましょう．`src/pages/heroes.riot` ファイルを以下のように変更してください．
 
 ```diff
   <heroes>
@@ -99,7 +105,7 @@ title: "Part2 ヒーローコンポーネント"
 +       hero: 'Windstorm'
 +     }
 +   </script>
-+ </heroes>
+  </heroes>
 ```
 
 ここまでできますと，画面に `Windstorm` という名前が表示されているかと思います．
@@ -255,4 +261,4 @@ title: "Part2 ヒーローコンポーネント"
 
 ![](https://storage.googleapis.com/zenn-user-upload/xkzwb2vj5b59fobs2a6si9cbpzva)
 
-以上で Part2「ヒーローエディタ」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
+以上で Part2「ヒーローエディタ」は完了です！
