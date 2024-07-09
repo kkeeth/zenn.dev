@@ -60,7 +60,10 @@ Is this OK? (yes) y
 
 なお，手前味噌ですが [create-riot についての記事](https://qiita.com/clown0082/items/9c908309c2031f398baf)も Qiita に書いておりますので，ご参考ください．
 
-※ ↑ の記事でも書いておりますが，執筆時点での最新の `create-riot` を用いたボイラープレートでは，`package.json` が圧縮（minify）されてしまいますので，`Prettier` や[外部サービス](https://one-ap-engineer.com/tools/json-formatter/) など何かしらのフォーマッターで整形することをお勧めします．
+:::message
+↑ の記事でも書いておりますが，執筆時点での最新の `create-riot` を用いたボイラープレートでは，`package.json` が圧縮（minify）されてしまいますので，`Prettier` や[外部サービス](https://one-ap-engineer.com/tools/json-formatter/) など何かしらのフォーマッターで整形することをお勧めします．
+:::
+
 以上で雛形の作成は完了です.
 
 # アプリケーションを起動
@@ -70,19 +73,16 @@ Is this OK? (yes) y
 ```bash
 $ npm install
 
-# yarn をご利用の方
-$ yarn install
+# pnpm をご利用の方
+$ pnpm install
 ```
 
-※これ以降筆者は `npm` コマンドで統一していきますので，`yarn` をご利用の方は適宜読み替えてください．
+※これ以降筆者は `npm` コマンドで統一していきますので，`pnpm` 等，他のものをご利用の方は適宜読み替えてください．
 
 インストールが完了しましたら，いよいよ起動してみます．以下のコマンドを実行してください.
 
 ```bash
 $ npm run start
-
-# yarn をご利用の方
-$ yarn start
 ```
 
 実行しますと，自動でアプリケーションが起動しブラウザも一緒に起動，[http://localhost:3000/](http://localhost:3000/) の画面が開くかと思います！
