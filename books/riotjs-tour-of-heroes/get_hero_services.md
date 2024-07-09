@@ -17,7 +17,7 @@ Angular チュートリアルの方針に沿って，アプリケーション全
 ということで，まずは以下のディレクトリとファイルを作成してきます．
 
 - `src/services` ディレクトリ
-- `src/services/hero.service.ts` ファイル
+- `src/services/hero.service.js` ファイル
 
 ファイルができましたら中身を書いていきましょう．
 
@@ -25,22 +25,7 @@ Angular チュートリアルの方針に沿って，アプリケーション全
 
 では，現在 `heroes` コンポーネントで取得しているヒーローデータを `hero.service` で取得するように変更していきます．
 
-まずは `heroes.riot` ファイルから `HEROES` 配列の取得部分を削除します．
-
-```diff
-  <script>
--   import { HEROES } from "../mock-heroes";
-    import HeroDetail from '../hero-detail/hero-detail.riot';
-
-    export default {
-      components: {
-        HeroDetail
-      },
--     heroes: HEROES,
-      selectedHero: null,
-```
-
-そして `hero.service.ts` ファイルにて `HEROES` 配列を読み込み，コール元にレスポンスするメソッド `getHeroes()` を定義します．
+まず `hero.service.js` ファイルにて `HEROES` 配列を読み込み，コール元にレスポンスするメソッド `getHeroes()` を定義します．
 
 ```js
 import { HEROES } from "@/components/heroes/mock";
@@ -50,20 +35,46 @@ export const getHeroes = () => {
 };
 ```
 
+:::details @ エイリアス
+ファイルの `import` を相対パスで記述することも可能ですが，ドキュメントルートや今回のように `src` フォルダをベースとしてパスを指定したい，というオーダーもあると思います．
+
+その場合，webpack の `alias` という API でいけますが，riot のボイラープレートは `"type": "module"` のため，ちょっとテクニカルですが，以下のようなハックをすると可能です．
+
+```diff
+  import MiniCssExtractPlugin from "mini-css-extract-plugin";
+  import webpack from "webpack";
+  import path from "node:path";
++ import { fileURLToPath } from 'url';
++ const __filename = fileURLToPath(import.meta.url);
++ const __dirname = path.dirname(__filename);
+
+（中略）
+
++  resolve: {
++    alias: {
++      '@': path.resolve(__dirname, 'src')
++    }
++  },
+   module: {
+     rules: [
+       {
+```
+:::
+
 次に，`heroes.riot` にて先程定義したメソッドをマウント前に処理する `onBeforeMount()` メソッドでコールし，`heroes` 変数の初期値としてセットします．
 
 ```diff
 
   <script>
+-   import { HEROES } from "../mock-heroes";
 +   import { getHeroes } from '@/services/hero.service';
     import HeroDetail from '../hero-detail/hero-detail.riot';
+
     export default {
-      components: {
-        HeroDetail
-      },
       // 厳密にはこの記述はなくても問題ない
+-     heroes: HEROES,
 +     heroes: [],
-      selectedHero: null,
+      selectedHero: {},
 +     onBeforeMount() {
 +       this.heroes = getHeroes();
 +     },
