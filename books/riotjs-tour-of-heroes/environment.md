@@ -40,14 +40,14 @@ Is this OK? (yes) y
 # ここからが riot プロジェクトの設定
 # 前述通り，今回は Webpack 版を選択
 ? Please select a template …
-  Webpack Project Template
+❯ Webpack Project Template
   Parcel Project Template
   Rollup Project Template
   Simple Component
-❯ SPA (Webpack) Project Template
+  SPA (Webpack) Project Template
   Custom Template (You will need to provide a template path to your template zip file)
 
-✔ Please select a template · webpack-spa
+✔ Please select a template · webpack
 ✔ Downloading the template files
 ✔ Unzipping the file downloaded
 ✔ Deleting the zip file
@@ -87,7 +87,7 @@ $ npm run start
 
 実行しますと，自動でアプリケーションが起動しブラウザも一緒に起動，[http://localhost:3000/](http://localhost:3000/) の画面が開くかと思います！
 
-![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/1a3a0fc3b4fa-20240709.png)
+![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/wobh7fily17yhjpbzg6sny1rflcj)
 
 ちなみにですが，この時点で `package.json` にいくつかのコマンドが自動で追記されておりますのでご確認ください．
 
@@ -139,11 +139,11 @@ $ npm install -D ress
 では最後に，先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．
 
 ```diff
- import "@riotjs/hot-reload";
- import { component } from "riot";
- import App from "./app.riot";
- import registerGlobalComponents from "./register-global-components";
-+import "ress";
++ import "ress";
+  import "./style.css";
+  import "@riotjs/hot-reload";
+  import { mount } from "riot";
+  import registerGlobalComponents from "./register-global-components.js";
 ```
 
 この状態ですと，`css` ファイルの読み込みと `<link>` タグへの CSS の展開がされないので，`css-loader`, `style-loader` をインストールして設定します．
@@ -180,14 +180,13 @@ $ npm install -D css-loader style-loader
 
 ここまでできますと，以下の画像のようにスタイリングがあたっていない画面が表示されると思います．
 
-
-![リセットCSS適用後](https://storage.googleapis.com/zenn-user-upload/991e80582a20-20240709.png)
+![リセットCSS適用後](https://storage.googleapis.com/zenn-user-upload/xassl1mdrjsijd4nkkacw4hwzm8s)
 
 以上でスタイリングの初期化は完了です．
 
 ## アプリケーションのベーススタイルを追加
 
-では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し，以下を追記してください．
+では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` というファイルに以下を追記してください．
 
 ```css
 /* Application-wide Styles */
@@ -217,14 +216,6 @@ button {
 }
 ```
 
-続いて，このファイルを読み込む必要がありますので，`src/index.js` に以下を追記してください．
-
-```diff
-  import registerGlobalComponents from "./register-global-components.js";
-  import "ress";
-+ import "./style.css";
-```
-
 ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Part1「新規プロジェクトの作成」は完了です！
 
-![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/2f4cdace5632-20240709.png)
+![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
