@@ -18,7 +18,7 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 ## template を記述する
 
-では `hero-detail.riot` ファイルに追記していきます．こちらは既存の `heroes.riot` ファイルのヒーローの詳細を表示する部分を丸っと持っていきますが，このとき `selectedHero` という変数名を `hero` に戻しておきます．
+では `hero-detail.riot` ファイルに追記していきます．こちらは既存の `heroes.riot` ファイルのヒーローの詳細を表示する部分を丸っと持っていきます．
 
 **heroes.riot**
 
@@ -48,21 +48,19 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 ```html
 <hero-detail>
-  <div if="{" hero.id }>
-    <h2>{ hero.name.toUpperCase() } Details</h2>
-    <div><span>id: </span>{ hero.id }</div>
+  <div if={ selectedHero.id }>
+    <h2>{ selectedHero.name.toUpperCase() } Details</h2>
     <div>
-      <label>
-        name:
+      <span>id: </span>{ selectedHero.id }
+    </div>
+    <div>
+      <label for="hero-name">name:
         <input
+          id="hero-name"
           type="text"
-          value="{"
-          hero.name
-          }
+          value={ selectedHero.name }
           placeholder="name"
-          oninput="{"
-          handleInput
-          }
+          oninput={ handleInput }
         />
       </label>
     </div>
@@ -70,9 +68,9 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
   <script>
     export default {
-      hero: {},
+      selectedHero: {},
       onBeforeUpdate(props) {
-        this.hero = props.hero;
+        this.selectedHero = props.hero;
       },
     };
   </script>
@@ -93,17 +91,9 @@ title: "Part4 フィーチャーコンポーネントの作成"
    <script>
      import { HEROES } from '../../../mock-heroes';
 +    import HeroDetail from '../hero-detail/hero-detail.riot';
-
-     export default {
-+      components: {
-+        HeroDetail
-+      },
-       heroes: HEROES,
 ```
 
 読み込みと一緒に，`hero` というキーで `props` として選択した `selectedHero` オブジェクトを渡しています．ここまでできますと，画面からも選択したヒーローの詳細情報が表示されるようになります．
-
-![](https://storage.googleapis.com/zenn-user-upload/5wii4nxtx04t18dj4gftq848ies8)
 
 ## ヒーローの名前を変更できるように
 
@@ -146,8 +136,10 @@ title: "Part4 フィーチャーコンポーネントの作成"
      },
 ```
 
+入力したヒーローの名前を `hero-detail` コンポーネントにて更新するだけなら `handleInput` の変更は不要ですが，ヒーローリストの名前の部分にも適用させたいので，上記のように `this.heroes` を走査して合致するヒーローの名前を更新しました💁
+
 ここまでできましたら入力フォームの値を自由に変更すると，タイトルの部分と上部のリストの名前も同時に変更されるかと思いますのでご確認ください．
 
-![](https://storage.googleapis.com/zenn-user-upload/pxgp3khy914o4gmnr73j0hndgwqp)
+![詳細と一覧のヒーローの名前を変更](https://storage.googleapis.com/zenn-user-upload/773a9e71989b-20240709.png)
 
 以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
