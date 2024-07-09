@@ -66,7 +66,10 @@ export const HEROES = [
 +  <h2>My Heroes</h2>
 +  <ul class="heroes">
 +    <li each={ hero in heroes }>
-+      <span class="badge">{ hero.id }</span> { hero.name }
++      <button type="button">
++        <span class="badge">{ hero.id }</span>
++        <span class="name">{ hero.name }</span>
++      </button>
 +    </li>
 +  </ul>
 +
@@ -97,41 +100,64 @@ export const HEROES = [
 +      padding: 0;
 +      width: 15em;
 +    }
++
 +    .heroes li {
++      display: flex;
++    }
++
++    .heroes button {
++      flex: 1;
 +      cursor: pointer;
 +      position: relative;
 +      left: 0;
 +      background-color: #EEE;
-+      margin: 0 .5em .5em .5em;
-+      padding: .3em 0;
-+      height: 2.2em;
++      margin: .5em;
++      padding: 0;
 +      border-radius: 4px;
++      display: flex;
++      align-items: stretch;
++      height: 1.8em;
 +    }
-+    .heroes li:hover {
-+      color: #607D8B;
-+      background-color: #DDD;
++
++    .heroes button:hover {
++      color: #2c3a41;
++      background-color: #e6e6e6;
 +      left: .1em;
 +    }
-+    .heroes li.selected {
-+      background-color: #CFD8DC;
++
++    .heroes button:active {
++      background-color: #525252;
++      color: #fafafa;
++    }
++
++    .heroes button.selected {
++      background-color: black;
 +      color: white;
 +    }
-+    .heroes li.selected:hover {
-+      background-color: #BBD8DC;
++
++    .heroes button.selected:hover {
++      background-color: #505050;
 +      color: white;
 +    }
++
++    .heroes button.selected:active {
++      background-color: black;
++      color: white;
++    }
++
 +    .heroes .badge {
 +      display: inline-block;
 +      font-size: small;
 +      color: white;
-+      padding: 0.8em 0.7em;
-+      background-color:#405061;
++      padding: 0.8em 0.7em 0 0.7em;
++      background-color: #405061;
 +      line-height: 1em;
-+      position: relative;
-+      left: -1px;
-+      top: -4px;
 +      margin-right: .8em;
 +      border-radius: 4px 0 0 4px;
++    }
++
++    .heroes .name {
++      align-self: center;
 +    }
 +  </style>
  </heroes>
@@ -152,13 +178,16 @@ export const HEROES = [
 ```diff
    <h2>My Heroes</h2>
    <ul class="heroes">
--    <li each={ hero in heroes }>
-+    <li
-+      each={ hero in heroes }
-+      onclick={ handleSelect }
-+      data={ hero }
-+    >
-       <span class="badge">{ hero.id }</span> { hero.name }
+     <li each={ hero in heroes }>
+-      <button type="button">
++      <button
++        type="button"
++        onclick={ handleSelect }
++        data={ hero }
++      >
+         <span class="badge">{ hero.id }</span>
+         <span class="name">{ hero.name }</span>
+       </button>
      </li>
    </ul>
 
@@ -167,21 +196,45 @@ export const HEROES = [
        handleInput(e) {
          this.hero.name = e.target.value;
          this.update();
+-      }
 +      },
 +      handleSelect(e) {
-+        this.hero.id = e.target.data.id;
-+        this.hero.name = e.target.data.name;
-         this.update();
-       }
++        this.hero.id = e.target.closest('button').data.id;
++        this.hero.name = e.target.closest('button').data.name;
++        this.update();
++      }
      }
    </script>
 ```
 
-追記し画面を更新しましたらブラウザのコンソールを開き，任意のヒーローをクリックしてみてください．選択したヒーローの詳細データが表示されると思います．
+`Angular` では以下のように，クリックイベントのバインディングに指定する関数の引数に任意の値を指定できます．
 
-## 詳細セクションを追加する
+```html
+<button type="button" (click)="onSelect(hero)">
+```
 
-そうしましたら，次は選択したヒーローの詳細を表示するように変更していきましょう．今まで使用してきた `hero` 変数は削除し，代わりに `selectedHero` 変数を追加します．画面描画時は何も選択されていないので初期値は `{}` とします．
+これを riot でも同様なコードを書いたとします．
+
+```html
+<button
+  type="button"
+  onclick={ handleSelect(hero) }
+>
+```
+
+**これを実行するとエラーになってしまいます．** Riot はイベントのバインディングに指定する関数を `hoge(fuga)` のように書いてしまうと，**初期レンダリングの際に関数を評価・実行してしまう** からです．したがって，ちょっとテクニカルにはなってしまいますが，
+
+```js
+e.target.closest('button').data
+```
+
+のように，クリックイベント時のイベントオブジェクトのターゲットに最も近い `<button>` タグにアクセスし，その属性に指定されている `data` にアクセスすることで選択した `hero` を取得しています．
+
+追記できましたら任意のヒーローをクリックしてみてください．選択したヒーローの詳細データが表示されると思います．
+
+## 詳細セクションを更新する
+
+次は選択したヒーローの詳細をリファクタリングしていきましょう．今まで使用してきた `hero` 変数を `selectedHero` に変更します．画面描画時は何も選択されていないので初期値は `{}` とします．
 
 ```diff
    </ul>
@@ -191,8 +244,9 @@ export const HEROES = [
 +  <h2>{ selectedHero.name.toUpperCase() } Details</h2>
 +  <div><span>id: </span>{ selectedHero.id }</div>
    <div>
-     <label>name:
+     <label for="hero-name">name:
        <input
+         id="hero-name"
          type="text"
 -        value={ hero.name }
 +        value={ selectedHero.name }
@@ -206,10 +260,9 @@ export const HEROES = [
 
      export default {
 -      hero: {
-+      selectedHero: {
-         id: 1,
-         name: 'Windstorm'
-       },
+-        id: 1,
+-        name: 'Windstorm'
+-      },
        heroes: HEROES,
 +      selectedHero: {},
        handleInput(e) {
@@ -218,15 +271,15 @@ export const HEROES = [
          this.update();
        },
        handleSelect(e) {
--        this.hero.id = e.target.data.id;
--        this.hero.name = e.target.data.name;
-+        this.selectedHero.id = e.target.data.id;
-+        this.selectedHero.name = e.target.data.name;
+-        this.hero.id = e.target.closest('button').data.id;
+-        this.hero.name = e.target.closest('button').data.name;
++        this.selectedHero.id = e.target.closest('button').data.id;
++        this.selectedHero.name = e.target.closest('button').data.name;
          this.update();
        }
 ```
 
-ここまで変更しますと，ブラウザのコンソールにエラーが表示されるはずです．理由はもちろん `selectedHero` の `name` プロパティの初期値が `null` ですので，`name` を `toUpperCase()` メソッドで変更しようとしてもできないからです．
+ここまで変更しますと，ブラウザのコンソールにエラーが表示されるはずです．理由はもちろん `selectedHero` が空オブジェクトのため， `name` プロパティにアクセスしようとしても `undefined` となり，`toUpperCase()` メソッドで変更しようとしてもできないからです．
 
 したがって，初期値がセットされていない場合はそもそも詳細部分をレンダリングしないように変更します．
 
@@ -271,8 +324,8 @@ export const HEROES = [
 ※ちなみに，`selected` の CSS スタイリングはすでに実装済みです．
 
 ```diff
-     <li
-       each={ hero in heroes }
+     <button
+       type="button"
 +      class={ hero.id === selectedHero.id && 'selected' }
        onclick={ handleSelect }
        data={ hero }
@@ -281,6 +334,6 @@ export const HEROES = [
 
 ここまで変更できましたら，以下の画像のように選択したヒーローの見た目が変わるはずです．
 
-![](https://storage.googleapis.com/zenn-user-upload/s1drkgq77iaygv58j22w2j6e9rw8)
+![チャプター3の完成イメージ](https://storage.googleapis.com/zenn-user-upload/534855f68ae3-20240709.png)
 
-以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
+以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！

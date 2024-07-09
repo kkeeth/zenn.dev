@@ -161,8 +161,8 @@ title: "Part2 ヒーローコンポーネント"
    <div><span>id: </span>{ hero.id }</div>
 -  <div><span>name: </span>{ hero.name }</div>
 +  <div>
-+    <label>name:
-+      <input type="text" value={ hero.name } placeholder="name" />
++    <label for="hero-name">name:
++      <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
 +    </label>
 +  </div>
 ```
@@ -176,9 +176,10 @@ title: "Part2 ヒーローコンポーネント"
 ```diff
    <div><span>id: </span>{ hero.id }</div>
    <div>
-     <label>name:
--      <input type="text" value={ hero.name } placeholder="name" />
+     <label for="hero-name">name:
+-      <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
 +      <input
++        id="hero-name"
 +        type="text"
 +        value={ hero.name }
 +        placeholder="name"
