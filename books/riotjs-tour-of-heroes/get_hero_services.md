@@ -6,11 +6,11 @@ title: "Part5 データ取得用のサービスの作成"
 
 では今回もやっていきましょう！
 
-# サービスの追加
+# `Hero` サービスの追加
 
-現在の実装では，heroes コンポーネント内で直接ヒーローデータを取得し保持していますが，コンポーネント内で直接データの取得や保存を行うべきではありません．コンポーネントはデータの受け渡しや表示に専念し，その他の処理は別ファイルへと切り出す方が望ましいです．
+現在の実装では，`heroes` コンポーネント内で直接ヒーローデータを取得し保持していますが，コンポーネント内で直接データの取得や保存を行うべきではありません．コンポーネントはデータの受け渡しや表示に専念し，その他の処理は別ファイルへと切り出す方が望ましいです．
 
-Angular チュートリアルの方針に沿って，アプリケーション全体でヒーローデータを取得できる `Hero` サービスを作成していきたいと思います．
+`Angular` チュートリアルの方針に沿って，アプリケーション全体でヒーローデータを取得できる `Hero` サービスを作成していきたいと思います．
 
 ## `Hero` サービスの作成
 
@@ -81,11 +81,23 @@ export const getHeroes = () => {
       handleInput(e) {
 ```
 
-これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．ここから，Angular の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用していきますが，今回は非同期処理については割愛します．
+これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．ただ，これですと現在はモックデータということもありますが，同期的にデータを取得しています．しかし実際のアプリケーションでは，外部 API をコールする事が多いでしょう．その場合，ブラウザがブロックされてしまわないように非同期処理を実装する必要があります．
 
-:::details riot で非同期処理の実装
+ここから，`Angular` の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用していきますが，riot では [riot/observable] を利用しつつ，非同期処理を実装していきます．
 
-一応実装してみたいという方向けに，少し原始的ですがやり方を以下に記載しておきます．
+:::message
+1️⃣ version 3 以前を使われている方は，`observable` はコアモジュールのため，以下のように本体からインポートが可能です．
+
+```js
+import { observable } from "riot"
+```
+
+2️⃣ `riot/observable` はイベントの送受信用のライブラリであり，非同期処理を内包しているわけではないため，非同期処理は別途書く必要があります．
+:::
+
+:::details riotコンポーネント内の非同期処理
+
+riot コンポーネント内の組み込みメソッドでも，非同期処理を書くことはできます．以下例．
 
 ```js
 export default {
@@ -100,13 +112,75 @@ export default {
     const data = response.json();
   }
 }
-
-// グローバルに非同期関数をモジュールとして定義
-export const myMethod = async () => {
-  const response = await fetch(/** URL */)
-  const data = response.json();
-}
 ```
 :::
+
+まずは `riot/observable` をインストールしましょう．
+
+```bash
+$ npm install -S  @riotjs/observable
+```
+
+続いて，`riot/observable` を用いて `hero.service.js` を書き直していきたいのですが，
+
+```diff
+  import { HEROES } from "@/components/global/heroes/mock-heroes";
++ import observable from '@riotjs/observable'
+
+export const getHeroes = () => {
+  return HEROES;
+};
+
+const heroService = createObservable({
+  heroes: [],
+
+  async fetchHeroes() {
+    try {
+      const response = await fetch('https://api.example.com/heroes');
+      const heroes = await response.json();
+      this.heroes = heroes;
+      this.trigger('heroesUpdated', this.heroes);
+    } catch (error) {
+      console.error('Failed to fetch heroes:', error);
+    }
+  },
+
+  getHero(id) {
+    return this.heroes.find(hero => hero.id === id);
+  },
+
+  addHero(hero) {
+    this.heroes.push(hero);
+    this.trigger('heroesUpdated', this.heroes);
+  },
+
+  deleteHero(id) {
+    this.heroes = this.heroes.filter(hero => hero.id !== id);
+    this.trigger('heroesUpdated', this.heroes);
+  }
+});
+
+export default heroService;
+```
+# `Messages` サービスの追加
+
+続いて，メッセージを表示するためのコンポーネントとサービスを実装していきます．まずは必要なフォルダとファイルを作ります．
+
+* `src/components/global/messages/`
+* `src/components/global/messages/messages.riot`
+* `src/components/global/messages/messages.spec.js`
+* `src/services/messages.service.js`
+
+作成できましたら，`.spec.js` ファイルは後回しにして，`.riot` ファイルの方に以下を追記してください．中身は仮です．
+
+```html
+<messages>
+  <p>messages</p>
+</messages>
+```
+
+そうしましたら，これを読み込んで画面に表示させましょう．
+
+```
 
 以上で，非同期処理へのロジック変更は完了です．実際に動作させてみると，今まで実装したものと同じ挙動をすると思います．

@@ -14,9 +14,9 @@ title: "Part2 ヒーローコンポーネント"
 
 まずはいくつかのディレクトリやファイルのリネームを行います．`src/components/global` ディレクトリ以下の `my-component` と名前がつくものを全て `heroes` に変更します．具体的には以下となります．
 
-- `src/components/components/my-component` ディレクトリ
-- `src/components/components/my-component/my-component.riot` ファイル
-- `src/components/components/my-component/my-component. spec.js` ファイル
+- `src/components/global/my-component` ディレクトリ
+- `src/components/global/my-component/my-component.riot` ファイル
+- `src/components/global/my-component/my-component. spec.js` ファイル
 
 さらに，`heroes.riot`, `heroes.spec.js` ファイルの `my-component` を `heroes` に変更します．
 
