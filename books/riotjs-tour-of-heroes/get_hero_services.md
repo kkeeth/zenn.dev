@@ -121,47 +121,76 @@ export default {
 $ npm install -S  @riotjs/observable
 ```
 
-続いて，`riot/observable` を用いて `hero.service.js` を書き直していきたいのですが，
+続いて，`riot/observable` を用いて `hero.service.js` を書き直していきましょう．
 
 ```diff
   import { HEROES } from "@/components/global/heroes/mock-heroes";
 + import observable from '@riotjs/observable'
 
-export const getHeroes = () => {
-  return HEROES;
-};
+- export const getHeroes = () => {
+-   return HEROES;
+- };
++ const heroService = {
++   async getHeroes() {
++     try {
++       // 実際は以下のように実装するが，今回はモックで実装
++       // const response = await fetch('https://api.+xample.com/heroes');
++       // const heroes = await response.json();
++       const heroes = HEROES;
++       this.trigger('heroesUpdated', heroes)
++     } catch (error) {
++       console.error('Failed to fetch heroes:', error);
++     }
++   }
++ };
 
-const heroService = createObservable({
-  heroes: [],
++ observable(heroService);
 
-  async fetchHeroes() {
-    try {
-      const response = await fetch('https://api.example.com/heroes');
-      const heroes = await response.json();
-      this.heroes = heroes;
-      this.trigger('heroesUpdated', this.heroes);
-    } catch (error) {
-      console.error('Failed to fetch heroes:', error);
-    }
-  },
-
-  getHero(id) {
-    return this.heroes.find(hero => hero.id === id);
-  },
-
-  addHero(hero) {
-    this.heroes.push(hero);
-    this.trigger('heroesUpdated', this.heroes);
-  },
-
-  deleteHero(id) {
-    this.heroes = this.heroes.filter(hero => hero.id !== id);
-    this.trigger('heroesUpdated', this.heroes);
-  }
-});
-
-export default heroService;
++ export default heroService;
 ```
+
+riot には非同期処理の機能や API がないため，愚直に実装するしかなく，`fetch API` を async-await で書くか，何かしらのフェッチャーライブラリ（[axios](https://axios-http.com/)，[ky](https://github.com/sindresorhus/ky) など）を使うことになるでしょう．
+
+コードの記述的には前後しますが，`observable` メソッドを用いて，`heroService` オブジェクトに [Observer 機能](https://ja.wikipedia.org/wiki/Observer_%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3) を付与し，イベントのトリガーおよび監視を可能にします．これにより，
+
+* `this.on`: イベントの監視および，callback の実行
+* `this.one`: イベントの監視および，callback を一度だけ実行
+* `this.off`: 監視を停止または，callback の削除
+* `this.trigger`: イベントの発火
+
+という `@riotjs/observable` の機能を使えるようになります．詳しくは [ドキュメント](https://github.com/riot/observable/blob/main/doc/README.md)　をご参照ください．
+
+データを取得後，そのデータを引数に `this.trigger` メソッドを実行し，`heroesUpdated` イベントを発火させます．
+
+続いて，`heroes.riot` も更新し，`heroesUpdated` イベントを監視し，コールバックを実行します．
+
+```diff
+ <script>
+-   import { getHeroes } from '@/services/hero.service';
++   import heroService from '@/services/hero.service';
+    import HeroDetail from '../hero-detail/hero-detail.riot';
+
+    export default {
++     heroes: [],
+      selectedHero: {},
+      onBeforeMount() {
+-       this.heroes = getHeroes();
++       heroService.on('heroesUpdated', (heroes) => {
++         this.heroes = heroes;
++       });
++       heroService.getHeroes();
+      },
+      handleInput(e) {
+```
+
+`heroService` オブジェクトの `getHeroes` メソッド内の `this.trigger` で指定した引数 `heroes` を，`heroes.riot` コンポーネントの `heroService.on` のコールバック関数の引数で受け取れます．この値を用いてヒーローリスト（`this.heroes`）を更新しています．
+
+:::message
+⚠ `@riotjs/observable` の中身は， JavaScript の Map を用いたイベント名と，イベントハッカのタイミングをハンドリングする構造になっておりますので，`on` メソッドの定義前に `trigger` メソッドを発火してしまうと，期待した処理ができないことに注意してください．
+:::
+
+以上で画面を確認してみましょう．挙動としては全く変わらないと思いますが，API コール処理をサービスオブジェクトに切り出せました．
+
 # `Messages` サービスの追加
 
 続いて，メッセージを表示するためのコンポーネントとサービスを実装していきます．まずは必要なフォルダとファイルを作ります．
