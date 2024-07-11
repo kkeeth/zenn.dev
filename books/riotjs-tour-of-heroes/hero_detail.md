@@ -54,7 +54,7 @@ title: "Part4 フィーチャーコンポーネントの作成"
       <span>id: </span>{ selectedHero.id }
     </div>
     <div>
-      <label for="hero-name">name:
+      <label for="hero-name">Hero name:
         <input
           id="hero-name"
           type="text"

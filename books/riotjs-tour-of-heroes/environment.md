@@ -111,7 +111,7 @@ $ npm run start
 
 更新後，ブラウザのタブのタイトルが変わっていれば OK です 👌
 
-## スタイリングの初期化（CSS リセット）
+スタイリングの初期化（CSS リセット）
 
 次にデフォルトで指定されているスタイリングを初期化します．まずは `index.html` で指定されている２つのスタイルシートを削除します．
 
@@ -130,20 +130,23 @@ $ npm run start
    </head>
 ```
 
-完了しましたら，次に CSS リセットのライブラリをインストールします．今回は [ress](https://github.com/filipelinhares/ress) を利用します．
+一般的には，何かしらの CSS リセットのライブラリをインストールしますが，今回はなるべく Angular 公式のチュートリアルに従うため，割愛します．
+
+:::details ress を用いた CSS リセット
+
+もし riot で　CSS リセットライブラリを使う場合の方法をいかに記載しておきます．
 
 ```bash
 $ npm install -D ress
 ```
 
-では最後に，先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．
+先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．
 
 ```diff
 + import "ress";
   import "./style.css";
   import "@riotjs/hot-reload";
   import { mount } from "riot";
-  import registerGlobalComponents from "./register-global-components.js";
 ```
 
 この状態ですと，`css` ファイルの読み込みと `<link>` タグへの CSS の展開がされないので，`css-loader`, `style-loader` をインストールして設定します．
@@ -181,6 +184,7 @@ $ npm install -D css-loader style-loader
 ここまでできますと，以下の画像のようにスタイリングがあたっていない画面が表示されると思います．
 
 ![リセットCSS適用後](https://storage.googleapis.com/zenn-user-upload/xassl1mdrjsijd4nkkacw4hwzm8s)
+:::
 
 以上でスタイリングの初期化は完了です．
 
@@ -189,30 +193,81 @@ $ npm install -D css-loader style-loader
 では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` というファイルに以下を追記してください．
 
 ```css
-/* Application-wide Styles */
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
-}
-h2,
-h3 {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: lighter;
-}
-body {
-  margin: 2em;
-}
-body,
-input[type='text'],
-button {
-  color: #333;
-  font-family: Cambria, Georgia;
-}
-/* everywhere else */
 * {
   font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+  color: #264D73;
+  font-size: 2.5rem;
+}
+h2, h3 {
+  color: #444;
+  font-weight: lighter;
+}
+h3 {
+  font-size: 1.3rem;
+}
+body {
+  padding: .5rem;
+  max-width: 1000px;
+  margin: auto;
+}
+@media (min-width: 600px) {
+  body {
+    padding: 2rem;
+  }
+}
+body, input[text] {
+  color: #333;
+  font-family: Cambria, Georgia, serif;
+}
+a {
+  cursor: pointer;
+}
+button {
+  background-color: #eee;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: black;
+  font-size: 1.2rem;
+  padding: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+button:hover {
+  background-color: black;
+  color: white;
+}
+button:disabled {
+  background-color: #eee;
+  color: #aaa;
+  cursor: auto;
+}
+
+/* Navigation link styles */
+nav a {
+  padding: 5px 10px;
+  text-decoration: none;
+  margin-right: 10px;
+  margin-top: 10px;
+  display: inline-block;
+  background-color: #e8e8e8;
+  color: #3d3d3d;
+  border-radius: 4px;
+}
+
+nav a:hover {
+  color: white;
+  background-color:  #42545C;
+}
+nav a.active {
+  background-color: black;
+  color: white;
+}
+hr {
+  margin: 1.5rem 0;
 }
 ```
 
