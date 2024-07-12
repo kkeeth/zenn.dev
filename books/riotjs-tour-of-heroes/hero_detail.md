@@ -142,4 +142,17 @@ title: "Part4 フィーチャーコンポーネントの作成"
 
 ![詳細と一覧のヒーローの名前を変更](https://storage.googleapis.com/zenn-user-upload/773a9e71989b-20240709.png)
 
-以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
+最後にスタイルを微調整します💁
+
+```diff
+  </script>
++ <style>
++   /* HeroDetail's private CSS styles */
++   input {
++     padding: .5rem;
++   }
++ </style>
+</hero-detail>
+```
+
+以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！

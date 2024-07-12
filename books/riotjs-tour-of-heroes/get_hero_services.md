@@ -193,7 +193,7 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
 
 以上で画面を確認してみましょう．挙動としては全く変わらないと思いますが，API コール処理をサービスオブジェクトに切り出せました．
 
-# `Messages` サービスの追加
+# `Message` サービスの追加
 
 続いて，メッセージを表示するためのコンポーネントとサービスを実装していきます．
 
@@ -239,7 +239,7 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
 
 以上で，準備は完了です．
 
-## message サービスの処理の実装
+## `Message` サービスの処理の実装
 
 ではここからは，具体的に処理を実装していきます．まずは message サービスからです．
 
@@ -277,8 +277,138 @@ export default messageService;
 処理が書けたら，画面に表示をしたいので，`messages.riot` を修正していきます．
 
 ```diff
-
+  <messages>
+    <h2>Messages</h2>
++
++   <div each={ message in messages }>{ message }</div>
++
++   <script>
++     import messageService from '@/services/message.  +ervice';
++
++     export default {
++      messages: [],
++      onBeforeMount() {
++        messageService.on('messagesAdded', (messages) +> {
++          this.messages = messages;
++        });
++      }
++     }
++   </script>
+  </messages>
 ```
 
+`messagesService` をインポートし，`messagesAdded` イベントを監視．送られたメッセージ配列を受け取るようにしています．後は，それを `each` で表示しています．シンプルですね．
 
-以上で，非同期処理へのロジック変更は完了です．実際に動作させてみると，今まで実装したものと同じ挙動をすると思います．
+ここまで実装できますと，以下のように，ヒーローを選択する事にメッセージが表示されるようになります．
+
+（後で画像を貼る）
+
+:::details 初期レンダリング時のメッセージ表示
+現状は初期レンダリング時に `HeroService: fetched heroes` のメッセージが表示されず，何かヒーローを選択した際にメッセージ一覧に表示されると思います．
+
+これは riot のネストしたコンポーネントのレンダリングの都合になってしまいますが，riot は子コンポーネントのマウントが先に走り，その後に`heroes` コンポーネントのマウント処理が走ります．
+
+そのため，上記の実装ですとまだ `messages` コンポーネントが先にレンダリングされてしまい，`messageService.trigger` メソッドが後から走るため，イベントの発火も後回しとなります．ちなみに `messages` コンポーネントの `this.messages` 変数を確認してみると，
+
+```js
+onMounted() {
+  this.update();
+  console.log(this.messages);
+},
+```
+上記は空配列となります．また逆に，`heroes.riot` で `onMounted` メソッドで `messageService` の `messages` 変数を確認しますと，メッセージが格納されていることが確認できます．
+
+```js
+// heroes.riot
+onMounted() {
+  console.log(messageService.getMessages());
+},
+
+// message.service.js
+getMessages() {
+  return this.messages;
+}
+```
+
+ですので，初期レンダリング時にメッセージを表示したい場合は，不本意ですが，`messages.riot` コンポーネントで
+
+```diff
+  onBeforeMount() {
+    messageService.on('messagesAdded', (messages) => {
+      this.messages = messages;
+    });
+    messageService.on('messagesCleared', (messages) => {
+      this.messages = messages;
+    });
+
++   messageService.add('MessagesComponent: mounted');
+  },
+```
+
+と発火させれば Angular のチュートリアルと同じ挙動となります．
+※他に方法があれば教えていただけると助かります！🙇‍♂
+:::
+
+## メッセージ一覧のクリア
+
+続いて，ボタンをクリックすると表示しているメッセージの一覧をクリアする処理を書いていきます．まずは `messages.riot` を以下のように変更してください．
+
+```diff
+  <h2>Messages</h2>
+
++ <button
++   type="button"
++   class="clear"
++   onclick={ clearMessages }
++ >Clear messages</button>
+  <div each={ message in messages }>{ message }</div>
+
+// （中略）
+
+  onBeforeMount() {
+    messageService.on('messagesAdded', (messages) => {
+      this.messages = messages;
+    });
++   messageService.on('messagesCleared', (messages) => {
++     this.messages = messages;
++   });
+  },
++ clearMessages() {
++   messageService.clear();
++   this.update()
++ },
+```
+
+最後にスタイリングしていきましょう🙋‍♂
+
+```diff
+   </script>
++ <style>
++   /* MessagesComponent's private CSS styles */
++   h2 {
++     color: #A80000;
++     font-family: Arial, Helvetica, sans-serif;
++     font-weight: lighter;
++   }
++   .clear {
++     color: #333;
++     background-color: #eee;
++     margin-bottom: 12px;
++     padding: 1rem;
++     border-radius: 4px;
++     font-size: 1rem;
++   }
++   .clear:hover {
++     color: white;
++     background-color: #42545C;
++   }
++   </style>
+  </messages>
+```
+
+では，動作を確認してみましょう．
+
+（後で画像を貼る）
+
+
+以上，Part5「データ取得用のサービスの作成」の実装完了です！何かわからないことがあれば，遠慮なくコメントしてください！
