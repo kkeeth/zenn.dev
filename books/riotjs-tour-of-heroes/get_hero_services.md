@@ -35,32 +35,6 @@ export const getHeroes = () => {
 };
 ```
 
-:::details @ エイリアス
-ファイルの `import` を相対パスで記述することも可能ですが，ドキュメントルートや今回のように `src` フォルダをベースとしてパスを指定したい，というオーダーもあると思います．
-
-その場合，webpack の `alias` という API でいけますが，riot のボイラープレートは `"type": "module"` のため，ちょっとテクニカルですが，以下のようなハックをすると可能です．
-
-```diff
-  import MiniCssExtractPlugin from "mini-css-extract-plugin";
-  import webpack from "webpack";
-  import path from "node:path";
-+ import { fileURLToPath } from 'url';
-+ const __filename = fileURLToPath(import.meta.url);
-+ const __dirname = path.dirname(__filename);
-
-（中略）
-
-+  resolve: {
-+    alias: {
-+      '@': path.resolve(__dirname, 'src')
-+    }
-+  },
-   module: {
-     rules: [
-       {
-```
-:::
-
 次に，`heroes.riot` にて先程定義したメソッドをマウント前に処理する `onBeforeMount()` メソッドでコールし，`heroes` 変数の初期値としてセットします．
 
 ```diff

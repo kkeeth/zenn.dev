@@ -149,119 +149,116 @@ $ npm install -D ress
 先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．
 
 ```diff
-  import "@riotjs/hot-reload";
 + import "ress";
+  import "./style.css";
+  import "@riotjs/hot-reload";
   import { mount } from "riot";
   import registerGlobalComponents from "./register-global-components.js";
 ```
 
 この辺は他の js ライブラリ・フレームワークと同じですね．
-
-ただ，このままですと webpack の処理でエラーが発生してしまいますので，本記事をこのまま読み進めていただくと，解消方法が出てきますので，そちらをご参照ください．
 :::
 
 ## アプリケーションのベーススタイルを追加
 
 では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` というファイルに以下を追記してください．
 
-```css
-* {
-  font-family: Arial, Helvetica, sans-serif;
-}
-h1 {
-  color: #264D73;
-  font-size: 2.5rem;
-}
-h2, h3 {
-  color: #444;
-  font-weight: lighter;
-}
-h3 {
-  font-size: 1.3rem;
-}
-body {
-  padding: .5rem;
-  max-width: 1000px;
-  margin: auto;
-}
-@media (min-width: 600px) {
-  body {
-    padding: 2rem;
-  }
-}
-body, input[text] {
-  color: #333;
-  font-family: Cambria, Georgia, serif;
-}
-a {
-  cursor: pointer;
-}
-button {
-  background-color: #eee;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  color: black;
-  font-size: 1.2rem;
-  padding: 1rem;
-  margin-right: 1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-button:hover {
-  background-color: black;
-  color: white;
-}
-button:disabled {
-  background-color: #eee;
-  color: #aaa;
-  cursor: auto;
-}
+```diff
+- .container {
+-   display: flex;
+-   justify-content: center;
+-   align-items: center;
+-   min-height: 100vh;
+- }
++ * {
++   font-family: Arial, Helvetica, sans-serif;
++ }
++ h1 {
++   color: #264D73;
++   font-size: 2.5rem;
++ }
++ h2, h3 {
++   color: #444;
++   font-weight: lighter;
++ }
++ h3 {
++   font-size: 1.3rem;
++ }
++ body {
++   padding: .5rem;
++   max-width: 1000px;
++   margin: auto;
++ }
++ @media (min-width: 600px) {
++   body {
++     padding: 2rem;
++   }
++ }
++ body, input[text] {
++   color: #333;
++   font-family: Cambria, Georgia, serif;
++ }
++ a {
++   cursor: pointer;
++ }
++ button {
++   background-color: #eee;
++   border: none;
++   border-radius: 4px;
++   cursor: pointer;
++   color: black;
++   font-size: 1.2rem;
++   padding: 1rem;
++   margin-right: 1rem;
++   margin-bottom: 1rem;
++   margin-top: 1rem;
++ }
++ button:hover {
++   background-color: black;
++   color: white;
++ }
++ button:disabled {
++   background-color: #eee;
++   color: #aaa;
++   cursor: auto;
++ }
 ```
 
-この CSS ファイルを読み込みましょう🙋‍♂`index.js` に以下を追記してください．
+ここまで書けましたら，以下の画像のようにスタイリングが変更されていると思います．
+
+![ベーススタイル設定後](/images/books/riotjs_toh/01_completed.png)
+
+
+# `webpack` のエイリアスを設定
+
+ファイルの `import` を相対パスで記述することも可能ですが，ドキュメントルートや今回のように `src` フォルダをベースとしてパスを指定したい，というオーダーもあると思います．
+
+その場合，webpack の `alias` という API でいけますが，riot のボイラープレートは `"type": "module"` のため，ちょっとテクニカルですが，以下のようなハックをすると可能です．
 
 ```diff
-  import "@riotjs/hot-reload";
-  import { component } from "riot";
-+ import "./style.css";
-  import App from "./app.riot";
-  import registerGlobalComponents from "./register-global-components.js";
+  import MiniCssExtractPlugin from "mini-css-extract-plugin";
+  import webpack from "webpack";
+  import path from "node:path";
++ import { fileURLToPath } from 'url';
++ const __filename = fileURLToPath(import.meta.url);
++ const __dirname = path.dirname(__filename);
 
+（中略）
+
++  resolve: {
++    alias: {
++      '@': path.resolve(__dirname, 'src')
++    }
++  },
+   module: {
+     rules: [
+       {
 ```
 
-この状態ですと，`css` ファイルを読み込もうとしても webpack の処理でエラーが発生してしまいます．これを解決するために `css-loader`, `style-loader` をインストールして設定します．
+これにより，今後は
 
-```bash
-$ npm install -D css-loader style-loader
+```js
+import hoge from "@/components/hoge.riot";
 ```
 
-続いて，webpack.config.js に以下を追記します．
-
-```diff
-      {
-        test: /\.riot$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "@riotjs/webpack-loader",
-            options: {
-              hot: true,
-            },
-          },
-        ],
-      },
-+     {
-+       test: /\.css$/,
-+       use: [
-+         "style-loader",
-+         {
-+           loader: "css-loader",
-+         },
-+       ],
-+     },
-```
-
-ここまで書けましたら，HTTP サーバーを再起動してください．以下の画像のようにスタイリングが変更されていると思います．以上で Chapter1「新規プロジェクトの作成」は完了です！
-
-![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/8d833e7d5b30-20240713.png)
+のように書くことができますし，この書籍でも利用していきますので，是非設定してください．以上で Chapter1「新規プロジェクトの作成」は完了です！
