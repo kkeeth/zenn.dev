@@ -10,9 +10,9 @@ title: "Chapter1 新規プロジェクトの作成"
 
 # プロジェクトの雛形を作成
 
-まずは本プロジェクトのディレクトリを作成して移動し，riot 公式のボイラープレートを用いて雛形を作成します．今回は `webpack` を使うことにします．では，以下のコマンドをターミナルから実行してください．
+まずは本プロジェクトのディレクトリを作成して移動し，riot 公式のボイラープレートを用いて雛形を作成します．今回は `SPA (Webpack)` を使うことにします．
 
-※コードを GitHub で管理したい方は先にリポジトリを作成しておいてください 🙇以下，適宜ご自身のものに置き換えてください，特に指定がなければ `Enter` を押下してください．
+それでは，以下のコマンドをターミナルから実行してください．以下，適宜ご自身のものに置き換えてください，特に指定がなければ `Enter` を押下してください．
 
 ```bash
 # ディレクトリ作成および移動
@@ -40,14 +40,14 @@ Is this OK? (yes) y
 # ここからが riot プロジェクトの設定
 # 前述通り，今回は Webpack 版を選択
 ? Please select a template …
-❯ Webpack Project Template
+  Webpack Project Template
   Parcel Project Template
   Rollup Project Template
   Simple Component
-  SPA (Webpack) Project Template
+❯ SPA (Webpack) Project Template
   Custom Template (You will need to provide a template path to your template zip file)
 
-✔ Please select a template · webpack
+✔ Please select a template · SPA (Webpack)
 ✔ Downloading the template files
 ✔ Unzipping the file downloaded
 ✔ Deleting the zip file
@@ -65,6 +65,7 @@ Is this OK? (yes) y
 :::
 
 以上で雛形の作成は完了です.
+
 
 # アプリケーションを起動
 
@@ -87,9 +88,7 @@ $ npm run start
 
 実行しますと，自動でアプリケーションが起動しブラウザも一緒に起動，[http://localhost:3000/](http://localhost:3000/) の画面が開くかと思います！
 
-![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/wobh7fily17yhjpbzg6sny1rflcj)
-
-ちなみにですが，この時点で `package.json` にいくつかのコマンドが自動で追記されておりますのでご確認ください．
+![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/1a3a0fc3b4fa-20240709.png)
 
 # アプリケーションの変更
 
@@ -111,14 +110,15 @@ $ npm run start
 
 更新後，ブラウザのタブのタイトルが変わっていれば OK です 👌
 
-スタイリングの初期化（CSS リセット）
+## スタイリングの初期化（+ CSS リセット）
 
-次にデフォルトで指定されているスタイリングを初期化します．まずは `index.html` で指定されている２つのスタイルシートを削除します．
+次にデフォルトで指定されているスタイリングを初期化します．まずは `src/index.html` で読み込んでいるフォントと２つのスタイルシートを削除します．
 
 ```diff
-       rel="stylesheet"
-       href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic"
-     />
+-    <link
+-      rel="stylesheet"
+-      href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic"
+-    />
 -    <link
 -      rel="stylesheet"
 -      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
@@ -130,11 +130,17 @@ $ npm run start
    </head>
 ```
 
-一般的には，何かしらの CSS リセットのライブラリをインストールしますが，今回はなるべく Angular 公式のチュートリアルに従うため，割愛します．
+また，一般的には何かしらの CSS リセットのライブラリをインストールしますが，今回はなるべく Angular 公式のチュートリアルに従うため，割愛します．
+
+ここまでできますと，スタイリングがあたっていない画面が表示されると思います．
+
+![CSS 初期化後](https://storage.googleapis.com/zenn-user-upload/d93e611e9048-20240713.png)
+
+以上でスタイリングの初期化は完了です．
 
 :::details ress を用いた CSS リセット
 
-もし riot で　CSS リセットライブラリを使う場合の方法をいかに記載しておきます．
+もし riot で　CSS リセットライブラリを使う場合の方法を以下に記載しておきます．今回は [ress](https://github.com/filipelinhares/ress) を利用します．
 
 ```bash
 $ npm install -D ress
@@ -143,54 +149,21 @@ $ npm install -D ress
 先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．
 
 ```diff
-+ import "ress";
-  import "./style.css";
   import "@riotjs/hot-reload";
-  import { mount } from "riot";
++ import "ress";
+  import { component } from "riot";
+  import App from "./app.riot";
+  import registerGlobalComponents from "./register-global-components.js";
 ```
 
-この状態ですと，`css` ファイルの読み込みと `<link>` タグへの CSS の展開がされないので，`css-loader`, `style-loader` をインストールして設定します．
+この辺は他の js ライブラリ・フレームワークと同じですね．
 
-```bash
-$ npm install -D css-loader style-loader
-```
-
-続いて，webpack.config.js に以下を追記します．
-
-```diff
-      {
-        test: /\.riot$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "@riotjs/webpack-loader",
-            options: {
-              hot: true,
-            },
-          },
-        ],
-      },
-+     {
-+       test: /\.css$/,
-+       use: [
-+         "style-loader",
-+         {
-+           loader: "css-loader",
-+         },
-+       ],
-+     },
-```
-
-ここまでできますと，以下の画像のようにスタイリングがあたっていない画面が表示されると思います．
-
-![リセットCSS適用後](https://storage.googleapis.com/zenn-user-upload/xassl1mdrjsijd4nkkacw4hwzm8s)
+ただ，このままですと webpack の処理でエラーが発生してしまいますので，本記事をこのまま読み進めていただくと，解消方法が出てきますので，そちらをご参照ください．
 :::
-
-以上でスタイリングの初期化は完了です．
 
 ## アプリケーションのベーススタイルを追加
 
-では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` というファイルに以下を追記してください．
+では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し，以下を追記してください．
 
 ```css
 * {
@@ -245,32 +218,51 @@ button:disabled {
   color: #aaa;
   cursor: auto;
 }
+```
 
-/* Navigation link styles */
-nav a {
-  padding: 5px 10px;
-  text-decoration: none;
-  margin-right: 10px;
-  margin-top: 10px;
-  display: inline-block;
-  background-color: #e8e8e8;
-  color: #3d3d3d;
-  border-radius: 4px;
-}
+この CSS ファイルを読み込みましょう🙋‍♂`index.js` に以下を追記してください．
 
-nav a:hover {
-  color: white;
-  background-color:  #42545C;
-}
-nav a.active {
-  background-color: black;
-  color: white;
-}
-hr {
-  margin: 1.5rem 0;
-}
+```diff
+  import "@riotjs/hot-reload";
+  import { component } from "riot";
++ import "./style.css";
+  import App from "./app.riot";
+  import registerGlobalComponents from "./register-global-components.js";
+
+```
+
+この状態ですと，`css` ファイルを読み込もうとしても webpack の処理でエラーが発生してしまいます．これを解決するために `css-loader`, `style-loader` をインストールして設定します．
+
+```bash
+$ npm install -D css-loader style-loader
+```
+
+続いて，webpack.config.js に以下を追記します．
+
+```diff
+      {
+        test: /\.riot$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "@riotjs/webpack-loader",
+            options: {
+              hot: true,
+            },
+          },
+        ],
+      },
++     {
++       test: /\.css$/,
++       use: [
++         "style-loader",
++         {
++           loader: "css-loader",
++         },
++       ],
++     },
 ```
 
 ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Chapter1「新規プロジェクトの作成」は完了です！
 
-![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/g1lnhj1g0yupzpzdcgqr1fvtsrfh)
+![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/8d833e7d5b30-20240713.png)
