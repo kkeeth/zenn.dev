@@ -1,5 +1,5 @@
 ---
-title: "Part2 ヒーローコンポーネント"
+title: "Chapter2 ヒーローコンポーネント"
 ---
 
 [前回](/books/riotjs-tour-of-heroes/environment.md) に引き続き，今回はより具体的にヒーローコンポーネントを作成していきます．
@@ -262,4 +262,4 @@ title: "Part2 ヒーローコンポーネント"
 
 ![](https://storage.googleapis.com/zenn-user-upload/xkzwb2vj5b59fobs2a6si9cbpzva)
 
-以上で Part2「ヒーローエディタ」は完了です！
+以上で Chapter2「ヒーローエディタ」は完了です！

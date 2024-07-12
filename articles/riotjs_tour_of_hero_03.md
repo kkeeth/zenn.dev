@@ -1,5 +1,5 @@
 ---
-title: 'Riot.js で Tour of Heroes を試す - Part3 リストの表示'
+title: 'Riot.js で Tour of Heroes を試す - Chapter3 リストの表示'
 emoji: '📝'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'tutorial', 'ToH']
@@ -280,6 +280,6 @@ export const HEROES = [
 
 ![](https://storage.googleapis.com/zenn-user-upload/s1drkgq77iaygv58j22w2j6e9rw8)
 
-以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
+以上で Chapter3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，[Part4「フィーチャーコンポーネントの作成」](https://zenn.dev/kkeeth/articles/riotjs_tour_of_hero_04)に続きます．
+では，[Chapter4「フィーチャーコンポーネントの作成」](https://zenn.dev/kkeeth/articles/riotjs_tour_of_hero_04)に続きます．

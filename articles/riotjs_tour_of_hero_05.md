@@ -1,5 +1,5 @@
 ---
-title: "Riot.js で Tour of Heroes を試す - Part5 非同期とメッセージの作成"
+title: "Riot.js で Tour of Heroes を試す - Chapter5 非同期とメッセージの作成"
 emoji: "📝"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["riotjs", "tutorial", "ToH"]

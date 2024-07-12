@@ -1,5 +1,5 @@
 ---
-title: "Part3 リストの表示"
+title: "Chapter3 リストの表示"
 ---
 
 [前回](/books/riotjs-tour-of-heroes/hero_component.md) に引き続き，今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装していきます．
@@ -336,4 +336,4 @@ e.target.closest('button').data
 
 ![チャプター3の完成イメージ](https://storage.googleapis.com/zenn-user-upload/534855f68ae3-20240709.png)
 
-以上で Part3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！
+以上で Chapter3「リストの表示」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！

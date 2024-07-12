@@ -1,5 +1,5 @@
 ---
-title: 'Riot.js で Tour of Heroes を試す - Part4 フィーチャーコンポーネントの作成'
+title: 'Riot.js で Tour of Heroes を試す - Chapter4 フィーチャーコンポーネントの作成'
 emoji: '📝'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['riotjs', 'tutorial', 'ToH']
@@ -141,6 +141,6 @@ published: true
 
 ![](https://storage.googleapis.com/zenn-user-upload/pxgp3khy914o4gmnr73j0hndgwqp)
 
-以上で Part4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
+以上で Chapter4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！可能な限りご説明させていただきます！
 
-では，Part5「非同期とメッセージの作成」に続きます．
+では，Chapter5「非同期とメッセージの作成」に続きます．
