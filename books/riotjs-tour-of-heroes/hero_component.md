@@ -2,102 +2,84 @@
 title: "Chapter2 ヒーローコンポーネント"
 ---
 
-[前回](/books/riotjs-tour-of-heroes/environment.md) に引き続き，今回はより具体的にヒーローコンポーネントを作成していきます．
-
-では今回もやっていきましょう！
+今回はより具体的にヒーローコンポーネントを作成していきます．
 
 # heroes コンポーネントを作成する
 
-では早速コンポーネントを作っていきたいところですが，ボイラープレートのデフォルトのコンポーネントでは名前が適切でないので変更していきます．
+では早速 `heroes` コンポーネントを作っていきますが，厳密には `heroes` ページ（コンポーネント）を作る形になります．
 
-## ディレクトリ・ファイルのリネーム
+## ディレクトリ・ファイルのリネームと修正
 
-まずはいくつかのディレクトリやファイルのリネームを行います．`src/components/global` ディレクトリ以下の `my-component` と名前がつくものを全て `heroes` に変更します．具体的には以下となります．
+まずはいくつかのディレクトリやファイルのリネームを行います．`src/pages/home.riot` ファイルの名前を `heroes.riot` に変更し，さらに，`app.riot`，`heroes/riot`，`src/pages.js` ファイルを以下のように変更します．
 
-- `src/components/global/my-component` ディレクトリ
-- `src/components/global/my-component/my-component.riot` ファイル
-- `src/components/global/my-component/my-component. spec.js` ファイル
-
-さらに，`heroes.riot`, `heroes.spec.js` ファイルの `my-component` を `heroes` に変更します．
+**app.riot**
+```diff
+   Router,
+   Route,
+   NotFound,
+-  Home: lazy(Loader, () => import(
+-    /* webpackPrefetch: true, webpackChunkName: 'pages/home' */
+-    './pages/home.riot'
++  Heroes: lazy(Loader, () => import(
++    /* webpackPrefetch: true, webpackChunkName: 'pages/heroes' */
++    './pages/heroes.riot'
+   )),
+   About: lazy(
+```
 
 **heroes.riot**
-
 ```diff
-- <my-component>
-+ <heroes>
-    <p>{ props.message }</p>
-- </my-component>
-+ </heroes>
+-<home>
++<heroes>
+   <h1>I am the home page</h1>
+   <p>Welcome</p>
+-</home>
++</heroes>
 ```
 
-**heroes.spec.js**
-
+**pages.js**
 ```diff
-- import MyComponent from './my-component.riot'
-+ import Heroes from './heroes.riot'
-  import { expect } from 'chai'
-  import { component } from 'riot'
-
-- describe('My Component Unit Test', () => {
--   const mountMyComponent = component(MyComponent)
-+ describe('Heroes Component Unit Test', () => {
-+   const mountHeroes = component(Heroes)
-    it('The component properties are properly rendered', () => {
-      const div = document.createElement('div')
-
--     const component = mountMyComponent(div, {
-+     const component = mountHeroes(div, {
-        message: 'hello'
-      })
-
-      expect(component.$('p').innerHTML).to.be.equal('hello')
-    })
-  })
+ export default [
+   {
+     path: "/",
+-    label: "Home",
+-    componentName: "home",
++    label: "Heroes",
++    componentName: "heroes",
+   },
 ```
 
-ここまで変更すると，エラーとなりますので，`index.html` を以下のように変更します．
-※ `Prettier` による整形も行われています 🙇
-
-```diff
-         <main class="column column-60">
-           <h1>Hello that's my first Riot.js App</h1>
--
--          <div
--            is="my-component"
--            data-riot-component
--            message="Hello There"
--          ></div>
-+          <div is="heroes" data-riot-component message="Hello There"></div>
-         </main>
-```
+一旦 `heroes` コンポーネントの作成は完了です．
 
 ## 不要なコンポーネントの削除
 
 次に，ボイラープレートで追加されている不要なコンポーネントがあるため，削除していきます．今回は
 
+* `src/components/global/my-component/` ディレクトリ
 *  `src/components/global/sidebar/` ディレクトリ
-*  `src/components/includes/` ディレクトリ
+*  `src/components/includes/user/` ディレクトリ
 
 ですね．こちらを丸っと削除しちゃいましょう💁
 
-さらにこのままだとエラーになりますので，直していきます．`index.html` ファイルを開き，以下の様に修正してください．
+さらに，削除したファイルを読み込んでいる箇所がいくつかありますので，`app.riot` ファイルを開き，以下の記述を削除してください．
 
-```diff
-           <h1>Hello that's my first Riot.js App</h1>
-           <div is="heroes" data-riot-component message="Hello There"></div>
-         </main>
--        <aside is="sidebar" data-riot-component class="column"></aside>
-       </div>
-     </div>
+```html
+<!-- notice how <sidebar> is registered as global component -->
+<div class="column column-40">
+ <sidebar/>
+</div>
 ```
+
+以上でお掃除完了です．
 
 ## `heroes` コンポーネントの実装
 
-では，`heroes` コンポーネントを作っていきます．まずはヒーローの名前を表示するところまで実装してみましょう．`src/pages/heroes.riot` ファイルを以下のように変更してください．
+では，`heroes` コンポーネントの実装に入ります．まずはヒーローの名前を表示するところまで実装してみましょう．`heroes.riot` ファイルを以下のように変更してください．
 
 ```diff
   <heroes>
--   <p>{ props.message }</p>
+-   <h1>I am the home page</h1>
+-   <p>Welcome</p>
 +   <h2>{ hero }</h2>
 +
 +   <script>
@@ -112,12 +94,12 @@ title: "Chapter2 ヒーローコンポーネント"
 
 # ヒーローオブジェクトを表示する
 
-ベースができましたので続けていきますが，今回のヒーローのデータには，名前の他にそれぞれのヒーローに一意な ID も持たせます．したがって，`heroes.riot` を以下のように変更してみましょう．
+ベースができましたので続けていきますが，今回のヒーローのデータには，名前の他にそれぞれのヒーローに一意な `ID` も持たせます．したがって，`heroes.riot` を以下のように変更してみましょう．
 
 ```diff
  <heroes>
 -  <h2>{ hero }</h2>
-+  <h2>{ hero.name } Details</h2>
++  <h2>{ hero.name.toUpperCase() } Details</h2>
 +  <div><span>id: </span>{ hero.id }</div>
 +  <div><span>name: </span>{ hero.name }</div>
 
@@ -133,21 +115,11 @@ title: "Chapter2 ヒーローコンポーネント"
  </heroes>
 ```
 
-ここまでいきますと，以下のように ID と名前が表示されます．
+ここまでいきますと，以下のように ID と名前が表示されます．今回のチュートリアルでは h2 タグの名前はアッパーケースで表示するそうなので，`toUpperCase()` を利用しています．
 
-![](https://storage.googleapis.com/zenn-user-upload/mpnpghzm1e1pbmimtua7zyklcyb4)
 
-## Uppercase で表示する
+![ヒーローオブジェクトの表示](/images/books/riotjs_toh/02_show_hero_object.png)
 
-今回のチュートリアルでは h2 タグの名前はアッパーケースで表示するそうなので，`heroes.riot` を以下のように変更します．
-
-```diff
- <heroes>
--  <h2>{ hero.name } Details</h2>
-+  <h2>{ hero.name.toUpperCase() } Details</h2>
-   <div><span>id: </span>{ hero.id }</div>
-   <div><span>name: </span>{ hero.name }</div>
-```
 
 # ヒーローを編集する
 
@@ -161,9 +133,8 @@ title: "Chapter2 ヒーローコンポーネント"
    <div><span>id: </span>{ hero.id }</div>
 -  <div><span>name: </span>{ hero.name }</div>
 +  <div>
-+    <label for="hero-name">name:
-+      <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
-+    </label>
++    <label for="hero-name">name:</label>
++    <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
 +  </div>
 ```
 
@@ -176,16 +147,15 @@ title: "Chapter2 ヒーローコンポーネント"
 ```diff
    <div><span>id: </span>{ hero.id }</div>
    <div>
-     <label for="hero-name">name:
--      <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
-+      <input
-+        id="hero-name"
-+        type="text"
-+        value={ hero.name }
-+        placeholder="name"
-+        oninput={ handleInput }
-+      />
-     </label>
+     <label for="hero-name">name:</label>
+-    <input id="hero-name" type="text" value={ hero.name } placeholder="name" />
++    <input
++      id="hero-name"
++      type="text"
++      value={ hero.name }
++      placeholder="name"
++      oninput={ handleInput }
++    />
    </div>
 
    <script>
@@ -204,7 +174,7 @@ title: "Chapter2 ヒーローコンポーネント"
 
 ここまでできましたら，`name` のテキストボックスの値を変えてみてください．リアルタイムにタイトル下の名前も一緒に変更されると思います！
 
-![](https://storage.googleapis.com/zenn-user-upload/q8n02fzj78mdt3v1q6o3tk5oya2e)
+![ヒーローネームの変更動画](/images/books/riotjs_toh/02_change_hero_name.gif)
 
 ## タイトルとスタイルを調整
 

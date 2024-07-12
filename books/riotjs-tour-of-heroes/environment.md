@@ -263,6 +263,6 @@ $ npm install -D css-loader style-loader
 +     },
 ```
 
-ここまでできますと，以下の画像のようにスタイリングが変更されていると思います．以上で Chapter1「新規プロジェクトの作成」は完了です！
+ここまで書けましたら，HTTP サーバーを再起動してください．以下の画像のようにスタイリングが変更されていると思います．以上で Chapter1「新規プロジェクトの作成」は完了です！
 
 ![ベーススタイル設定後](https://storage.googleapis.com/zenn-user-upload/8d833e7d5b30-20240713.png)
