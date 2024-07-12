@@ -10,9 +10,9 @@ title: "Chapter1 新規プロジェクトの作成"
 
 # プロジェクトの雛形を作成
 
-まずは本プロジェクトのディレクトリを作成して移動し，riot 公式のボイラープレートを用いて雛形を作成します．今回は `SPA (Webpack)` を使うことにします．
+まずは本プロジェクトのディレクトリを作成して移動し，riot 公式のボイラープレートを用いて雛形を作成します．今回は `webpack` を使うことにします．では，以下のコマンドをターミナルから実行してください．
 
-それでは，以下のコマンドをターミナルから実行してください．以下，適宜ご自身のものに置き換えてください，特に指定がなければ `Enter` を押下してください．
+以下，適宜ご自身のものに置き換えてください，特に指定がなければ `Enter` を押下してください．
 
 ```bash
 # ディレクトリ作成および移動
@@ -40,14 +40,14 @@ Is this OK? (yes) y
 # ここからが riot プロジェクトの設定
 # 前述通り，今回は Webpack 版を選択
 ? Please select a template …
-  Webpack Project Template
+❯ Webpack Project Template
   Parcel Project Template
   Rollup Project Template
   Simple Component
-❯ SPA (Webpack) Project Template
+  SPA (Webpack) Project Template
   Custom Template (You will need to provide a template path to your template zip file)
 
-✔ Please select a template · SPA (Webpack)
+✔ Please select a template · webpack
 ✔ Downloading the template files
 ✔ Unzipping the file downloaded
 ✔ Deleting the zip file
@@ -88,7 +88,7 @@ $ npm run start
 
 実行しますと，自動でアプリケーションが起動しブラウザも一緒に起動，[http://localhost:3000/](http://localhost:3000/) の画面が開くかと思います！
 
-![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/1a3a0fc3b4fa-20240709.png)
+![アプリケーション起動](https://storage.googleapis.com/zenn-user-upload/wobh7fily17yhjpbzg6sny1rflcj)
 
 # アプリケーションの変更
 
@@ -112,7 +112,7 @@ $ npm run start
 
 ## スタイリングの初期化（+ CSS リセット）
 
-次にデフォルトで指定されているスタイリングを初期化します．まずは `src/index.html` で読み込んでいるフォントと２つのスタイルシートを削除します．
+次にデフォルトで指定されているスタイリングを初期化します．まずは `index.html` で読み込んでいるフォントと２つのスタイルシートを削除します．
 
 ```diff
 -    <link
@@ -151,8 +151,7 @@ $ npm install -D ress
 ```diff
   import "@riotjs/hot-reload";
 + import "ress";
-  import { component } from "riot";
-  import App from "./app.riot";
+  import { mount } from "riot";
   import registerGlobalComponents from "./register-global-components.js";
 ```
 
@@ -163,7 +162,7 @@ $ npm install -D ress
 
 ## アプリケーションのベーススタイルを追加
 
-では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下に `style.css` というファイルを作成し，以下を追記してください．
+では次にアプリケーション全体のベーススタイリングを設定してきます．`src` ディレクトリ直下の `style.css` というファイルに以下を追記してください．
 
 ```css
 * {
