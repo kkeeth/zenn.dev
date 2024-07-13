@@ -4,97 +4,131 @@ title: "Chapter2 ヒーローコンポーネント"
 
 今回はより具体的にヒーローコンポーネントを作成していきます．
 
-# heroes コンポーネントを作成する
+# 全体構成を Angular チュートリアルに寄せる
 
-では早速 `heroes` コンポーネントを作っていきますが，厳密には `heroes` ページ（コンポーネント）を作る形になります．
+では早速 `heroes` コンポーネントを作っていきたいのですが，今の riot のアプリケーションの全体構成が，Angular のチュートリアルと差分があるため，修正していきます．
 
-## ディレクトリ・ファイルのリネームと修正
+## ベースコンポーネントの作成
 
-まずはいくつかのディレクトリやファイルのリネームを行います．`src/pages/home.riot` ファイルの名前を `heroes.riot` に変更し，さらに，`app.riot`，`heroes/riot`，`src/pages.js` ファイルを以下のように変更します．
+まずは，アプリケーションのコアとなるベースコンポーネントを作成していきます．`app.riot` というファイルを作成し，以下を追記してください．
 
-**app.riot**
-```diff
-   Router,
-   Route,
-   NotFound,
--  Home: lazy(Loader, () => import(
--    /* webpackPrefetch: true, webpackChunkName: 'pages/home' */
--    './pages/home.riot'
-+  Heroes: lazy(Loader, () => import(
-+    /* webpackPrefetch: true, webpackChunkName: 'pages/heroes' */
-+    './pages/heroes.riot'
-   )),
-   About: lazy(
+```html
+<app>
+  <div class="container">
+    <h1>{ props.title }</h1>
+  </div>
+</app>
 ```
 
-**heroes.riot**
+続いて，`index.html` を以下のように修正します．
+
 ```diff
--<home>
-+<heroes>
-   <h1>I am the home page</h1>
-   <p>Welcome</p>
--</home>
-+</heroes>
+  <body>
+-   <div class="container">
++   <div id="root"></div>
++   <aside is="sidebar" data-riot-component class="column"></aside>
+-     <div class="row">
+-       <main class="column column-60">
+-         <h1>Hello that's my first Riot.js App</h1>
+-
+-         <div
+-           is="my-component"
+-           data-riot-component
+-           message="Hello There"
+-         ></div>
+-       </main>
+-     </div>
+-   </div>
+  </body>
 ```
 
-**pages.js**
-```diff
- export default [
-   {
-     path: "/",
--    label: "Home",
--    componentName: "home",
-+    label: "Heroes",
-+    componentName: "heroes",
-   },
-```
+さらに，`index.js` ファイルを以下のように変更します．
 
-一旦 `heroes` コンポーネントの作成は完了です．
+```diff
+ import "./style.css";
+ import "@riotjs/hot-reload";
+- import { mount } from "riot";
++ import { component } from "riot";
++ import App from "./app.riot";
+ import registerGlobalComponents from "./register-global-components.js";
+
+ // register
+ registerGlobalComponents();
+
+- // mount all the global components found in this page
+- mount("[data-riot-component]");
++ // mount the root tag
++ component(App)(document.getElementById("root"), {
++   title: "Tour of Heroes"
++ });
+```
 
 ## 不要なコンポーネントの削除
 
-次に，ボイラープレートで追加されている不要なコンポーネントがあるため，削除していきます．今回は
+次に，ボイラープレートで追加された不要なコンポーネントがあるため，削除していきます．今回は
 
 * `src/components/global/my-component/` ディレクトリ
-*  `src/components/global/sidebar/` ディレクトリ
-*  `src/components/includes/user/` ディレクトリ
+* `src/components/global/sidebar/` ディレクトリ
+* `src/components/includes/user/` ディレクトリ
 
-ですね．こちらを丸っと削除しちゃいましょう💁
+以上3つを丸っと削除しちゃいましょう💁
 
-さらに，削除したファイルを読み込んでいる箇所がいくつかありますので，`app.riot` ファイルを開き，以下の記述を削除してください．
-
-```html
-<!-- notice how <sidebar> is registered as global component -->
-<div class="column column-40">
- <sidebar/>
-</div>
-```
-
-以上でお掃除完了です．
-
-## `heroes` コンポーネントの実装
-
-では，`heroes` コンポーネントの実装に入ります．まずはヒーローの名前を表示するところまで実装してみましょう．`heroes.riot` ファイルを以下のように変更してください．
+さらに，削除したファイルを読み込んでいる箇所がいくつかありますので，`index.html` ファイルを開き，以下の記述を削除してください．
 
 ```diff
-  <heroes>
--   <h1>I am the home page</h1>
--   <p>Welcome</p>
-+   <h2>{ hero }</h2>
-+
-+   <script>
-+     export default {
-+       hero: 'Windstorm'
-+     }
-+   </script>
-  </heroes>
+  <div class="container">
+    <div id="root"></div>
+-   <aside is="sidebar" data-riot-component class="column"></aside>
+  </div>
+```
+
+ 以上でお掃除も完了し，準備は完了です！
+
+# heroes コンポーネントを作成する
+
+それでは改めて `heroes` コンポーネントを作っていきます．
+
+## `heroes` コンポーネントの作成
+
+以下３つのファイルとフォルダを作成してください．
+
+* `src/components/global/heroes/` ディレクトリ
+* `src/components/global/heroes/heroes.riot` ファイル
+* `src/components/global/heroes/heroes.spec.js` ファイル
+
+`heroes.spec.js` についてはこの章では触れず，後ほど書いていきます（たぶん）．
+
+では，`heroes` コンポーネントの実装に入ります．まずはヒーローの名前を表示するところまで実装してみましょう．`heroes.riot` ファイルに以下を記述してください．
+
+```html
+<heroes>
+  <h2>{ hero }</h2>
+
+  <script>
+    export default {
+      hero: 'Windstorm'
+    }
+  </script>
+</heroes>
+```
+
+書けましたら，`heroes` コンポーネントを `app.riot` にてインポートし，レンダリングさせましょう．
+
+```diff
+    <h1>{ props.title }</h1>
++   <heroes />
+  </div>
+
++ <script>
++   import Heroes from "@/components/global/heroes/heroes.riot";
++ </script>
 ```
 
 ここまでできますと，画面に `Windstorm` という名前が表示されているかと思います．
 
-# ヒーローオブジェクトを表示する
+## ヒーローオブジェクトを表示する
 
-ベースができましたので続けていきますが，今回のヒーローのデータには，名前の他にそれぞれのヒーローに一意な `ID` も持たせます．したがって，`heroes.riot` を以下のように変更してみましょう．
+今回のヒーローのデータには，名前の他にそれぞれのヒーローに一意な `ID` も持たせます．したがって，`heroes.riot` を以下のように変更してみましょう．
 
 ```diff
  <heroes>
@@ -175,61 +209,5 @@ title: "Chapter2 ヒーローコンポーネント"
 ここまでできましたら，`name` のテキストボックスの値を変えてみてください．リアルタイムにタイトル下の名前も一緒に変更されると思います！
 
 ![ヒーローネームの変更動画](/images/books/riotjs_toh/02_change_hero_name.gif)
-
-## タイトルとスタイルを調整
-
-最後の最後に，今までデフォルトのままだったタイトルを（今更）今回のチュートリアルのものに変更しつつ，`ress` で初期化したスタイリングを調整していきます．
-
-まずはタイトルを変更しますので，`index.html` を以下のように変更してください．
-
-```diff
-       <div class="row">
-         <main class="column column-60">
--          <h1>Hello that's my first Riot.js App</h1>
-+          <h1>Tour of Heroes with Riot</h1>
-           <div is="heroes" data-riot-component message="Hello There"></div>
-         </main>
-       </div>
-```
-
-次にスタイリングを変更しますので，`style.css` を以下のように変更してください．
-
-```diff
-   color: #369;
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 250%;
-+  margin: 1.6rem auto;
- }
- h2,
- h3 {
-   color: #444;
-   font-family: Arial, Helvetica, sans-serif;
-   font-weight: lighter;
-+  margin: 1.2rem auto;
- }
- body {
-   margin: 2em;
-
-...（中略）
-    color: #333;
-    font-family: Cambria, Georgia;
-  }
-+ input[type="text"] {
-+   border: 1px solid gray;
-+   border-radius: 2px;
-+   padding: 1px 4px;
-+ }
-
-  /* everywhere else */
-  * {
-    font-family: Arial, Helvetica, sans-serif;
-```
-
-ここまで変更できましたら，以下の画像のように変更されていると思います．行ったことは
-
-- タイトルと名前の上下の margin をセット
-- input タグの border を調整
-
-![](https://storage.googleapis.com/zenn-user-upload/xkzwb2vj5b59fobs2a6si9cbpzva)
 
 以上で Chapter2「ヒーローエディタ」は完了です！
