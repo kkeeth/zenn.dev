@@ -2,7 +2,7 @@
 title: "Chapter5 データ取得用のサービスの作成"
 ---
 
-[前回](/books/riotjs-tour-of-heroes/hero_detail.md) に引き続き，今回は Angular フレームワークに備わっている Service という機能に相当するコンポーネントと，メッセージを表示するコンポーネントを作成していきます．
+今回は Angular フレームワークに備わっている Service という機能に相当するコンポーネントと，メッセージを表示するコンポーネントを作成していきます．
 
 では今回もやっていきましょう！
 
@@ -28,7 +28,7 @@ title: "Chapter5 データ取得用のサービスの作成"
 まず `hero.service.js` ファイルにて `HEROES` 配列を読み込み，コール元にレスポンスするメソッド `getHeroes()` を定義します．
 
 ```js
-import { HEROES } from "@/components/heroes/mock";
+import { HEROES } from "@/components/global/heroes/mock-heroes";
 
 export const getHeroes = () => {
   return HEROES;
@@ -235,7 +235,7 @@ export default messageService;
 
 単純に追加のための `add` メソッドを追加し，受け取ったメッセージを配列に格納しています．その後，`this.trigger` メソッドで更新後の配列を引数に `messagesAdded` イベントを発火させ，受け取ったコンポーネントで処理を委譲します．
 
-実装できましたら，`heroes.riot` でイベント発火時にメッセージを追加する処理を書きましょう．
+実装できましたら，`heroes.riot` でイベント発火時にメッセージを追加する処理を書きましょう．発火のタイミングは，ヒーローデータの取得時と，ヒーローの選択時の２つです．
 
 ```diff
   onBeforeMount() {
@@ -246,6 +246,15 @@ export default messageService;
     heroService.getHeroes();
 +   messageService.add('HeroService: fetched heroes');
   },
+
+  // 中略
+
+  handleSelect(e) {
+    this.selectedHero.id = e.target.closest('button').data.id;
+    this.selectedHero.name = e.target.closest('button').data.name;
++   messageService.add(`HeroesComponent: Selected hero id=${this.selectedHero.id}`);
+    this.update();
+  }
 ```
 
 処理が書けたら，画面に表示をしたいので，`messages.riot` を修正していきます．
@@ -257,12 +266,12 @@ export default messageService;
 +   <div each={ message in messages }>{ message }</div>
 +
 +   <script>
-+     import messageService from '@/services/message.  +ervice';
++     import messageService from '@/services/message.service';
 +
 +     export default {
 +      messages: [],
 +      onBeforeMount() {
-+        messageService.on('messagesAdded', (messages) +> {
++        messageService.on('messagesAdded', (messages) => {
 +          this.messages = messages;
 +        });
 +      }
@@ -273,9 +282,55 @@ export default messageService;
 
 `messagesService` をインポートし，`messagesAdded` イベントを監視．送られたメッセージ配列を受け取るようにしています．後は，それを `each` で表示しています．シンプルですね．
 
-ここまで実装できますと，以下のように，ヒーローを選択する事にメッセージが表示されるようになります．
+ここまで実装できますと，以下のように，ヒーローを選択するたびにメッセージが表示されるようになります．
 
-（後で画像を貼る）
+![メッセージリストの表示](/images/books/riotjs_toh/05_show_messages.png)
+
+## メッセージ一覧のクリア
+
+続いて，ボタンをクリックすると表示しているメッセージの一覧をクリアする処理を書いていきます．まずは，`message.service.js` に `clear` メソッドを追加します．
+
+```diff
+  add(message) {
+    this.messages.push(message);
+    this.trigger('messagesAdded', this.messages)
+- },
++ },
++ clear() {
++   this.messages = [];
++   this.trigger('messagesCleared', this.messages)
++ }
+
+```
+
+続いて `messages.riot` を以下のように変更してください．
+
+```diff
+  <h2>Messages</h2>
+
++ <button
++   type="button"
++   class="clear"
++   onclick={ clearMessages }
++ >Clear messages</button>
+  <div each={ message in messages }>{ message }</div>
+
+// （中略）
+
+  onBeforeMount() {
+    messageService.on('messagesAdded', (messages) => {
+      this.messages = messages;
+    });
++   messageService.on('messagesCleared', (messages) => {
++     this.messages = messages;
++   });
+- }
++ },
++ clearMessages() {
++   messageService.clear();
++   this.update()
++ }
+```
 
 :::details 初期レンダリング時のメッセージ表示
 現状は初期レンダリング時に `HeroService: fetched heroes` のメッセージが表示されず，何かヒーローを選択した際にメッセージ一覧に表示されると思います．
@@ -315,43 +370,13 @@ getMessages() {
       this.messages = messages;
     });
 
-+   messageService.add('MessagesComponent: mounted');
++   messageService.add('HeroService: fetched heroes');
   },
 ```
 
 と発火させれば Angular のチュートリアルと同じ挙動となります．
 ※他に方法があれば教えていただけると助かります！🙇‍♂
 :::
-
-## メッセージ一覧のクリア
-
-続いて，ボタンをクリックすると表示しているメッセージの一覧をクリアする処理を書いていきます．まずは `messages.riot` を以下のように変更してください．
-
-```diff
-  <h2>Messages</h2>
-
-+ <button
-+   type="button"
-+   class="clear"
-+   onclick={ clearMessages }
-+ >Clear messages</button>
-  <div each={ message in messages }>{ message }</div>
-
-// （中略）
-
-  onBeforeMount() {
-    messageService.on('messagesAdded', (messages) => {
-      this.messages = messages;
-    });
-+   messageService.on('messagesCleared', (messages) => {
-+     this.messages = messages;
-+   });
-  },
-+ clearMessages() {
-+   messageService.clear();
-+   this.update()
-+ },
-```
 
 最後にスタイリングしていきましょう🙋‍♂
 
