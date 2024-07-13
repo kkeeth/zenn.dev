@@ -2,7 +2,7 @@
 title: "Chapter4 フィーチャーコンポーネントの作成"
 ---
 
-[前回](/books/riotjs-tour-of-heroes/show_list.md) に引き続き，今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
+今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
 
 では今回もやっていきましょう！
 
@@ -13,6 +13,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 - `src/components/heroes/hero-detail` ディレクトリ
 - `src/components/heroes/hero-detail/hero-detail.riot` ファイル
+- `src/components/heroes/hero-detail/hero-detail.spec.js` ファイル
 
 作成できましたら，それぞれのファイルの中身を書いていきましょう．
 
@@ -145,14 +146,14 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 最後にスタイルを微調整します💁
 
 ```diff
-  </script>
-+ <style>
-+   /* HeroDetail's private CSS styles */
-+   input {
-+     padding: .5rem;
-+   }
-+ </style>
-</hero-detail>
+    </script>
++   <style>
++     /* HeroDetail's private CSS styles */
++     input {
++       padding: .5rem;
++     }
++   </style>
+  </hero-detail>
 ```
 
 以上で Chapter4「フィーチャーコンポーネントの作成」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！
