@@ -36,6 +36,7 @@ title: "Chapter2 ヒーローコンポーネント"
 -           data-riot-component
 -           message="Hello There"
 -         ></div>
+-         <aside is="sidebar" data-riot-component class="column"></aside>
 -       </main>
 -     </div>
 -   </div>
@@ -59,7 +60,7 @@ title: "Chapter2 ヒーローコンポーネント"
 - mount("[data-riot-component]");
 + // mount the root tag
 + component(App)(document.getElementById("root"), {
-+   title: "Tour of Heroes"
++   title: "Tour of Heroes with Riot"
 + });
 ```
 
