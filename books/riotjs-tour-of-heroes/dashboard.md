@@ -250,3 +250,241 @@ $ npm ls --depth=0
 ここまで実装できますと，以下のような見た目になっているかと思います．
 
 ![ダッシュボードコンポーネントの表示](/images/books/riotjs_toh/06_show_dashboard.png)
+
+# ヒーローの詳細へ遷移
+
+選択したヒーローの詳細情報を表示する `hero-detail` コンポーネントは，現状ユーザーは3つの方法でアクセスできるべきです．
+
+* ダッシュボードのヒーローをクリック
+* ヒーローリストのヒーローをクリック
+* 表示するヒーローを識別するブラウザのアドレスバーに"ディープリンク"URLを貼り付ける
+
+これを実現し，`hero-detail` コンポーネントを `heroes` コンポーネントから独立させます．
+
+## `heroes` コンポーネントから `hero-detail` コンポーネントを削除
+
+まずはエイヤで，`hero-detail` コンポーネントから `heroes` コンポーネントから引っ剥がしちゃいます．
+
+```diff
+   </ul>
+
+-  <hero-detail hero={ selectedHero } handle-input={ handleInput } />
+-
+   <script>
+     import heroService from '@/services/hero.service';
+     import messageService from '@/services/message.service';
+-    import HeroDetail from '@/components/global/hero-detail/hero-detail.riot';
+
+     export default {
+       // （中略）
+-      handleInput(e) {
+-        this.selectedHero.name = e.target.value;
+-        this.heroes.forEach((item) => {
+-          if (item.id === this.selectedHero.id) {
+-            item.name = e.target.value;
+-          }
+-        });
+-        this.update();
+-      },
+```
+
+## `hero-detail` ルートを追加する
+
+`~/hero-detail/13` などの URL でアクセスすると，ID が 13 のヒーローの詳細が表示されるように，ルートを追加します．`app.riot` を以下のように変更してください．
+
+```diff
+    <route path="/heroes">
+      <main is="heroes" />
+    </route>
++   <route path="/hero-detail/:id">
++     <main is="hero-detail" id={ route.params.id } />
++   </route>
+  </router>
+
+// （中略）
+
+  <script>
+    import Heroes from "@/components/global/heroes/heroes.riot";
+    import Messages from '@/components/global/messages/messages.riot';
++   import HeroDetail from "@/components/global/hero-detail/hero-detail.riot";
+    import { Router, Route, route, toRegexp, match } from '@riotjs/route'
+```
+
+一旦こちらで設定は完了です．
+
+
+## `dashboard`, `heroes` コンポーネントのヒーローのリンク
+
+設定はしましたが，今は URL で直接アクセスするしかヒーローの詳細が表示されないため，`dashboard`, `heroes` コンポーネントのヒーローのリンクを修正します．
+
+**dashboard.riot**
+
+```diff
+   <div class="heroes-menu">
+-    <a each={ hero in heroes }>
++    <a each={ hero in heroes } href={ `/hero-detail/${hero.id}` }>
+       { hero.name }
+     </a>
+```
+
+**heroes.riot**
+
+```diff
+     <li each={ hero in heroes }>
+-      <button
+-        type="button"
+-        class={ hero.id === selectedHero.id && 'selected' }
+-        onclick={ handleSelect }
+-        data={ hero }
+-      >
++      <a href={`/hero-detail/${hero.id}`}>
+         <span class="badge">{ hero.id }</span>
+         <span class="name">{ hero.name }</span>
+-      </button>
++      </a>
+     </li>
+```
+
+これでヒーローの詳細画面にアクセスすることができました．しかしまだ詳細情報自体は表示されていませんので，後ほど修正します．
+
+`heroes` コンポーネントが `<button>` から `<a>` に変わったためスタイルが崩れてしまいました．`heroes.riot` の CSS を修正しましょう．差分が多いので，以下で丸っと上書きしていただくのが良さそうです！
+
+```css
+/* HeroesComponent's private CSS styles */
+.heroes {
+  margin: 0 0 2em 0;
+  list-style-type: none;
+  padding: 0;
+  width: 15em;
+}
+.heroes li {
+  position: relative;
+  cursor: pointer;
+}
+
+.heroes li:hover {
+  left: .1em;
+}
+
+.heroes a {
+  color: #333;
+  text-decoration: none;
+  background-color: #EEE;
+  margin: .5em;
+  padding: .3em 0;
+  height: 1.6em;
+  border-radius: 4px;
+  display: block;
+  width: 100%;
+}
+
+.heroes a:hover {
+  color: #2c3a41;
+  background-color: #e6e6e6;
+}
+
+.heroes a:active {
+  background-color: #525252;
+  color: #fafafa;
+}
+
+.heroes .badge {
+  display: inline-block;
+  font-size: small;
+  color: white;
+  padding: 0.8em 0.7em 0 0.7em;
+  background-color: #405061;
+  line-height: 1em;
+  position: relative;
+  left: -1px;
+  top: -4px;
+  height: 1.8em;
+  min-width: 16px;
+  text-align: right;
+  margin-right: .8em;
+  border-radius: 4px 0 0 4px;
+}
+```
+
+## `heroes` コンポーネントの不要なコードの削除
+
+`heroes` コンポーネントで既に使わなくなったメソッドやコードがあるので，こちらも削除してしまいましょう．
+
+```diff
+  <script>
+    import heroService from '@/services/hero.service';
+-   import messageService from '@/services/message.service';
+
+    export default {
+      heroes: [],
+-     selectedHero: {},
+      onBeforeMount() {
+        heroService.on('heroesUpdated', (heroes) => {
+          this.heroes = heroes;
+        });
+        heroService.getHeroes();
+      },
+-     handleSelect(e) {
+-       this.selectedHero.id = e.target.closest('button').data.id;
+-       this.selectedHero.name = e.target.closest('button').data.name;
+-       messageService.add(`HeroesComponent: Selected hero id=${this.selectedHero.id}`);
+-       this.update();
+-     }
+```
+
+以上でお掃除完了です！
+
+## `hero-detail` コンポーネントでヒーローデータを取得
+
+以前は，親の `heroes` コンポーネントが `hero-detail` コンポーネントのプロパティを設定しており`hero-detail` コンポーネントは単に受け取ったデータを表示していました．
+
+しかし，`heroes` コンポーネントはその責務から開放され，今はルーターが `~/hero-detail/11` のような URL に応答して `hero-detail` コンポーネントを作成します．
+
+したがって，`hero-detail` コンポーネントが渡された ID をキーに `Hero` サービスからデータを取得するように変更します．
+
+```diff
+   <script>
++    import heroService from '@/services/hero.service';
++
+     export default {
+       selectedHero: {},
+-      onBeforeUpdate(props) {
+-        this.selectedHero = props.hero;
++      onBeforeMount(props) {
++        heroService.on('getHero', (hero) => {
++          this.selectedHero = hero;
++        })
++
++        heroService.getHero(Number(props.id));
+       },
+     };
+   </script>
+```
+
+さらに，`hero.service.js` にて ID を指定してヒーローを取得するためのメソッドを実装します．
+
+```diff
+       console.error('Failed to fetch heroes:', error);
+     }
++  },
++  async getHero(id) {
++    try{
++      // const response = await fetch(`https://api.+xample.com/hero/${id}`);
++      // const heroes = await response.json();
++      const hero = HEROES.find(h => h.id === id);
++      messageService.add(`HeroService: fetched hero id=${id}`);
++      this.trigger('getHero', hero)
++    } catch (error) {
++      console.error('Failed to fetch heroes:', error);
++    }
+   }
+```
+
+
+## active なコンポーネントの明示
+
+現状ですと，ナビゲーションのどちらをクリックしたのかが画面からは判断がつきますが，ナビゲーション自体からは分かりにくいため，こちらを修正していきます．`app.riot` を以下のように修正してください．
+
+```diff
+
+```

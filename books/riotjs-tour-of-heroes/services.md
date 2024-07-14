@@ -314,12 +314,12 @@ export default messageService;
 ```diff
   <h2>Messages</h2>
 
+  <div each={ message in messages }>{ message }</div>
 + <button
 +   type="button"
 +   class="clear"
 +   onclick={ clearMessages }
 + >Clear messages</button>
-  <div each={ message in messages }>{ message }</div>
 
 // （中略）
 
