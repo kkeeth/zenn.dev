@@ -188,17 +188,19 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
 </messages>
 ```
 
-そうしましたら，これを読み込んで画面に表示させるために `hero.riot` でインポートし，配置しましょう．
+そうしましたら，これを読み込んで画面に表示させるために `app.riot` でインポートし，配置しましょう．
 
 ```diff
+   <div class="container">
+     <h1>{ props.title }</h1>
+     <heroes />
++    <messages />
+   </div>
 
-  <hero-detail hero={ selectedHero } handle-input={ handleInput } />
-+ <messages />
-
-  <script>
-    import heroService from '@/services/hero.service';
-    import HeroDetail from '@/components/global/hero-detail/hero-detail.riot';
-+   import Messages from '@/components/global/messages/messages.riot';
+   <script>
+     import Heroes from "@/components/global/heroes/heroes.riot";
++    import Messages from '@/components/global/messages/messages.riot';
+   </script>
 ```
 
 続いて，`messages.service.js` を `heroes.riot` にてインポートします．
@@ -273,6 +275,7 @@ export default messageService;
 +      onBeforeMount() {
 +        messageService.on('messagesAdded', (messages) => {
 +          this.messages = messages;
++          this.update();
 +        });
 +      }
 +     }
@@ -323,12 +326,12 @@ export default messageService;
     });
 +   messageService.on('messagesCleared', (messages) => {
 +     this.messages = messages;
++     this.update();
 +   });
 - }
 + },
 + clearMessages() {
 +   messageService.clear();
-+   this.update()
 + }
 ```
 
@@ -365,9 +368,11 @@ getMessages() {
   onBeforeMount() {
     messageService.on('messagesAdded', (messages) => {
       this.messages = messages;
+      this.update();
     });
     messageService.on('messagesCleared', (messages) => {
       this.messages = messages;
+      this.update();
     });
 
 +   messageService.add('HeroService: fetched heroes');

@@ -17,6 +17,6 @@ chapters:
   - hero_component
   - show_list
   - hero_detail
-  - get_hero_services
+  - services
   - dashboard
   - advance_typescript
