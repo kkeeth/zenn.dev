@@ -235,22 +235,25 @@ observable(messageService);
 export default messageService;
 ```
 
-単純に追加のための `add` メソッドを追加し，受け取ったメッセージを配列に格納しています．その後，`this.trigger` メソッドで更新後の配列を引数に `messagesAdded` イベントを発火させ，受け取ったコンポーネントで処理を委譲します．
+単純に追加のための `add` メソッドを追加し，受け取ったメッセージを配列に格納しています．その後，`this.trigger` メソッドで更新後の配列を引数に `messagesAdded` イベントを発火させ，メッセージを追加，受け取ったコンポーネントで処理を委譲します．
 
-実装できましたら，`heroes.riot` でイベント発火時にメッセージを追加する処理を書きましょう．発火のタイミングは，ヒーローデータの取得時と，ヒーローの選択時の２つです．
+また，ヒーローデータを取得した際のメッセージを追加したいと思います．`hero.service.js` に以下を追記してください．
 
 ```diff
-  onBeforeMount() {
-    heroService.on('heroesUpdated', (heroes) => {
-      this.heroes = heroes;
-    });
++ import messageService from "@/services/message.service";
 
-    heroService.getHeroes();
-+   messageService.add('HeroService: fetched heroes');
-  },
+  const heroService = {
+    async getHeroes() {
+      //（省略）
+      const heroes = HEROES;
++     messageService.add('HeroService: fetched heroes');
+      this.trigger('heroesUpdated', heroes)
+    } catch (error) {
+```
 
-  // 中略
+さらに `heroes.riot` で，ヒーロー選択時のイベント発火のメッセージを追加する処理を書きましょう．
 
+```diff
   handleSelect(e) {
     this.selectedHero.id = e.target.closest('button').data.id;
     this.selectedHero.name = e.target.closest('button').data.name;
