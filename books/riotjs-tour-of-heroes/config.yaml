@@ -16,7 +16,7 @@ chapters:
   - environment
   - hero_component
   - show_list
-  - hero_detail
+  - heroes_detail
   - services
   - dashboard
   - advance_typescript

@@ -222,6 +222,9 @@ $ npm install -D ress
 +   color: #aaa;
 +   cursor: auto;
 + }
++ hr {
++   margin-top: 3rem;
++ }
 ```
 
 ここまで書けましたら，以下の画像のようにスタイリングが変更されていると思います．

@@ -55,15 +55,14 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
       <span>id: </span>{ selectedHero.id }
     </div>
     <div>
-      <label for="hero-name">Hero name:
-        <input
-          id="hero-name"
-          type="text"
-          value={ selectedHero.name }
-          placeholder="name"
-          oninput={ handleInput }
-        />
-      </label>
+      <label for="hero-name">Hero name:</label>
+      <input
+        id="hero-name"
+        type="text"
+        value={ selectedHero.name }
+        placeholder="name"
+        oninput={ handleInput }
+      />
     </div>
   </div>
 

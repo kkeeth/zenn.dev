@@ -170,12 +170,13 @@ $ npm ls --depth=0
 +       margin-left: 10px;
 +     }
 +
++     nav a.active {
++       color: white;
++       background-color: black;
++     }
 +     nav a:hover {
 +       color: white;
 +       background-color: #42545C;
-+     }
-+     nav a:active {
-+       background-color: black;
 +     }
 +   </style>
   </app>
@@ -287,6 +288,29 @@ $ npm ls --depth=0
 -        this.update();
 -      },
 ```
+
+ただし，`handleInput` メソッドは `hero-detail` コンポーネントで引き続き利用するため，こちらは移植してしまいます．
+
+```diff
+           value={ selectedHero.name }
+           placeholder="name"
+-          oninput={ props.handleInput }
++          oninput={ handleInput }
+         />
+       </label>
+     </div>
+
+// （中略）
+
+         heroService.getHero(Number(props.id));
+       },
++      handleInput(e) {
++        this.selectedHero.name = e.target.value;
++        this.update();
++      }
+     };
+```
+
 
 ## `hero-detail` ルートを追加する
 
@@ -457,6 +481,10 @@ $ npm ls --depth=0
 +
 +        heroService.getHero(Number(props.id));
        },
+       handleInput(e) {
+         this.selectedHero.name = e.target.value;
+         this.update();
+       }
      };
    </script>
 ```
@@ -480,11 +508,288 @@ $ npm ls --depth=0
    }
 ```
 
+今回は引数に `id` を受け取り，`HEROES` 配列からその ID と合致するヒーローのデータをフィルタリングし，observable のイベントトリガーで渡しています．
+
+実際のアプリケーションでは，`id` を指定して取得する API のエンドポイントが用意されていると思いますので，上記のようなフィルタリング処理は不要かもしれませんね💁
+
+## 戻るボタンの追加
+
+現在は `hero-detail` コンポーネントを表示した後，ブラウザの戻るボタンをクリックすればヒーローリストまたはダッシュボード画面に戻れます．これを `hero-detail` コンポーネントにもそうできるボタンを用意しましょう．
+
+```diff
++        oninput={ handleInput }
++      />
+     </div>
++    <button type="button" onclick={ goBack }>go back</button>
+   </div>
+
+// （中略）
+
+     handleInput(e) {
+       this.selectedHero.name = e.target.value;
+       this.update();
+     },
++    goBack() {
++      history.back();
++    }
+   };
+```
+
+ブラウザを更新してクリックしてみましょう．ユーザーは新しいボタンを使って，アプリケーション内を移動できるようになりました．
+
+`Angular` には [location](https://angular.jp/api/common/Location) というブラウザと対話するためのサービスがあります．これは前のビューに戻ることができるサービスです．
+
+riot には上記のようなものは存在しないので，シンプルにブラウザの History API を利用して実装しました．
+
+## `hero-detail` のスタイリング
+
+最後にスタイルの微調整をします．`hero-detail` コンポーネントの `<style>` を以下で丸っと上書きしてください．
+
+```css
+/* HeroDetailComponent's private CSS styles */
+label {
+  color: #435960;
+  font-weight: bold;
+}
+input {
+  font-size: 1em;
+  padding: .5rem;
+}
+button {
+  margin-top: 20px;
+  background-color: #eee;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+button:hover {
+  background-color: #cfd8dc;
+}
+button:disabled {
+  background-color: #eee;
+  color: #ccc;
+  cursor: auto;
+}
+```
+
+ここまでできましたら，アプリケーションを更新してみてみましょう．
+
+**ダッシュボード**
+![実装完了（ダッシュボード）](/images/books/riotjs_toh/06_completed_dashboard.png)
+
+**ヒーロー一覧**
+![実装完了（ヒーロー一覧）](/images/books/riotjs_toh/06_completed_heroes.png)
+
+**ヒーロー詳細**
+![実装完了（ヒーロー詳細）](/images/books/riotjs_toh/06_completed_hero-detail.png)
+
+
+# 諸々のリファクタリング
+
+本章で実装したかったことは完了ですが，後は全体的なリファクタリングをしたいと思います．
+
+## ルートの一覧をまとめる
+
+現状は，ルートごとに一つ一つ手書きで `<route>`　を書いておりますが，ルートの一覧をファイルに纏めてしまい，マークアップはループで書いてしまう方が管理が楽になります．
+
+`routes.js` ファイルを作成し，以下を記述してください．
+
+```js
+export default [
+  {
+    path: "/",
+    label: "Dashboard",
+    componentName: "dashboard",
+    nav: false
+  },
+  {
+    path: "/dashboard",
+    label: "Dashboard",
+    componentName: "dashboard",
+    nav: true,
+  },
+  {
+    path: "/heroes",
+    label: "Heroes",
+    componentName: "heroes",
+    nav: true,
+  },
+  {
+    path: "/hero-detail/:id",
+    label: "HeroDetail",
+    componentName: "hero-detail",
+    nav: false,
+  },
+];
+```
+
+続いて，`app.riot` を以下のように修正してください．
+
+```diff
+         <nav class="menu column">
+-          <a href="/dashboard">Dashboard</a>
+-          <a href="/heroes">Heroes</a>
++          <a
++            each={ page in state.pages }
++            if={ page.nav }
++            href={ page.path }
++          >
++            { page.label }
++          </a>
+         </nav>
+       <div>
+-      <route path="/(dashboard)?">
+-        <main is="dashboard" />
+-      </route>
+-      <route path="/heroes">
+-        <main is="heroes" />
+-      </route>
+-      <route path="/hero-detail/:id">
+-        <main is="hero-detail" id={ route.params.id } />
++      <route each={ page in state.pages } path={ page.path }>
++        <main is={ page.componentName } id={ route.params.id } />
+       </route>
+     </router>
+```
+
+これで各ルートの管理が少し楽になりました．
 
 ## active なコンポーネントの明示
 
-現状ですと，ナビゲーションのどちらをクリックしたのかが画面からは判断がつきますが，ナビゲーション自体からは分かりにくいため，こちらを修正していきます．`app.riot` を以下のように修正してください．
+現状ですと，ナビゲーションのどちらをクリックしたのかが画面からは判断がつきますが，ナビゲーション自体からは分かりにくいため，こちらを修正していきます（※ こちらは Angular のチュートリアルにはないものです）．`app.riot` を以下のように修正してください．
 
 ```diff
+         <a
+           each={ page in state.pages }
+           if={ page.nav }
+           href={ page.path }
++          class={ state.activePage === page ? 'active' : '' }
+         >
+           { page.label }
+         </a>
 
+// （中略）
+
+   <script>
+-    import { Router, Route} from '@riotjs/route'
++    import { Router, Route, route, toRegexp, match } from '@riotjs/route'
+
+     export default {
+       state: {
+-        pages
++        pages,
++        activePage: null
++      },
++      onBeforeMount() {
++        const anyRouteStream = route('(.*)')
++        anyRouteStream.on.value((path) => {
++          const activePage = pages.find(p => match(path.pathname, toRegexp(p.path)))
++          this.update({
++            activePage
++          })
++        })
+       },
 ```
+
+ちょっといきなり見慣れないコードがたくさん出てきましたが，こちらは別のテンプレート [SPA (Webpack)](https://github.com/riot/webpack-spa-template/blob/c7ba166986d8d800d5836db574e884bf9efda03e/src/app.riot#L59-L72) から拝借しました．
+
+要するに，**ルーティングのイベントが発火したのを検知し，そのパスを取得．`pages` 配列から一致するものを探す** という処理をしています．
+
+一致したもので `state.activePage` を更新し，`<nav>` の当該 `<a>` の class 属性に `active` を付与しています．
+
+:::details ほんの少しだけ解説
+
+`@riotjs/route` が export している関数屋プロパティは他にもいくつかありまして，その中の３つ [route](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L155), [toRegexp](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L94), [match](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L133) を利用していますが，これらはリンク先を見ても分かるように他のライブラリ [rawth](https://github.com/GianlucaGuarini/rawth) が export しているものになります．それぞれのメソッドの実装を見ますと
+
+* `route`: 新しいイベントストリームを作成．指定されたパスに関するルーティングのイベントを検知する．イベント検知のコアロジックは [erre](https://github.com/GianlucaGuarini/erre) というライブラリで，[RxJS](http://reactivex.io/rxjs/) 等にインスパイアされている模様
+* `toRegExp`: 第１引数に渡したパス（文字列）を正規表現に置換する（例：`/dashboard` -> `/^\/dashboard[\/#\?]?$/i`）．第２引数は正規表現のオプションの設定．詳しくは[こちら](/^\/dashboard[\/#\?]?$/i)
+* `match`: 第１引数にターゲットのパス（文字列），第２引数に正規表現の文字列を渡し，JavaScript 標準の `RegExp` インスタンスの [test](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) メソッドを実行する．正規表現と指定された文字列を照合するための検索する
+
+と言った感じです．余談ですが，上記のライブラリのソースコードを見てみると，エラーハンドリングのメソッドに `panic` という名前のメソッドが使われており，コアコミッターの方が `Golang` を使っているのかな，と推察できますね．
+:::
+
+## Not Found（404） ページを表示
+
+http://localhost:3000/hoge という URL にアクセスすると，「そんなパスはないよー」というエラーが発生すると思います．一般的には存在しないパスにアクセスした場合は，Not Found（404）というページを表示しますので，ここでも `not-found` というコンポーネントを用意し，表示させましょう．
+
+* `src/components/global/not-found/` ディレクトリ
+* `src/components/global/not-found/not-found.riot` ファイル
+* `src/components/global/not-found/not-found.spec.js` ファイル
+
+を作成後，`not-found.riot` に以下を記述してください．今回はもうスタイルも一緒に実装しちゃいます．
+
+```html
+<not-found>
+  <h1>Page not found</h1>
+  <a href="/">go back</a>
+
+  <style>
+    a {
+        padding: 1rem;
+        text-decoration: none;
+        margin-top: 10px;
+        display: inline-block;
+        background-color: #e8e8e8;
+        color: #3d3d3d;
+        border-radius: 4px;
+      }
+      a:hover {
+        color: white;
+        background-color: #42545C;
+      }
+  </style>
+</not-found>
+```
+
+続いて，`app.riot` にて存在しないルートへのアクセスがあった場合は `not-found` コンポーネントを表示させます．
+
+```diff
+         </nav>
+       </div>
+-      <route each={ page in state.pages } path={ page.path }>
+-        <main is={ page.componentName } id={ route.params.id } />
+-      </route>
++      <div if={ state.showNotFound }>
++        <not-found />
++      </div>
++      <div if={ !state.showNotFound }>
++        <route each={ page in state.pages } path={ page.path }>
++          <main is={ page.componentName } id={ route.params.id } />
++        </route>
++      </div>
+     </router>
++    <hr />
+     <messages />
+
+// （中略）
+
+     import Heroes from "@/components/global/heroes/heroes.riot";
+     import Messages from '@/components/global/messages/messages.riot';
+     import HeroDetail from "@/components/global/hero-detail/hero-detail.riot";
++    import NotFound from "@/components/global/not-found/not-found.riot";
+     import pages from "@/pages";
+
+// （中略）
+
+       state: {
+         pages,
+-        activePage: null
++        activePage: null,
++        showNotFound: false,
+       },
+       onBeforeMount() {
+         const anyRouteStream = route('(.*)')
+         anyRouteStream.on.value((path) => {
+           const activePage = pages.find(p => match(path.pathname, toRegexp(p.path)))
+           this.update({
+-            activePage
++            activePage,
++            showNotFound: !activePage
+           })
+         })
+       },
+```
+
+これで，`/hoge` など存在しないパスにアクセスすると，以下のように Not Found の文言が表示されます．
+
+![Not Found ページの表示](/images/books/riotjs_toh/06_not_found.png)
