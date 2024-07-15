@@ -9,8 +9,8 @@ summary: |-
 
   https://github.com/kkeeth/riot-toh-demo
 
-  * クレジット
-  このドキュメントは Google社の公式 Angular チュートリアル『Tour of Heroes』（https://angular.jp/tutorial）をベースにしており，Creative Commons Attribution 4.0 International (CC BY 4.0)ライセンスの下で提供されています（https://creativecommons.org/licenses/by/4.0/）．
+  参考元情報
+  このドキュメントは Google社が開発した JavaScript フレームワーク「Angular」の公式チュートリアル『Tour of Heroes』（https://angular.jp/tutorial）をベースにしており，Creative Commons Attribution 4.0 International (CC BY 4.0)ライセンスの下で提供されています（https://creativecommons.org/licenses/by/4.0/）．
   Riot.js への書き換えやその他の変更は kkeeth（Kuwahara KEETH Kiyohito） によって行われました．
 
 topics: ["riotjs", "ToH", "tutorial"]
