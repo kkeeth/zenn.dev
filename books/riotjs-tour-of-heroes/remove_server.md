@@ -1,5 +1,5 @@
 ---
-title: "発展① TypeScript"
+title: "Chapter7 サーバーからデータの取得"
 ---
 
 # 🚧 　こちらは現在作成途中 🚧

@@ -19,4 +19,6 @@ chapters:
   - heroes_detail
   - services
   - dashboard
-  - advance_typescript
+  - remote_server
+  - unit_test
+  - using_vite
