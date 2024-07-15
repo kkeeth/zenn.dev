@@ -10,13 +10,13 @@ summary: |-
   https://github.com/kkeeth/riot-toh-demo
 
 topics: ["riotjs", "ToH", "tutorial"]
-published: false
+published: public
 price: 0 # 有料の場合200〜5000
 chapters:
   - environment
   - hero_component
   - show_list
-  - heroes_detail
+  - hero_detail
   - services
   - dashboard
   - remote_server
