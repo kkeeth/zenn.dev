@@ -16,7 +16,7 @@ published: true
 
 @[codepen](https://codepen.io/kuwahara_jsri/pen/wvgNwvx)
 
-ご覧いただくと分かるように，`border, padding, border` をすべて 0 で初期化したとしても，余白が設定されていることが分かるかと思います．この余白を消す方法の一つとして，今回は `<button>` タグを `<div>` タグでラップし `display: flex` を付けて対処しました．
+ご覧いただくと分かるように，`border, padding` を 0 で初期化したとしても，余白が設定されていることが分かるかと思います．この余白を消す方法の一つとして，今回は `<button>` タグを `<div>` タグでラップし `display: flex` を付けて対処しました．
 
 ## 各ブラウザ毎の挙動
 
