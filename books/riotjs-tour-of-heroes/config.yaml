@@ -27,5 +27,4 @@ chapters:
   - services
   - dashboard
   - remote_server
-  - unit_test
-  - using_vite
+  - development
