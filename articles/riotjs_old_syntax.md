@@ -6,7 +6,7 @@ topics: ['riotjs', 'JavaScript', 'update']
 published: true
 ---
 
-つい先日 [Riot.js(以下、riot)](https://riot.js.org) のバージョン v5.2.0 がリリースされました ❗ このバージョンのリリースは riot 界隈でちょっと話題になっており、今回はこのアップデートについて書き残していきます。
+つい先日 [Riot.js(以下、riot)](https://riot.js.org) のバージョン v5.2.0 がリリースされました ❗ このバージョンのリリースは riot 界隈でちょっと話題になっており、今回はこのアップデートについて書き残します。
 
 https://twitter.com/riotjs_/status/1355974386721943554?s=20
 
@@ -27,14 +27,14 @@ https://twitter.com/riotjs_/status/1355974386721943554?s=20
 
   <script>
     this.onBeforeMount = () => {
-      this.state.message = 'Hello'
-    }
+      this.state.message = 'Hello';
+    };
 
     this.onClick = () => {
       this.update({
         message: 'Goodbye',
-      })
-    }
+      });
+    };
   </script>
 </old-syntax>
 ```
@@ -49,14 +49,14 @@ https://twitter.com/riotjs_/status/1355974386721943554?s=20
   <script>
     export default {
       onBeforeMount() {
-        this.state.message = 'Hello'
+        this.state.message = 'Hello';
       },
       onClick() {
         this.update({
           message: 'Goodbye',
-        })
+        });
       },
-    }
+    };
   </script>
 </current-syntax>
 ```
@@ -68,12 +68,12 @@ https://twitter.com/riotjs_/status/1355974386721943554?s=20
 まずは３つの引数 `opts, props, state` の確認から。以下のコードにて確認しましたところ、`props, state` は問題なく動作しましたが、`opts` はエラーになったため、やはり使えないようです。
 
 ```javascript
-console.log(opts) // opts is not defined
+console.log(opts); // opts is not defined
 
 this.onBeforeMount = (props, state) => {
-  console.log(props) // {title: "Old Syntax Demo"}
-  state.message = 'Hello'
-}
+  console.log(props); // {title: "Old Syntax Demo"}
+  state.message = 'Hello';
+};
 ```
 
 ## ライフサイクルメソッドの書き方
@@ -85,14 +85,14 @@ this.onBeforeMount = (props, state) => {
 this.onMounted = () => {
   this.update({
     message: 'Bye',
-  })
-}
+  });
+};
 
 // NG
 // SyntaxError: Unexpected token
 this.on('mount', () => {
-  console.log(this)
-})
+  console.log(this);
+});
 ```
 
 ## script タグの省略
@@ -105,15 +105,8 @@ this.on('mount', () => {
   <button onclick="{onClick}">Click Me</button>
 
   <!-- error -->
-  this.onBeforeMount = () => {
-    this.state.message = 'Hello'
-  }
-
-  this.onClick = () => {
-    this.update({
-      message: 'Goodbye'
-    })
-  }
+  this.onBeforeMount = () => { this.state.message = 'Hello' } this.onClick = ()
+  => { this.update({ message: 'Goodbye' }) }
 </old-syntax>
 ```
 

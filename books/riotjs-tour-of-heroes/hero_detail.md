@@ -1,5 +1,5 @@
 ---
-title: "Chapter4 フィーチャーコンポーネントの作成"
+title: 'Chapter4 フィーチャーコンポーネントの作成'
 ---
 
 今回はリファクタリングの回となります．機能としては前回のものから何も真新しいものはなく，動作も全く同じですが，コンポーネント単位でファイルを分割することで保守性・拡張性の向上が望めます．
@@ -8,7 +8,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 # hero-detail コンポーネントを作成する
 
-それではまずはヒーローの詳細を表示するためのコンポーネントと，それを格納するディレクトリを作成していきます．具体的には以下です．
+それではまずはヒーローの詳細を表示するためのコンポーネントと，それを格納するディレクトリを作成します．具体的には以下です．
 ※`spec.js` ファイルはテスト用ファイルですが，後の回にて説明しますので，一旦空ファイルのままで良いです．
 
 - `src/components/heroes/hero-detail` ディレクトリ
@@ -19,7 +19,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 ## template を記述する
 
-では `hero-detail.riot` ファイルに追記していきます．こちらは既存の `heroes.riot` ファイルのヒーローの詳細を表示する部分を丸っと持っていきます．
+では `hero-detail.riot` ファイルに追記します．こちらは既存の `heroes.riot` ファイルのヒーローの詳細を表示する部分を丸っと持っていきます．
 
 **heroes.riot**
 
@@ -49,19 +49,21 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 ```html
 <hero-detail>
-  <div if={ selectedHero.id }>
+  <div if="{" selectedHero.id }>
     <h2>{ selectedHero.name.toUpperCase() } Details</h2>
-    <div>
-      <span>id: </span>{ selectedHero.id }
-    </div>
+    <div><span>id: </span>{ selectedHero.id }</div>
     <div>
       <label for="hero-name">Hero name:</label>
       <input
         id="hero-name"
         type="text"
-        value={ selectedHero.name }
+        value="{"
+        selectedHero.name
+        }
         placeholder="name"
-        oninput={ handleInput }
+        oninput="{"
+        handleInput
+        }
       />
     </div>
   </div>
@@ -81,7 +83,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 # hero-detail コンポーネントを表示する
 
-それでは作成した `hero-detail` コンポーネントを表示していきましょう．`heroes` コンポーネントにて，`hero-detail` コンポーネントを読み込み，配置します．
+それでは作成した `hero-detail` コンポーネントを表示しましょう．`heroes` コンポーネントにて，`hero-detail` コンポーネントを読み込み，配置します．
 
 ```diff
      </li>
@@ -89,8 +91,8 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 +  <hero-detail hero={ selectedHero } />
 
    <script>
-     import { HEROES } from '../../../mock-heroes';
-+    import HeroDetail from '../hero-detail/hero-detail.riot';
+     import { HEROES } from './mock-heroes';
++    import HeroDetail from "@components/hero-detail/hero-detail.riot";
 ```
 
 読み込みと一緒に，`hero` というキーで `props` として選択した `selectedHero` オブジェクトを渡しています．ここまでできますと，画面からも選択したヒーローの詳細情報が表示されるようになります．
@@ -99,7 +101,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 
 ヒーローの詳細を表示はできましたが，現状では `name` のテキストボックスを変更しても画面には反映されません．
 
-というのも，`hero-detail` コンポーネントの 11 行目で `oninput` イベントハンドラとして `handleInput` というハンドラをセットしていますが，こちらのハンドラは元々 `heroes` コンポーネントで生成しており，これを `hero-detail` コンポーネントに渡せていないので，こちらを修正していきましょう．
+というのも，`hero-detail` コンポーネントの 11 行目で `oninput` イベントハンドラとして `handleInput` というハンドラをセットしていますが，こちらのハンドラは元々 `heroes` コンポーネントで生成しており，これを `hero-detail` コンポーネントに渡せていないので，こちらを修正しましょう．
 
 **hero-detail.riot**
 
@@ -121,7 +123,7 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
 +  <hero-detail hero={ selectedHero } handle-input={ handleInput } />
 
    <script>
-     import { HEROES } from '../../../mock-heroes';
+     import { HEROES } from './mock-heroes';
 
      (中略)
 
@@ -136,13 +138,13 @@ title: "Chapter4 フィーチャーコンポーネントの作成"
      },
 ```
 
-入力したヒーローの名前を `hero-detail` コンポーネントにて更新するだけなら `handleInput` の変更は不要ですが，ヒーローリストの名前の部分にも適用させたいので，上記のように `this.heroes` を走査して合致するヒーローの名前を更新しました💁
+入力したヒーローの名前を `hero-detail` コンポーネントにて更新するだけなら `handleInput` の変更は不要ですが，ヒーローリストの名前の部分にも適用させたいので，上記のように `this.heroes` を走査して合致するヒーローの名前を更新しました 💁
 
 ここまでできましたら入力フォームの値を自由に変更すると，タイトルの部分と上部のリストの名前も同時に変更されるかと思いますのでご確認ください．
 
 ![詳細と一覧のヒーローの名前を変更](https://storage.googleapis.com/zenn-user-upload/773a9e71989b-20240709.png)
 
-最後にスタイルを微調整します💁
+最後にスタイルを微調整します 💁
 
 ```diff
     </script>

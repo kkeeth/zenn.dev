@@ -1,8 +1,8 @@
 ---
-title: "Chapter3 リストの表示"
+title: 'Chapter3 リストの表示'
 ---
 
-今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装していきます．
+今回は複数人のヒーローをリストで表示しつつ，クリックすると ID・名前が表示される様に実装します．
 
 では今回もやっていきましょう！
 
@@ -18,20 +18,20 @@ title: "Chapter3 リストの表示"
 
 ## ヒーローのモックを作成する
 
-まずはチュートリアルで用意されているデータを利用させていただきます．今回は構成はあまり考えず `src/components/global/heroes` ディレクトリ下に `mock-heroes.js` ファイルを生成し，以下を追記します．
+まずはチュートリアルで用意されているデータを利用させていただきます．今回は構成はあまり考えず `src/components/heroes` ディレクトリ下に `mock-heroes.js` ファイルを生成し，以下を追記します．
 
 ```js
 export const HEROES = [
-  { id: 11, name: "Dr Nice" },
-  { id: 12, name: "Narco" },
-  { id: 13, name: "Bombasto" },
-  { id: 14, name: "Celeritas" },
-  { id: 15, name: "Magneta" },
-  { id: 16, name: "RubberMan" },
-  { id: 17, name: "Dynama" },
-  { id: 18, name: "Dr IQ" },
-  { id: 19, name: "Magma" },
-  { id: 20, name: "Tornado" },
+  { id: 11, name: 'Dr Nice' },
+  { id: 12, name: 'Narco' },
+  { id: 13, name: 'Bombasto' },
+  { id: 14, name: 'Celeritas' },
+  { id: 15, name: 'Magneta' },
+  { id: 16, name: 'RubberMan' },
+  { id: 17, name: 'Dynama' },
+  { id: 18, name: 'Dr IQ' },
+  { id: 19, name: 'Magma' },
+  { id: 20, name: 'Tornado' },
 ];
 ```
 
@@ -39,7 +39,7 @@ export const HEROES = [
 
 ## ヒーローを表示する
 
-では上記で作成したモックデータを読み込みます．`src/components/global/heroes.riot` ファイルに以下を追記してください．
+では上記で作成したモックデータを読み込みます．`src/components/heroes.riot` ファイルに以下を追記してください．
 
 ```diff
    <script>
@@ -59,7 +59,7 @@ export const HEROES = [
 
 ![](https://storage.googleapis.com/zenn-user-upload/s9yz51ykh0ql8rukmw6cq1wsp7cd)
 
-モックデータが読み込めていることを確認できましたので，一覧表示していきましょう！同ファイルを以下のように変更してください．
+モックデータが読み込めていることを確認できましたので，一覧表示しましょう！同ファイルを以下のように変更してください．
 
 ```diff
  <heroes>
@@ -79,7 +79,7 @@ export const HEROES = [
 ...(中略)
 
    <script>
-     import { HEROES } from '../../../mock-heroes';
+     import { HEROES } from './mock-heroes';
 -    console.log(HEROES);
 ```
 
@@ -210,22 +210,19 @@ export const HEROES = [
 `Angular` では以下のように，クリックイベントのバインディングに指定する関数の引数に任意の値を指定できます．
 
 ```html
-<button type="button" (click)="onSelect(hero)">
+<button type="button" (click)="onSelect(hero)"></button>
 ```
 
 これを riot でも同様なコードを書いたとします．
 
 ```html
-<button
-  type="button"
-  onclick={ handleSelect(hero) }
->
+<button type="button" onclick="{" handleSelect(hero) }></button>
 ```
 
 **これを実行するとエラーになってしまいます．** Riot はイベントのバインディングに指定する関数を `hoge(fuga)` のように書いてしまうと，**初期レンダリングの際に関数を評価・実行してしまう** からです．したがって，ちょっとテクニカルにはなってしまいますが，
 
 ```js
-e.target.closest('button').data
+e.target.closest('button').data;
 ```
 
 のように，クリックイベント時のイベントオブジェクトのターゲットに最も近い `<button>` タグにアクセスし，その属性に指定されている `data` にアクセスすることで選択した `hero` を取得しています．
@@ -234,7 +231,7 @@ e.target.closest('button').data
 
 ## 詳細セクションを更新する
 
-次は選択したヒーローの詳細をリファクタリングしていきましょう．今まで使用してきた `hero` 変数を `selectedHero` に変更します．画面描画時は何も選択されていないので初期値は `{}` とします．
+次は選択したヒーローの詳細をリファクタリングしましょう．今まで使用してきた `hero` 変数を `selectedHero` に変更します．画面描画時は何も選択されていないので初期値は `{}` とします．
 
 ```diff
    </ul>

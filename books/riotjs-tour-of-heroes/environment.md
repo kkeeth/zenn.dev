@@ -1,5 +1,5 @@
 ---
-title: "Chapter1 新規プロジェクトの作成"
+title: 'Chapter1 新規プロジェクトの作成'
 ---
 
 [Riot.js](https://riot.js.org/)（以下，riot）は非常にシンプルかつ軽量で入門の敷居も低く，とても書きやすいコンポーネント指向の UI ライブラリです．
@@ -66,7 +66,6 @@ Is this OK? (yes) y
 
 以上で雛形の作成は完了です.
 
-
 # アプリケーションを起動
 
 プロジェクトの新規作成が終わりましたので，アプリケーションを起動してみたいと思いますが，その前に必要なモジュールをインストールする必要があります．以下のコマンドを実行してください.
@@ -78,7 +77,7 @@ $ npm install
 $ pnpm install
 ```
 
-※これ以降筆者は `npm` コマンドで統一していきますので，`pnpm` 等，他のものをご利用の方は適宜読み替えてください．`lock` ファイルも同様です．
+※これ以降筆者は `npm` コマンドで統一しますので，`pnpm` 等，他のものをご利用の方は適宜読み替えてください．`lock` ファイルも同様です．
 
 インストールが完了しましたら，いよいよ起動してみます．以下のコマンドを実行してください.
 
@@ -140,7 +139,7 @@ $ npm run start
 
 :::details ress を用いた CSS リセット
 
-もし riot で　CSS リセットライブラリを使う場合の方法を以下に記載しておきます．今回は [ress](https://github.com/filipelinhares/ress) を利用します．
+もし riot で　 CSS リセットライブラリを使う場合の方法を以下に記載しておきます．今回は [ress](https://github.com/filipelinhares/ress) を利用します．
 
 ```bash
 $ npm install -D ress
@@ -231,7 +230,6 @@ $ npm install -D ress
 
 ![ベーススタイル設定後](/images/books/riotjs_toh/01_completed.png)
 
-
 # `webpack` のエイリアスを設定
 
 ファイルの `import` を相対パスで記述することも可能ですが，ドキュメントルートや今回のように `src` フォルダをベースとしてパスを指定したい，というオーダーもあると思います．
@@ -250,7 +248,9 @@ $ npm install -D ress
 
 +  resolve: {
 +    alias: {
-+      '@': path.resolve(__dirname, 'src')
++      '@': path.resolve(__dirname, 'src'),
++      '@components': path.resolve(__dirname, 'src/components/global'),
++      '@services': path.resolve(__dirname, 'src/services'),
 +    }
 +  },
    module: {
@@ -261,7 +261,18 @@ $ npm install -D ress
 これにより，今後は
 
 ```js
-import hoge from "@/components/hoge.riot";
+import hoge from '@components/hoge.riot';
 ```
 
-のように書くことができますし，この書籍でも利用していきますので，是非設定してください．以上で Chapter1「新規プロジェクトの作成」は完了です！
+のように書くことができますし，この書籍でも利用しますので，是非設定してください．ついでに `src/index.js` の中も変更してしまいましょう！
+
+```diff
+- import "./style.css";
++ import "@/style.css";
+  import "@riotjs/hot-reload";
+  import { mount } from "riot";
+- import registerGlobalComponents from "./register-global-components.js";
++ import registerGlobalComponents from "@/register-global-components.js";
+```
+
+以上で Chapter1「新規プロジェクトの作成」は完了です！何かわからないことがあれば，遠慮なくコメントしてください！

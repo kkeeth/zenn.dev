@@ -1,8 +1,8 @@
 ---
-title: "Chapter6 ナビゲーションの追加"
+title: 'Chapter6 ナビゲーションの追加'
 ---
 
-ここまでの実装で，アプリケーションとしては一通り実装はできています．しかし全体構造として，1画面にすべてのコンポーネントがレンダリングされ，DOMとしては存在している状態です．ヒーローズビューとダッシュボードビューの間で行き来できる用拡張することで，選択したヒーローの詳細ビューを表示できます．
+ここまでの実装で，アプリケーションとしては一通り実装はできています．しかし全体構造として，1 画面にすべてのコンポーネントがレンダリングされ，DOM としては存在している状態です．ヒーローズビューとダッシュボードビューの間で行き来できる用拡張することで，選択したヒーローの詳細ビューを表示できます．
 
 それではやっていきましょう！
 
@@ -16,7 +16,7 @@ title: "Chapter6 ナビゲーションの追加"
 
 ## `@riotjs/route` の導入とルーティングの設定
 
-これを実現するためには，ルーティングの機構を導入する必要があります．riot では `@riotjs/route` というコアライブラリが有りますので，こちらをインストールしていきます．
+これを実現するためには，ルーティングの機構を導入する必要があります．riot では `@riotjs/route` というコアライブラリが有りますので，こちらをインストールします．
 
 ```bash
 $ npm install -S @riotjs/route
@@ -32,7 +32,7 @@ $ npm ls --depth=0
 コマンドから `@riotjs/route` がないかご確認ください．
 :::
 
-インストールできましたら，実際に `app.riot` に組み込んでいきましょう🙋‍♂
+インストールできましたら，実際に `app.riot` に組み込んでいきましょう 🙋‍♂
 
 ```diff
   <div class="container">
@@ -48,8 +48,8 @@ $ npm ls --depth=0
 
   <script>
 +   import { Router, Route, route, toRegexp, match } from '@riotjs/route'
-    import Heroes from "@/components/global/heroes/heroes.riot";
-    import Messages from '@/components/global/messages/messages.riot';
+    import Heroes from "@components/heroes/heroes.riot";
+    import Messages from '@components/messages/messages.riot';
 
 +   export default {
 +     components: {
@@ -62,10 +62,10 @@ $ npm ls --depth=0
 
 詳しい使い方は [`@riotjs/route`](https://github.com/riot/route) 公式の README にお譲りするとして，インポートした `Router, Route` コンポーネントを使ってルーティングの機構を組み込んでいます．
 
-* `Router`: このコンポーネント内のリンククリックを自動的に検知し， `riotjs/router` のルートイベントを発火させる．コンポーネント外はブラウザ標準のリンクとなる
-* `Route`: 子コンポーネントで URL パラメータとクエリを検出できるようにする．`path` で指定した文字列（正規表現で指定も可）と URL のパスが一致したものがレンダリングされる
+- `Router`: このコンポーネント内のリンククリックを自動的に検知し， `riotjs/router` のルートイベントを発火させる．コンポーネント外はブラウザ標準のリンクとなる
+- `Route`: 子コンポーネントで URL パラメータとクエリを検出できるようにする．`path` で指定した文字列（正規表現で指定も可）と URL のパスが一致したものがレンダリングされる
 
-上記の実装だと，`/` の場合 `heroes` コンポーネントがレンダリングされます．これを，`/heroes` にアクセスしたときに `heroes` コンポーネントがレンダリングされること，ナビゲーションリンクも実装していきましょう．
+上記の実装だと，`/` の場合 `heroes` コンポーネントがレンダリングされます．これを，`/heroes` にアクセスしたときに `heroes` コンポーネントがレンダリングされること，ナビゲーションリンクも実装しましょう．
 
 ```diff
   <div class="container">
@@ -91,9 +91,9 @@ $ npm ls --depth=0
 
 まずは必要なフォルダとファイルを作ります．
 
-* `src/components/global/dashboard/`
-* `src/components/global/dashboard/dashboard.riot`
-* `src/components/global/dashboard/dashboard.spec.js`
+- `src/components/dashboard/`
+- `src/components/dashboard/dashboard.riot`
+- `src/components/dashboard/dashboard.spec.js`
 
 作成できましたら，今まで通り `.spec.js` ファイルは後回しにして，`.riot` ファイルの方に以下を追記してください．
 
@@ -101,13 +101,11 @@ $ npm ls --depth=0
 <dashboard>
   <h2>Top Heroes</h2>
   <div class="heroes-menu">
-    <a each={ hero in heroes }>
-      { hero.name }
-    </a>
+    <a each="{" hero in heroes }> { hero.name } </a>
   </div>
 
   <script>
-    import heroService from "@/services/hero.service";
+    import heroService from '@services/hero.service';
 
     export default {
       heroes: [],
@@ -116,8 +114,8 @@ $ npm ls --depth=0
           this.heroes = heroes.slice(1, 5);
         });
         heroService.getHeroes();
-      }
-    }
+      },
+    };
   </script>
 </dashboard>
 ```
@@ -180,11 +178,11 @@ $ npm ls --depth=0
 +     }
 +   </style>
   </app>
- ```
+```
 
- すると，以下のような見た目になっているはずです．
+すると，以下のような見た目になっているはずです．
 
- ![ナビゲーションのスタイリング後](/images/books/riotjs_toh/06_styled_navigation.png)
+![ナビゲーションのスタイリング後](/images/books/riotjs_toh/06_styled_navigation.png)
 
 ## `dashboard` コンポーネントのスタイリング
 
@@ -254,11 +252,11 @@ $ npm ls --depth=0
 
 # ヒーローの詳細へ遷移
 
-選択したヒーローの詳細情報を表示する `hero-detail` コンポーネントは，現状ユーザーは3つの方法でアクセスできるべきです．
+選択したヒーローの詳細情報を表示する `hero-detail` コンポーネントは，現状ユーザーは 3 つの方法でアクセスできるべきです．
 
-* ダッシュボードのヒーローをクリック
-* ヒーローリストのヒーローをクリック
-* 表示するヒーローを識別するブラウザのアドレスバーに"ディープリンク"URLを貼り付ける
+- ダッシュボードのヒーローをクリック
+- ヒーローリストのヒーローをクリック
+- 表示するヒーローを識別するブラウザのアドレスバーに"ディープリンク"URL を貼り付ける
 
 これを実現し，`hero-detail` コンポーネントを `heroes` コンポーネントから独立させます．
 
@@ -272,9 +270,9 @@ $ npm ls --depth=0
 -  <hero-detail hero={ selectedHero } handle-input={ handleInput } />
 -
    <script>
-     import heroService from '@/services/hero.service';
-     import messageService from '@/services/message.service';
--    import HeroDetail from '@/components/global/hero-detail/hero-detail.riot';
+     import heroService from '@services/hero.service';
+     import messageService from '@services/message.service';
+-    import HeroDetail from '@components/hero-detail/hero-detail.riot';
 
      export default {
        // （中略）
@@ -311,7 +309,6 @@ $ npm ls --depth=0
      };
 ```
 
-
 ## `hero-detail` ルートを追加する
 
 `~/hero-detail/13` などの URL でアクセスすると，ID が 13 のヒーローの詳細が表示されるように，ルートを追加します．`app.riot` を以下のように変更してください．
@@ -328,14 +325,13 @@ $ npm ls --depth=0
 // （中略）
 
   <script>
-    import Heroes from "@/components/global/heroes/heroes.riot";
-    import Messages from '@/components/global/messages/messages.riot';
-+   import HeroDetail from "@/components/global/hero-detail/hero-detail.riot";
+    import Heroes from "@components/heroes/heroes.riot";
+    import Messages from '@components/messages/messages.riot';
++   import HeroDetail from "@components/hero-detail/hero-detail.riot";
     import { Router, Route, route, toRegexp, match } from '@riotjs/route'
 ```
 
 一旦こちらで設定は完了です．
-
 
 ## `dashboard`, `heroes` コンポーネントのヒーローのリンク
 
@@ -387,15 +383,15 @@ $ npm ls --depth=0
 }
 
 .heroes li:hover {
-  left: .1em;
+  left: 0.1em;
 }
 
 .heroes a {
   color: #333;
   text-decoration: none;
-  background-color: #EEE;
-  margin: .5em;
-  padding: .3em 0;
+  background-color: #eee;
+  margin: 0.5em;
+  padding: 0.3em 0;
   height: 1.6em;
   border-radius: 4px;
   display: block;
@@ -425,7 +421,7 @@ $ npm ls --depth=0
   height: 1.8em;
   min-width: 16px;
   text-align: right;
-  margin-right: .8em;
+  margin-right: 0.8em;
   border-radius: 4px 0 0 4px;
 }
 ```
@@ -436,8 +432,8 @@ $ npm ls --depth=0
 
 ```diff
   <script>
-    import heroService from '@/services/hero.service';
--   import messageService from '@/services/message.service';
+    import heroService from '@services/hero.service';
+-   import messageService from '@services/message.service';
 
     export default {
       heroes: [],
@@ -468,7 +464,7 @@ $ npm ls --depth=0
 
 ```diff
    <script>
-+    import heroService from '@/services/hero.service';
++    import heroService from '@services/hero.service';
 +
      export default {
        selectedHero: {},
@@ -510,7 +506,7 @@ $ npm ls --depth=0
 
 今回は引数に `id` を受け取り，`HEROES` 配列からその ID と合致するヒーローのデータをフィルタリングし，observable のイベントトリガーで渡しています．
 
-実際のアプリケーションでは，`id` を指定して取得する API のエンドポイントが用意されていると思いますので，上記のようなフィルタリング処理は不要かもしれませんね💁
+実際のアプリケーションでは，`id` を指定して取得する API のエンドポイントが用意されていると思いますので，上記のようなフィルタリング処理は不要かもしれませんね 💁
 
 ## 戻るボタンの追加
 
@@ -553,7 +549,7 @@ label {
 }
 input {
   font-size: 1em;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 button {
   margin-top: 20px;
@@ -583,7 +579,6 @@ button:disabled {
 **ヒーロー詳細**
 ![実装完了（ヒーロー詳細）](/images/books/riotjs_toh/06_completed_hero-detail.png)
 
-
 # 諸々のリファクタリング
 
 本章で実装したかったことは完了ですが，後は全体的なリファクタリングをしたいと思います．
@@ -597,27 +592,27 @@ button:disabled {
 ```js
 export default [
   {
-    path: "/",
-    label: "Dashboard",
-    componentName: "dashboard",
-    nav: false
+    path: '/',
+    label: 'Dashboard',
+    componentName: 'dashboard',
+    nav: false,
   },
   {
-    path: "/dashboard",
-    label: "Dashboard",
-    componentName: "dashboard",
+    path: '/dashboard',
+    label: 'Dashboard',
+    componentName: 'dashboard',
     nav: true,
   },
   {
-    path: "/heroes",
-    label: "Heroes",
-    componentName: "heroes",
+    path: '/heroes',
+    label: 'Heroes',
+    componentName: 'heroes',
     nav: true,
   },
   {
-    path: "/hero-detail/:id",
-    label: "HeroDetail",
-    componentName: "hero-detail",
+    path: '/hero-detail/:id',
+    label: 'HeroDetail',
+    componentName: 'hero-detail',
     nav: false,
   },
 ];
@@ -656,7 +651,7 @@ export default [
 
 ## active なコンポーネントの明示
 
-現状ですと，ナビゲーションのどちらをクリックしたのかが画面からは判断がつきますが，ナビゲーション自体からは分かりにくいため，こちらを修正していきます（※ こちらは Angular のチュートリアルにはないものです）．`app.riot` を以下のように修正してください．
+現状ですと，ナビゲーションのどちらをクリックしたのかが画面からは判断がつきますが，ナビゲーション自体からは分かりにくいため，こちらを修正します（※ こちらは Angular のチュートリアルにはないものです）．`app.riot` を以下のように修正してください．
 
 ```diff
          <a
@@ -701,9 +696,9 @@ export default [
 
 `@riotjs/route` が export している関数屋プロパティは他にもいくつかありまして，その中の３つ [route](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L155), [toRegexp](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L94), [match](https://github.com/GianlucaGuarini/rawth/blob/70cc9605a88d9515f3dc92527abf927fed8942af/index.next.js#L133) を利用していますが，これらはリンク先を見ても分かるように他のライブラリ [rawth](https://github.com/GianlucaGuarini/rawth) が export しているものになります．それぞれのメソッドの実装を見ますと
 
-* `route`: 新しいイベントストリームを作成．指定されたパスに関するルーティングのイベントを検知する．イベント検知のコアロジックは [erre](https://github.com/GianlucaGuarini/erre) というライブラリで，[RxJS](http://reactivex.io/rxjs/) 等にインスパイアされている模様
-* `toRegExp`: 第１引数に渡したパス（文字列）を正規表現に置換する（例：`/dashboard` -> `/^\/dashboard[\/#\?]?$/i`）．第２引数は正規表現のオプションの設定．詳しくは[こちら](/^\/dashboard[\/#\?]?$/i)
-* `match`: 第１引数にターゲットのパス（文字列），第２引数に正規表現の文字列を渡し，JavaScript 標準の `RegExp` インスタンスの [test](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) メソッドを実行する．正規表現と指定された文字列を照合するための検索する
+- `route`: 新しいイベントストリームを作成．指定されたパスに関するルーティングのイベントを検知する．イベント検知のコアロジックは [erre](https://github.com/GianlucaGuarini/erre) というライブラリで，[RxJS](http://reactivex.io/rxjs/) 等にインスパイアされている模様
+- `toRegExp`: 第１引数に渡したパス（文字列）を正規表現に置換する（例：`/dashboard` -> `/^\/dashboard[\/#\?]?$/i`）．第２引数は正規表現のオプションの設定．詳しくは[こちら](/^/dashboard[/#?]?$/i)
+- `match`: 第１引数にターゲットのパス（文字列），第２引数に正規表現の文字列を渡し，JavaScript 標準の `RegExp` インスタンスの [test](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) メソッドを実行する．正規表現と指定された文字列を照合するための検索する
 
 と言った感じです．余談ですが，上記のライブラリのソースコードを見てみると，エラーハンドリングのメソッドに `panic` という名前のメソッドが使われており，コアコミッターの方が `Golang` を使っているのかな，と推察できますね．
 :::
@@ -712,9 +707,9 @@ export default [
 
 http://localhost:3000/hoge という URL にアクセスすると，「そんなパスはないよー」というエラーが発生すると思います．一般的には存在しないパスにアクセスした場合は，Not Found（404）というページを表示しますので，ここでも `not-found` というコンポーネントを用意し，表示させましょう．
 
-* `src/components/global/not-found/` ディレクトリ
-* `src/components/global/not-found/not-found.riot` ファイル
-* `src/components/global/not-found/not-found.spec.js` ファイル
+- `src/components/not-found/` ディレクトリ
+- `src/components/not-found/not-found.riot` ファイル
+- `src/components/not-found/not-found.spec.js` ファイル
 
 を作成後，`not-found.riot` に以下を記述してください．今回はもうスタイルも一緒に実装しちゃいます．
 
@@ -725,18 +720,18 @@ http://localhost:3000/hoge という URL にアクセスすると，「そんな
 
   <style>
     a {
-        padding: 1rem;
-        text-decoration: none;
-        margin-top: 10px;
-        display: inline-block;
-        background-color: #e8e8e8;
-        color: #3d3d3d;
-        border-radius: 4px;
-      }
-      a:hover {
-        color: white;
-        background-color: #42545C;
-      }
+      padding: 1rem;
+      text-decoration: none;
+      margin-top: 10px;
+      display: inline-block;
+      background-color: #e8e8e8;
+      color: #3d3d3d;
+      border-radius: 4px;
+    }
+    a:hover {
+      color: white;
+      background-color: #42545c;
+    }
   </style>
 </not-found>
 ```
@@ -763,10 +758,10 @@ http://localhost:3000/hoge という URL にアクセスすると，「そんな
 
 // （中略）
 
-     import Heroes from "@/components/global/heroes/heroes.riot";
-     import Messages from '@/components/global/messages/messages.riot';
-     import HeroDetail from "@/components/global/hero-detail/hero-detail.riot";
-+    import NotFound from "@/components/global/not-found/not-found.riot";
+     import Heroes from "@components/heroes/heroes.riot";
+     import Messages from '@components/messages/messages.riot';
+     import HeroDetail from "@components/hero-detail/hero-detail.riot";
++    import NotFound from "@components/not-found/not-found.riot";
      import pages from "@/pages";
 
 // （中略）
@@ -793,3 +788,5 @@ http://localhost:3000/hoge という URL にアクセスすると，「そんな
 これで，`/hoge` など存在しないパスにアクセスすると，以下のように Not Found の文言が表示されます．
 
 ![Not Found ページの表示](/images/books/riotjs_toh/06_not_found.png)
+
+以上で Chapter6「ナビゲーションの追加」は完了です．何かわからないことがあれば，遠慮なくコメントしてください！

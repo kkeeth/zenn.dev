@@ -41,23 +41,23 @@ https://github.com/riot/examples/tree/gh-pages/typescript
     The riot compiler will ignore it
   -->
   <script lang="ts">
-    import { withTypes, RiotComponent } from 'riot'
+    import { withTypes, RiotComponent } from 'riot';
 
     export type MyComponentProps = {
-      username: string
-    }
+      username: string;
+    };
 
     export type MyComponentState = {
-      message: string
-    }
+      message: string;
+    };
 
-    export type MyComponent = RiotComponent<MyComponentProps, MyComponentState>
+    export type MyComponent = RiotComponent<MyComponentProps, MyComponentState>;
 
     export default withTypes<MyComponent>({
       state: {
         message: 'hello',
       },
-    })
+    });
   </script>
 </my-component>
 ```
@@ -144,7 +144,7 @@ OK．ちゃんと動いていますね．
 
 ## TypeScript を導入
 
-では次に `TypeScript` を導入していきますが，[公式サンプル](https://github.com/riot/examples/tree/gh-pages/typescript)を参考に作成していきましょう．
+では次に `TypeScript` を導入しますが，[公式サンプル](https://github.com/riot/examples/tree/gh-pages/typescript)を参考に作成しましょう．
 まずは必要なモジュールをインストールします．ついでに `eslint` も入れておきます．
 
 ```bash

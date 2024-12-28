@@ -1,8 +1,8 @@
 ---
-title: "Chapter5 データ取得用のサービスの作成"
+title: 'Chapter5 データ取得用のサービスの作成'
 ---
 
-今回は Angular フレームワークに備わっている Service という機能に相当するコンポーネントと，メッセージを表示するコンポーネントを作成していきます．
+今回は Angular フレームワークに備わっている Service という機能に相当するコンポーネントと，メッセージを表示するコンポーネントを作成します．
 
 では今回もやっていきましょう！
 
@@ -23,12 +23,12 @@ title: "Chapter5 データ取得用のサービスの作成"
 
 ## ヒーローデータの取得
 
-では，現在 `heroes` コンポーネントで取得しているヒーローデータを `hero.service` で取得するように変更していきます．
+では，現在 `heroes` コンポーネントで取得しているヒーローデータを `hero.service` で取得するように変更します．
 
-まず `hero.service.js` ファイルにて `HEROES` 配列を読み込み，コール元にレスポンスするメソッド `getHeroes()` を定義します．
+まず `mock-heroes.js` ファイルを `src/services` ディレクトリに移動させ，`hero.service.js` ファイルにて `HEROES` 配列を読み込み，コール元にレスポンスするメソッド `getHeroes()` を定義します．
 
 ```js
-import { HEROES } from "@/components/global/heroes/mock-heroes";
+import { HEROES } from '@services/heroes/mock-heroes';
 
 export const getHeroes = () => {
   return HEROES;
@@ -40,9 +40,9 @@ export const getHeroes = () => {
 ```diff
 
   <script>
--   import { HEROES } from "../mock-heroes";
-+   import { getHeroes } from '@/services/hero.service';
-    import HeroDetail from '../hero-detail/hero-detail.riot';
+-   import { HEROES } from './mock-heroes';
++   import { getHeroes } from '@services/hero.service';
+    import HeroDetail from '@components/hero-detail/hero-detail.riot';
 
     export default {
       // 厳密にはこの記述はなくても問題ない
@@ -59,19 +59,19 @@ export const getHeroes = () => {
 
 これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．ただ，現状ですと現在はモックデータということもありますが，同期的にデータを取得しています．しかし実際のアプリケーションでは，外部 API をコールする事が多いでしょう．その場合，ブラウザがブロックされてしまわないように非同期処理を実装する必要があります．
 
-ここから，`Angular` の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用していきますが，riot では [riot/observable] を利用しつつ，非同期処理を実装していきます．
+ここから，`Angular` の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用しますが，riot では [riot/observable] を利用しつつ，非同期処理を実装します．
 
 :::message
 1️⃣ version 3 以前を使われている方は，`observable` はコアモジュールのため，以下のように本体からインポートが可能です．
 
 ```js
-import { observable } from "riot"
+import { observable } from 'riot';
 ```
 
 2️⃣ `riot/observable` はイベントの送受信用のライブラリであり，非同期処理を内包しているわけではないため，非同期処理は別途書く必要があります．
 :::
 
-:::details riotコンポーネント内の非同期処理
+:::details riot コンポーネント内の非同期処理
 
 riot コンポーネント内の組み込みメソッドでも，非同期処理を書くことはできます．以下例．
 
@@ -79,16 +79,17 @@ riot コンポーネント内の組み込みメソッドでも，非同期処理
 export default {
   // レンダリング前に必ず実行
   async onBeforeMount() {
-    const response = await fetch(/** URL */)
+    const response = await fetch(/** URL */);
     const data = response.json();
   },
   // 非同期の関数を定義しておき，適宜呼び出したいところで呼び出す
   async myMethod(v) {
-    const response = await fetch(/** URL */)
+    const response = await fetch(/** URL */);
     const data = response.json();
-  }
-}
+  },
+};
 ```
+
 :::
 
 まずは `riot/observable` をインストールしましょう．
@@ -97,10 +98,10 @@ export default {
 $ npm install -S  @riotjs/observable
 ```
 
-続いて，`riot/observable` を用いて `hero.service.js` を書き直していきましょう．
+続いて，`riot/observable` を用いて `hero.service.js` を書き直しましょう．
 
 ```diff
-  import { HEROES } from "@/components/global/heroes/mock-heroes";
+  import { HEROES } from "@components/heroes/mock-heroes";
 + import observable from '@riotjs/observable'
 
 - export const getHeroes = () => {
@@ -129,10 +130,10 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
 
 コードの記述的には前後しますが，`observable` メソッドを用いて，`heroService` オブジェクトに [Observer 機能](https://ja.wikipedia.org/wiki/Observer_%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3) を付与し，イベントのトリガーおよび監視を可能にします．これにより，
 
-* `this.on`: イベントの監視および，callback の実行
-* `this.one`: イベントの監視および，callback を一度だけ実行
-* `this.off`: 監視を停止または，callback の削除
-* `this.trigger`: イベントの発火
+- `this.on`: イベントの監視および，callback の実行
+- `this.one`: イベントの監視および，callback を一度だけ実行
+- `this.off`: 監視を停止または，callback の削除
+- `this.trigger`: イベントの発火
 
 という `@riotjs/observable` の機能を使えるようになります．詳しくは [ドキュメント](https://github.com/riot/observable/blob/main/doc/README.md)　をご参照ください．
 
@@ -144,7 +145,7 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
  <script>
 -   import { getHeroes } from '@/services/hero.service';
 +   import heroService from '@/services/hero.service';
-    import HeroDetail from '../hero-detail/hero-detail.riot';
+    import HeroDetail from '@components/hero-detail/hero-detail.riot';
 
     export default {
       heroes: [],
@@ -169,16 +170,16 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
 
 # `Message` サービスの追加
 
-続いて，メッセージを表示するためのコンポーネントとサービスを実装していきます．
+続いて，メッセージを表示するためのコンポーネントとサービスを実装します．
 
 ## `Message` コンポーネントとサービスの作成
 
 まずは必要なフォルダとファイルを作ります．
 
-* `src/components/global/messages/`
-* `src/components/global/messages/messages.riot`
-* `src/components/global/messages/messages.spec.js`
-* `src/services/messages.service.js`
+- `src/components/messages/`
+- `src/components/messages/messages.riot`
+- `src/components/messages/messages.spec.js`
+- `src/services/messages.service.js`
 
 作成できましたら，`.spec.js` ファイルは後回しにして，`.riot` ファイルの方に以下を追記してください．中身は仮です．
 
@@ -198,8 +199,8 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
    </div>
 
    <script>
-     import Heroes from "@/components/global/heroes/heroes.riot";
-+    import Messages from '@/components/global/messages/messages.riot';
+     import Heroes from "@components/heroes/heroes.riot";
++    import Messages from '@components/messages/messages.riot';
    </script>
 ```
 
@@ -209,25 +210,25 @@ riot には非同期処理の機能や API がないため，愚直に実装す�
   <script>
     import heroService from '@/services/hero.service';
 +   import messageService from '@/services/message.service';
-    import HeroDetail from '@/components/global/hero-detail/hero-detail.riot';
-    import Messages from '@/components/global/messages/messages.riot';
+    import HeroDetail from '@components/hero-detail/hero-detail.riot';
+    import Messages from '@components/messages/messages.riot';
 ```
 
 以上で，準備は完了です．
 
 ## `Message` サービスの処理の実装
 
-ではここからは，具体的に処理を実装していきます．まずは message サービスからです．
+ではここからは，具体的に処理を実装します．まずは message サービスからです．
 
 ```js
-import observable from "@riotjs/observable";
+import observable from '@riotjs/observable';
 
 const messageService = {
   messages: [],
   add(message) {
     this.messages.push(message);
-    this.trigger('messagesAdded', this.messages)
-  }
+    this.trigger('messagesAdded', this.messages);
+  },
 };
 
 observable(messageService);
@@ -262,7 +263,7 @@ export default messageService;
   }
 ```
 
-処理が書けたら，画面に表示をしたいので，`messages.riot` を修正していきます．
+処理が書けたら，画面に表示をしたいので，`messages.riot` を修正します．
 
 ```diff
   <messages>
@@ -271,7 +272,7 @@ export default messageService;
 +   <div each={ message in messages }>{ message }</div>
 +
 +   <script>
-+     import messageService from '@/services/message.service';
++     import messageService from '@services/message.service';
 +
 +     export default {
 +      messages: [],
@@ -351,6 +352,7 @@ onMounted() {
   console.log(this.messages);
 },
 ```
+
 上記は空配列となります．また逆に，`heroes.riot` で `onMounted` メソッドで `messageService` の `messages` 変数を確認しますと，メッセージが格納されていることが確認できます．
 
 ```js
@@ -386,7 +388,7 @@ getMessages() {
 ※他に方法があれば教えていただけると助かります！🙇‍♂
 :::
 
-最後にスタイリングしていきましょう🙋‍♂
+最後にスタイリングしましょう 🙋‍♂
 
 ```diff
    </script>

@@ -1,5 +1,5 @@
 ---
-title: "Chapter2 ヒーローコンポーネント"
+title: 'Chapter2 ヒーローコンポーネント'
 ---
 
 今回はより具体的にヒーロー（`heroes`）コンポーネントを作成し，ヒーローの一覧を表示します．
@@ -8,11 +8,11 @@ title: "Chapter2 ヒーローコンポーネント"
 
 # 全体構成を Angular チュートリアルに寄せる
 
-では早速 `heroes` コンポーネントを作っていきたいのですが，今の riot のアプリケーションの全体構成が，Angular のチュートリアルと差分があるため，修正していきます．
+では早速 `heroes` コンポーネントを作っていきたいのですが，今の riot のアプリケーションの全体構成が，Angular のチュートリアルと差分があるため，修正します．
 
 ## ベースコンポーネントの作成
 
-まずは，アプリケーションのコアとなるベースコンポーネントを作成していきます．`app.riot` というファイルを作成し，以下を追記してください．
+まずは，アプリケーションのコアとなるベースコンポーネントを作成します．`app.riot` というファイルを作成し，以下を追記してください．
 
 ```html
 <app>
@@ -48,15 +48,15 @@ title: "Chapter2 ヒーローコンポーネント"
 さらに，`index.js` ファイルを以下のように変更します．
 
 ```diff
- import "./style.css";
- import "@riotjs/hot-reload";
+  import "@/style.css";
+  import "@riotjs/hot-reload";
 - import { mount } from "riot";
 + import { component } from "riot";
-+ import App from "./app.riot";
- import registerGlobalComponents from "./register-global-components.js";
++ import App from "@/app.riot";
+  import registerGlobalComponents from "@/register-global-components.js";
 
- // register
- registerGlobalComponents();
+  // register
+  registerGlobalComponents();
 
 - // mount all the global components found in this page
 - mount("[data-riot-component]");
@@ -68,13 +68,13 @@ title: "Chapter2 ヒーローコンポーネント"
 
 ## 不要なコンポーネントの削除
 
-次に，ボイラープレートで追加された不要なコンポーネントがあるため，削除していきます．今回は
+次に，ボイラープレートで追加された不要なコンポーネントがあるため，削除します．今回は
 
-* `src/components/global/my-component/` ディレクトリ
-* `src/components/global/sidebar/` ディレクトリ
-* `src/components/includes/user/` ディレクトリ
+- `src/components/global/my-component/` ディレクトリ
+- `src/components/global/sidebar/` ディレクトリ
+- `src/components/includes/user/` ディレクトリ
 
-以上3つを丸っと削除しちゃいましょう💁
+以上 3 つが対象ですが，`global` という階層自体が不要になりますので，このディレクトリごと丸っと削除しちゃいましょう 💁
 
 さらに，削除したファイルを読み込んでいる箇所がいくつかありますので，`index.html` ファイルを開き，以下の記述を削除してください．
 
@@ -85,7 +85,7 @@ title: "Chapter2 ヒーローコンポーネント"
   </div>
 ```
 
- 以上でお掃除も完了し，準備は完了です！
+以上でお掃除も完了し，準備は完了です！
 
 # heroes コンポーネントを作成する
 
@@ -95,9 +95,9 @@ title: "Chapter2 ヒーローコンポーネント"
 
 以下３つのファイルとフォルダを作成してください．
 
-* `src/components/global/heroes/` ディレクトリ
-* `src/components/global/heroes/heroes.riot` ファイル
-* `src/components/global/heroes/heroes.spec.js` ファイル
+- `src/components/heroes/` ディレクトリ
+- `src/components/heroes/heroes.riot` ファイル
+- `src/components/heroes/heroes.spec.js` ファイル
 
 `heroes.spec.js` についてはこの章では触れず，後ほど書いていきます（たぶん）．
 
@@ -109,8 +109,8 @@ title: "Chapter2 ヒーローコンポーネント"
 
   <script>
     export default {
-      hero: 'Windstorm'
-    }
+      hero: 'Windstorm',
+    };
   </script>
 </heroes>
 ```
@@ -123,7 +123,7 @@ title: "Chapter2 ヒーローコンポーネント"
   </div>
 
 + <script>
-+   import Heroes from "@/components/global/heroes/heroes.riot";
++   import Heroes from "@components//heroes/heroes.riot";
 + </script>
 ```
 
@@ -154,15 +154,13 @@ title: "Chapter2 ヒーローコンポーネント"
 
 ここまでいきますと，以下のように ID と名前が表示されます．今回のチュートリアルでは h2 タグの名前はアッパーケースで表示するそうなので，`toUpperCase()` を利用しています．
 
-
 ![ヒーローオブジェクトの表示](/images/books/riotjs_toh/02_show_hero_object.png)
-
 
 # ヒーローを編集する
 
-では最後に，ユーザーが `<input>` テキストボックスでヒーローの名前を編集できるように実装していきます．
+では最後に，ユーザーが `<input>` テキストボックスでヒーローの名前を編集できるように実装します．
 
-まずは `heroes` コンポーネントの名前部分に入力フォームを追加していきましょう．
+まずは `heroes` コンポーネントの名前部分に入力フォームを追加しましょう．
 
 ```diff
  <heroes>
@@ -179,7 +177,7 @@ title: "Chapter2 ヒーローコンポーネント"
 
 ## 変更のリアルタイム反映
 
-名前の部分にテキストボックスが実装されましたが，このままですと名前を変更しても，タイトル下の名前に反映されませんので，これをリアルタイムで反映されるように修正していきます．
+名前の部分にテキストボックスが実装されましたが，このままですと名前を変更しても，タイトル下の名前に反映されませんので，これをリアルタイムで反映されるように修正します．
 
 ```diff
    <div><span>id: </span>{ hero.id }</div>
@@ -213,4 +211,4 @@ title: "Chapter2 ヒーローコンポーネント"
 
 ![ヒーローネームの変更動画](/images/books/riotjs_toh/02_change_hero_name.gif)
 
-以上で Chapter2「ヒーローエディタ」は完了です！
+以上で Chapter2「ヒーローエディタ」は完了です！何かわからないことがあれば，遠慮なくコメントしてください！
