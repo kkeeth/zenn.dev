@@ -88,6 +88,8 @@ https://github.com/kkeeth/riotjs-with-vite
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@components': path.resolve(__dirname, 'src/components'),
+        '@services': path.resolve(__dirname, 'src/services'),
       },
     },
     build: {
@@ -119,27 +121,14 @@ https://github.com/kkeeth/riotjs-with-vite
   src/index.js -> index.js
   ```
 
-- 移動に伴って `index.js` のパスの記述を修正
-
-  ```diff
-  - import './style.css';
-  + import './src/style.css';
-    import '@riotjs/hot-reload';
-    import { component } from 'riot';
-  - import App from './app.riot';
-  + import App from './src/app.riot';
-  - import registerGlobalComponents from './register-global-components.js';
-  + import registerGlobalComponents from './src/register-global-components.js';
-  ```
-
 - `src/register-global-components.js` を修正
 
   ```diff
   -const globalComponentsContext = import.meta.webpackContext(
-  -  "./components/global/",
+  -  "./components/",
   -  { recursive: true, regExp: /[a-zA-Z0-9-]+\.riot/ },
   +const globalComponentsContext = import.meta.glob(
-  +  "./components/global/**/*.riot",
+  +  "./components/**/*.riot",
   +  { eager: true },
    );
 
