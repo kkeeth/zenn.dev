@@ -6,7 +6,9 @@ topics: ['riotjs', 'riot', 'vite', '開発環境']
 published: true
 ---
 
+:::message
 本記事は [Riot.js Advent Calendar 2024](https://qiita.com/advent-calendar/2024/riotjs) の第 18 日目(遅刻組) の記事になります！
+:::
 
 https://qiita.com/advent-calendar/2024/riotjs
 
@@ -45,7 +47,7 @@ https://github.com/kkeeth/riotjs-with-vite
 - 不要になるモジュールを削除
 
   ```bash
-  $ pnpm rm webpack webpack-cli webpack-dev-server html-webpack-plugin mini-css-extract-plugin @riotjs/webpack-loader
+  $ pnpm rm webpack webpack-cli webpack-dev-server html-webpack-plugin mini-css-extract-plugin css-loader @riotjs/webpack-loader
   ```
 
 - 不要になった設定ファイル（`webpack.config.js`）を削除
