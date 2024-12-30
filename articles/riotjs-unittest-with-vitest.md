@@ -16,7 +16,7 @@ https://qiita.com/advent-calendar/2024/riotjs
 
 [Riot.js（以下，riot）](https://riot.js.org/) の公式ボイラープレートの環境ではバンドラに [webpack](https://webpack.js.org/) が使われていますが，[昨日（18 日目）の記事]() で [Vite](https://vite.dev/) に変更しました．また，公式ボイラープレートで使われているテスティングフレームワークは JavaScript のテスティングフレームワークとしては最古参と言っても良い [Mocha](https://mochajs.org/) をベースに環境が用意されていますが，せっかく vite を用いているのであれば [Vitest](https://vitest.dev/) で性ということで，実際に書いてみました．^[ほぼほぼ vitest の紹介になります 🙇]参考になれば幸いです 💁 本記事内のコードはこちらのリポジトリになります．
 
-https://github.com/kkeeth/riot-toh-demo
+https://github.com/kkeeth/riot-toh-demo/tree/with-vite
 
 ## Goodbye `Mocha`
 
