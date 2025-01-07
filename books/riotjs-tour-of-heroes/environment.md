@@ -16,10 +16,10 @@ title: 'Chapter1 新規プロジェクトの作成'
 
 ```bash
 # ディレクトリ作成および移動
-$ mkdir riot-tour-of-heroes && cd riot-tour-of-heroes
+mkdir riot-tour-of-heroes && cd riot-tour-of-heroes
 
 # riot プロジェクトの作成
-$ npm init riot
+npm init riot
 
 # いつもの npm init の手順ですので，お好きに設定してください
 package name: (riot-tour-of-heroes)
@@ -71,10 +71,10 @@ Is this OK? (yes) y
 プロジェクトの新規作成が終わりましたので，アプリケーションを起動してみたいと思いますが，その前に必要なモジュールをインストールする必要があります．以下のコマンドを実行してください.
 
 ```bash
-$ npm install
+npm install
 
 # pnpm をご利用の方
-$ pnpm install
+pnpm install
 ```
 
 ※これ以降筆者は `npm` コマンドで統一しますので，`pnpm` 等，他のものをご利用の方は適宜読み替えてください．`lock` ファイルも同様です．
@@ -82,7 +82,7 @@ $ pnpm install
 インストールが完了しましたら，いよいよ起動してみます．以下のコマンドを実行してください.
 
 ```bash
-$ npm run start
+npm run start
 ```
 
 実行しますと，自動でアプリケーションが起動しブラウザも一緒に起動，[http://localhost:3000/](http://localhost:3000/) の画面が開くかと思います！
@@ -142,7 +142,7 @@ $ npm run start
 もし riot で　 CSS リセットライブラリを使う場合の方法を以下に記載しておきます．今回は [ress](https://github.com/filipelinhares/ress) を利用します．
 
 ```bash
-$ npm install -D ress
+npm install -D ress
 ```
 
 先程インストールした `ress` をアプリケーション内で読み込んで行きます．`index.js` に以下を追記してください．

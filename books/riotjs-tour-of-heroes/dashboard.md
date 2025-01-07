@@ -19,14 +19,14 @@ title: 'Chapter6 ナビゲーションの追加'
 これを実現するためには，ルーティングの機構を導入する必要があります．riot では `@riotjs/route` というコアライブラリが有りますので，こちらをインストールします．
 
 ```bash
-$ npm install -S @riotjs/route
+npm install -S @riotjs/route
 ```
 
 :::message
 `riot/create-riot` のバージョンや，開発環境の作り方によっては始めからインストールされている可能性があります．`package.json` の中をご確認いただくか，
 
 ```bash
-$ npm ls --depth=0
+npm ls --depth=0
 ```
 
 コマンドから `@riotjs/route` がないかご確認ください．

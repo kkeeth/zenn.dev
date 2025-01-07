@@ -47,7 +47,7 @@ https://github.com/kkeeth/riotjs-with-vite
 - 不要になるモジュールを削除
 
   ```bash
-  $ pnpm rm webpack webpack-cli webpack-dev-server html-webpack-plugin mini-css-extract-plugin css-loader @riotjs/webpack-loader
+  pnpm rm webpack webpack-cli webpack-dev-server html-webpack-plugin mini-css-extract-plugin css-loader @riotjs/webpack-loader
   ```
 
 - 不要になった設定ファイル（`webpack.config.js`）を削除
@@ -59,7 +59,7 @@ https://github.com/kkeeth/riotjs-with-vite
 - `vite` と `rollup-plugin-riot` のインストール
 
   ```bash
-  $ pnpm i -D vite rollup-plugin-riot
+  pnpm i -D vite rollup-plugin-riot
   ```
 
 - `package.json` の `scripts` の書き換え

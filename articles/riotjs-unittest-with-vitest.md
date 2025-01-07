@@ -23,7 +23,7 @@ https://github.com/kkeeth/riot-toh-demo/tree/with-vite
 では昨日と同様に，まずはプロジェクト内から mocha を削除します．
 
 ```Bash
-$ pnpm rm mocha chai c8
+pnpm rm mocha chai c8
 ```
 
 ## `Vitest` の導入
@@ -31,7 +31,7 @@ $ pnpm rm mocha chai c8
 続いて vitest のインストールから．[vitest の公式ドキュメント](https://vitest.dev/guide/) に沿って進めましょう．
 
 ```Bash
-$ pnpm add -D vitest
+pnpm add -D vitest
 ```
 
 インストールが終わったら，公式ドキュメントのサンプルテストを試してみてもよいですが，大抵の JavaScript テスティングフレームワークのサンプルと同じのため，今回は割愛しますが，一点だけ，`package.json` の `scripts` を変更します 🙋
@@ -130,7 +130,7 @@ describe('NotFound Unit Test', () => {
 ここまで書けましたら実行します．
 
 ```bash
-$ pnpm test
+pnpm test
 
 > riot-toh-demo@1.0.0 test /path/to/riot-toh-demo
 > vitest --reporter=verbose
@@ -299,7 +299,7 @@ describe('HeroDetail Unit Test', () => {
 設定できましたら実行します 💁
 
 ```bash
-$ pnpm coverage
+pnpm coverage
 
 > riot-toh-demo@1.0.0 coverage /path/to/riot-toh-demo
 > vitest run --coverage

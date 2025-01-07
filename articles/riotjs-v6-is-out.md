@@ -86,7 +86,7 @@ https://github.com/riot/riot/blob/main/package.json
 という事で以下のコマンドを実行．今回選択したテンプレートは `webpack-spa` とします．
 
 ```bash
-$ npm init riot
+npm init riot
 ```
 
 ボイラープレートができたので，package.json（一部抜粋）を確認すると，
@@ -109,7 +109,7 @@ $ npm init riot
 ~~riot 本体とその他モジュールのバージョンが v6 に合わせてテンプレートがまだ反映されていないようですのでアップグレードします．~~
 
 ```bash
-$ npm i riot@latest @riotjs/route@latest @riotjs/hot-reload@latest @riotjs/compiler@latest @riotjs/webpack-loader@latest
+npm i riot@latest @riotjs/route@latest @riotjs/hot-reload@latest @riotjs/compiler@latest @riotjs/webpack-loader@latest
 ```
 
 ~~インストール完了後，念の為 package.json を見て更新を確認．~~
@@ -135,7 +135,7 @@ $ npm i riot@latest @riotjs/route@latest @riotjs/hot-reload@latest @riotjs/compi
 では実行します．
 
 ```bash
-$ npm start
+npm start
 ```
 
 ![](https://storage.googleapis.com/zenn-user-upload/c1fc9548edfd1ced05482e4d.png)
@@ -149,9 +149,9 @@ OK．ちゃんと動いていますね．
 
 ```bash
 # typescript 周り
-$ npm install -D @types/webpack-env @typescript-eslint/eslint-plugin @typescript-eslint/parser ts-loader
+npm install -D @types/webpack-env @typescript-eslint/eslint-plugin @typescript-eslint/parser ts-loader
 # eslint 周り
-$ npm install -D eslint eslint-config-riot
+npm install -D eslint eslint-config-riot
 ```
 
 続いて `tsconfig.json` を作成して以下を追記します．細かい設定は適宜変更してください．
@@ -226,7 +226,7 @@ export interface MyComponentState {
 念の為，実行し直しましょう．
 
 ```bash
-$ npm start
+npm start
 
 ...
 

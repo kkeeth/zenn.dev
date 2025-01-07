@@ -95,7 +95,7 @@ export default {
 まずは `riot/observable` をインストールしましょう．
 
 ```bash
-$ npm install -S  @riotjs/observable
+npm install -S  @riotjs/observable
 ```
 
 続いて，`riot/observable` を用いて `hero.service.js` を書き直しましょう．
