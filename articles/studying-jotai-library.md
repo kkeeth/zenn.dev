@@ -34,18 +34,18 @@ published: true
 
 # サイズ比較
 
-私がミニマルなライブラリが好きなので，React 用状態管理ライブラリのサイズ比較をしてみたいと思います．対象は Redux, Mobx, Recoil の名前を聞くようになったので，これらと Jotai のサイズを比べてみます．※いずれも minified + gzipped の数字です．
+私がミニマルなライブラリが好きなので，React 用状態管理ライブラリのサイズ比較をしてみたいと思います．対象は Redux, Mobx, Recoil, Zustand の名前を聞くようになったので，これらと Jotai のサイズを比べてみます．※いずれも minified + gzipped の数字です．
 
-| name        | size                                                       |
-| :---------- | :--------------------------------------------------------- |
-| redux       | [1.6kb](https://bundlephobia.com/result?p=redux@4.1.0)     |
-| react-redux | [5kb](https://bundlephobia.com/result?p=react-redux@7.2.4) |
-| mobx        | [16.1kB](https://bundlephobia.com/result?p=mobx@6.3.0)     |
-| recoil      | [19.7kb](https://bundlephobia.com/result?p=recoil@0.3.0)   |
-| jotai       | [2.5kb](https://bundlephobia.com/result?p=jotai@0.16.4)    |
-| zustand     | []()                                                       |
+| name        | size（執筆時点）                                           | size（2025/01/13 時点）                                     |
+| :---------- | :--------------------------------------------------------- | :---------------------------------------------------------- |
+| redux       | [1.6kb](https://bundlephobia.com/result?p=redux@4.1.0)     | [1.4kb](https://bundlephobia.com/package/redux@5.0.1)       |
+| react-redux | [5kb](https://bundlephobia.com/result?p=react-redux@7.2.4) | [4.1kb](https://bundlephobia.com/package/react-redux@9.2.0) |
+| mobx        | [16.1kB](https://bundlephobia.com/result?p=mobx@6.3.0)     | [17.5kb](https://bundlephobia.com/package/mobx@6.13.5)      |
+| recoil      | [19.7kb](https://bundlephobia.com/result?p=recoil@0.3.0)   | [23.5kb](https://bundlephobia.com/package/recoil@0.7.7)     |
+| jotai       | [2.5kb](https://bundlephobia.com/result?p=jotai@0.16.4)    | [3.5kb](https://bundlephobia.com/package/jotai@2.11.0)      |
+| zustand     | -                                                          | [588b](https://bundlephobia.com/package/zustand@5.0.3)      |
 
-こう見ると，Jotai は公式が謳っている通りかなり軽量であることがわかりますが，Redux 単体では更に軽量なのが意外でした．逆に Recoil は思った以上にサイズが有ることがわかりますね．
+こう見ると，Zustand・Jotai は公式が謳っている通りかなり軽量であることがわかりますが，Redux は単体だと更に軽量なのが意外でした．逆に Recoil は思った以上にサイズが大きいことがわかりますね．
 
 余談ですが，ダウンロード数比較をすると，やはり Redux が強いですね．ついで Mobx が頑張っている印象で，これはリリースが早かったというのも加味すると納得です．
 
