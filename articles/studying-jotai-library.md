@@ -8,7 +8,7 @@ published: true
 
 こんにちは．[株式会社ゆめみ](https://www.yumemi.co.jp/)の Keeth こと桑原です．
 
-今回は [Jotai](https://github.com/pmndrs/jotai) という React 用の超軽量な状態管理ライブラリを触ってみたので勉強ログとしてまとめました．軽く使ってみた感触としては非常にシンプルで分かりやすく，導入も簡単でしたのでしたね．
+今回は [Jotai](https://github.com/pmndrs/jotai) という React 用の超軽量な状態管理ライブラリを触ってみたので勉強ログとしてまとめました．軽く使ってみた感触としては非常にシンプルで分かりやすく，導入も簡単でした．
 
 ただ，既に `Jotai` リリース後ある程度時間が経っており，Google で検索していただくとわかるかと思いますが，Jotai に関する記事もいくつかありますので，二番煎じな内容もありますことをご了承頂ければと思います．
 
@@ -43,14 +43,15 @@ published: true
 | mobx        | [16.1kB](https://bundlephobia.com/result?p=mobx@6.3.0)     |
 | recoil      | [19.7kb](https://bundlephobia.com/result?p=recoil@0.3.0)   |
 | jotai       | [2.5kb](https://bundlephobia.com/result?p=jotai@0.16.4)    |
+| zustand     | []()                                                       |
 
 こう見ると，Jotai は公式が謳っている通りかなり軽量であることがわかりますが，Redux 単体では更に軽量なのが意外でした．逆に Recoil は思った以上にサイズが有ることがわかりますね．
 
 余談ですが，ダウンロード数比較をすると，やはり Redux が強いですね．ついで Mobx が頑張っている印象で，これはリリースが早かったというのも加味すると納得です．
 
-![](https://storage.googleapis.com/zenn-user-upload/5uitrpxdjw7memf2z26u2zxsdrcq)
+![](/images/compare_jotai_with_others.png)
 
-[https://www.npmtrends.com/jotai-vs-recoil-vs-mobx-vs-redux-vs-react-redux](https://www.npmtrends.com/jotai-vs-recoil-vs-mobx-vs-redux-vs-react-redux)
+[https://npmtrends.com/jotai-vs-mobx-vs-react-redux-vs-recoil-vs-redux-vs-zustand](https://npmtrends.com/jotai-vs-mobx-vs-react-redux-vs-recoil-vs-redux-vs-zustand)
 
 また，公式ドキュメントの[コンセプト](https://docs.pmnd.rs/jotai/basics/concepts)を読んだところ，Jotai が生まれた元々の理由というか考えは，React の余分な再レンダリングの問題を解決するためだったそうです．
 
@@ -71,9 +72,9 @@ published: true
 まずは `atom` と呼ばれる最小単にの状態を保持したオブジェクトを生成し，管理します．このオブジェクトを生成するには，以下のように `atom` というファクトリ関数に初期値を渡して実行することで可能です．
 
 ```javascript
-import { atom } from 'jotai'
+import { atom } from 'jotai';
 
-const count = atom(0)
+const count = atom(0);
 ```
 
 `atom` はその性質を考えるとコンポーネントで定義するのではなく，以下のように別途 `Atoms.js` のようなファイルに集約して一元管理し，コンポーネント毎に使いたい atom をインポートできるようにすることが望ましいですね．
@@ -81,10 +82,10 @@ const count = atom(0)
 **Atoms.js**
 
 ```javascript
-import { atom } from 'jotai'
+import { atom } from 'jotai';
 
-export const countAtom = atom(0)
-export const nameAtom = atom('keeth')
+export const countAtom = atom(0);
+export const nameAtom = atom('keeth');
 ```
 
 **Hoge.js**
@@ -106,22 +107,24 @@ export default Hoge
 
 ```ts
 // primitive atom
-function atom<Value>(initialValue: Value): PrimitiveAtom<Value>
+function atom<Value>(initialValue: Value): PrimitiveAtom<Value>;
 
 // read-only atom
-function atom<Value>(read: (get: Getter) => Value | Promise<Value>): Atom<Value>
+function atom<Value>(
+  read: (get: Getter) => Value | Promise<Value>,
+): Atom<Value>;
 
 // writable derived atom
 function atom<Value, Update>(
   read: (get: Getter) => Value | Promise<Value>,
   write: (get: Getter, set: Setter, update: Update) => void | Promise<void>,
-): WritableAtom<Value, Update>
+): WritableAtom<Value, Update>;
 
 // write-only derived atom
 function atom<Value, Update>(
   read: Value,
   write: (get: Getter, set: Setter, update: Update) => void | Promise<void>,
-): WritableAtom<Value, Update>
+): WritableAtom<Value, Update>;
 ```
 
 ## `useAtom` で `atom` を利用
@@ -131,16 +134,16 @@ function atom<Value, Update>(
 **Hoge.js**
 
 ```js
-import { Provider, useAtom } from 'jotai'
-import { countAtom } from './Atoms'
+import { Provider, useAtom } from 'jotai';
+import { countAtom } from './Atoms';
 
 const Hoge = () => {
   // このコンポーネントでは countAtom を利用する
   // 合わせてセッターも返される
-  const [count, setCount] = useAtom(countAtom)
+  const [count, setCount] = useAtom(countAtom);
 
-  const handlePlus = () => setCount((value) => value + 1)
-  const handleMinus = () => setCount((value) => value - 1)
+  const handlePlus = () => setCount((value) => value + 1);
+  const handleMinus = () => setCount((value) => value - 1);
 
   return (
     <>
@@ -150,9 +153,9 @@ const Hoge = () => {
         <button onClick={handleMinus}>one down</button>
       </div>
     </>
-  )
-}
-export default Hoge
+  );
+};
+export default Hoge;
 ```
 
 うん，分かりやすい．というか既視感があります（笑）この `useAtom` の使い方は `useState` と `useContext`　を合わせたように見えますね．
@@ -164,12 +167,12 @@ export default Hoge
 **Atoms.js**
 
 ```js
-import { atom } from 'jotai'
+import { atom } from 'jotai';
 
-export const countAtom = atom(0)
-export const nameAtom = atom('keeth')
+export const countAtom = atom(0);
+export const nameAtom = atom('keeth');
 // 大文字変換した名前用の atom
-export const upperNameAtom = atom((get) => get(nameAtom).toUpperCase())
+export const upperNameAtom = atom((get) => get(nameAtom).toUpperCase());
 ```
 
 利用の仕方も同様で，使いたいコンポーネント側で `useAtom` の引数に渡してください．
@@ -178,12 +181,12 @@ export const upperNameAtom = atom((get) => get(nameAtom).toUpperCase())
 
 ```js
 const postData = atom(async (get) => {
-  const id = get(postId)
+  const id = get(postId);
   const response = await fetch(
     `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
-  )
-  return await response.json()
-})
+  );
+  return await response.json();
+});
 ```
 
 ## `Provider` で初期値を与える
