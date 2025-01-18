@@ -59,7 +59,7 @@ export const getHeroes = () => {
 
 これで，ヒーローデータ取得のロジックを `heroes` コンポーネントから切り出せました．ただ，現状ですと現在はモックデータということもありますが，同期的にデータを取得しています．しかし実際のアプリケーションでは，外部 API をコールする事が多いでしょう．その場合，ブラウザがブロックされてしまわないように非同期処理を実装する必要があります．
 
-ここから，`Angular` の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用しますが，riot では [riot/observable] を利用しつつ，非同期処理を実装します．
+ここから，`Angular` の ToH では非同期にデータをフェッチするために [RxJS](https://rxjs.dev/) というライブラリの `Observable` クラスを利用しますが，riot では [riot/observable](https://github.com/riot/observable) を利用しつつ，非同期処理を実装します．
 
 :::message
 1️⃣ version 3 以前を使われている方は，`observable` はコアモジュールのため，以下のように本体からインポートが可能です．
