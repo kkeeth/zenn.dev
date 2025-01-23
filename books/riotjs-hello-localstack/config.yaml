@@ -1,0 +1,30 @@
+title: 'LocalStack で AWS に入門'
+summary: |-
+
+  AWS の学習において，実際の AWS 環境を利用するとコストやリソース制限が課題となる場合があります．
+  その解決策として，LocalStack を使用することでAWSのサービスをローカル環境でシミュレーションできます．
+
+  本書籍は，AWS のクローンサービス LocalStack を使って，AWS の基本的な機能を学ぶものです！
+
+  https://localstack.cloud/
+
+  完成版のソースコードは GitHub（TBD） にアップしておりますので，何かわからないことがあればこちらのコードを参考にしていただければと思います．
+
+  ・LocalStackのセットアップを最初に行い、以降のサービス学習で活用する
+  ・各章で具体的なハンズオンとサンプルコードを提供
+  ・各サービスは独立して学べるが、一部の章は複数のサービスを組み合わせてアプリを作る
+
+topics: ['riot', 'riotjs', 'localstack', 'AWS']
+published: false
+price: 0 # 有料の場合200〜5000
+# 本に含めるチャプターを順番に並べましょう
+chapters:
+  - introduction_environment
+  - s3_web_hosting
+  - dynamodb
+  - lambda_serverless
+  - api_gateway_rest_api
+  - cloudformation_iaas
+  - sns_sqs
+  - iam_security
+  - diff_localstack_aws
