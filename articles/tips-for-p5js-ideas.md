@@ -111,6 +111,8 @@ function dividedRect(x, y, w, h, n) {
 
 ### Draw a striped circle
 
+単なる円を描くのではなく，円を線で描くやり方．
+
 ```js
 const diameter = 100;
 
@@ -183,6 +185,10 @@ function setup() {
 
 // draw() は割愛
 ```
+
+:::details 実行結果
+![](/images/tips_for_p5js/parallax_effect.gif)
+:::
 
 ### Add Shadow
 
