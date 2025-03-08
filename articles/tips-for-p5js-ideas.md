@@ -14,9 +14,9 @@ published: false
 コードの詳細な説明は割愛します．
 :::
 
-# setup
+## setup
 
-## Square canvas to match the size of the view
+### Square canvas to match the size of the view
 
 正方形の `canvas` を指定する際，画面横幅 or 縦幅の `min` の方を基準にcanvas のサイズを決定する．
 
@@ -27,7 +27,7 @@ function setup() {
 }
 ```
 
-## grid layout
+### grid layout
 
 物体を `格子状` に配置するときのやり方．いろんな書き方があるうちの1つ．
 
@@ -62,7 +62,7 @@ function drawGrid() {
 }
 ```
 
-## randomly sized grid layout
+### randomly sized grid layout
 
 単なる格子状の配置ではなく，ランダムにサイズが違う配置も見ていて面白い．再帰関数を使うことで表現できる．
 
@@ -104,9 +104,12 @@ function dividedRect(x, y, w, h, n) {
 :::
 
 
-# ideas
 
-## Draw a striped circle
+---
+
+## ideas
+
+### Draw a striped circle
 
 ```js
 const diameter = 100;
@@ -151,7 +154,7 @@ function setup() {
 }
 ```
 
-## Parallax Effect
+### Parallax Effect
 
 上から何かを降らすようなアニメーションを描く場合，明るいものから暗いものになるにつれて落下速度を遅くするとパララックス効果のような見た目が作れる．
 
@@ -179,4 +182,52 @@ function setup() {
 }
 
 // draw() は割愛
+```
+
+### Add Shadow
+
+物体に影をつける簡単なやり方．
+
+```js
+function setup() {
+  createCanvas(400, 400);
+  background(255);
+  noStroke();
+
+  drawingContext.shadowColor = color(100);
+  drawingContext.shadowBlur = 16;
+
+  ellipse(width / 2, height / 2, 150)
+}
+```
+
+:::details 実行結果
+![](/images/tips_for_p5js/add_shadow.png)
+:::
+
+
+### How to draw hexagons
+
+`vertex` を使わない六角形の描き方．
+
+```js
+function drawHexagonWithTriangles(cx, cy) {
+  let angleOffset = PI / 3;
+  const cl = random(255)
+  fill(cl);
+  stroke(cl);
+
+  for (let i = 0; i < 6; i++) {
+    let angle1 = angleOffset * i - PI / 6;
+    let angle2 = angleOffset * (i + 1) - PI / 6;
+
+    let x1 = cx + hexRadius * cos(angle1);
+    let y1 = cy + hexRadius * sin(angle1);
+
+    let x2 = cx + hexRadius * cos(angle2);
+    let y2 = cy + hexRadius * sin(angle2);
+
+    triangle(cx, cy, x1, y1, x2, y2);
+  }
+}
 ```
