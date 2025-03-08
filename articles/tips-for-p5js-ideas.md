@@ -16,7 +16,18 @@ published: false
 
 # setup
 
-## grid pattern
+## Square canvas to match the size of the view
+
+正方形の `canvas` を指定する際，画面横幅 or 縦幅の `min` の方を基準にcanvas のサイズを決定する．
+
+```js
+function setup() {
+  createCanvas(W = min(windowWidth, windowHeight), W);
+  background(255);
+}
+```
+
+## grid layout
 
 物体を `格子状` に配置するときのやり方．いろんな書き方があるうちの1つ．
 
@@ -92,6 +103,7 @@ function dividedRect(x, y, w, h, n) {
 ![](/images/tips_for_p5js/randomly_sized_grid_layout.png)
 :::
 
+
 # ideas
 
 ## Draw a striped circle
@@ -137,4 +149,34 @@ function setup() {
   texture(pg);
   ellipse(0, 0, 100);
 }
+```
+
+## Parallax Effect
+
+上から何かを降らすようなアニメーションを描く場合，明るいものから暗いものになるにつれて落下速度を遅くするとパララックス効果のような見た目が作れる．
+
+```js
+let snowflakes = [];
+const NUM = 100;
+let xoff = 0.0;
+
+function setup() {
+  createCanvas(W = min(windowWidth, windowHeight), W);
+  noStroke();
+
+  for (let i = 0; i < NUM; i++) {
+    const op = random(255)
+    const v = map(op, 0, 255, 1, 5) // ← ここ
+    snowflakes.push({
+      x: random(width),
+      y: random(height),
+      size: random(5, 20),
+      op: op,
+      r: random(20, 50),
+      velocity: v,
+    });
+  }
+}
+
+// draw() は割愛
 ```
