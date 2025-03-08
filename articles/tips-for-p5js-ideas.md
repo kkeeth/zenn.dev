@@ -3,7 +3,7 @@ title: "クリエイティブコーディングで個人的に使えそうなテ
 emoji: "🎨"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["Tips", "Collection", "p5js"]
-published: false
+published: true
 ---
 
 こんにちは．趣味で [p5.js](https://p5js.org/) を使いながらジェネラティブアートに勤しんでいる [Keeth（和仁🐊）](https://x.com/ArtmanKKeeth) こと桑原です．
