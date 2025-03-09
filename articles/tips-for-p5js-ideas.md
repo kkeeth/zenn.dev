@@ -156,7 +156,7 @@ function setup() {
 }
 ```
 
-### Parallax Effect
+### Like Parallax Effect
 
 上から何かを降らすようなアニメーションを描く場合，明るいものから暗いものになるにつれて落下速度を遅くするとパララックス効果のような見た目が作れる．
 
@@ -170,7 +170,7 @@ function setup() {
   noStroke();
 
   for (let i = 0; i < NUM; i++) {
-    const op = random(255)
+    const op = random(255) // ← ここと
     const v = map(op, 0, 255, 1, 5) // ← ここ
     snowflakes.push({
       x: random(width),
@@ -188,6 +188,26 @@ function setup() {
 
 :::details 実行結果
 ![](/images/tips_for_p5js/parallax_effect.gif)
+:::
+
+[@youtoy](https://zenn.dev/youtoy) さんに明るさではなく，大きさで表現するアイディアもいただいたので追記．
+https://x.com/youtoy/status/1898502766961770988
+
+```js
+    const size = random(5, 20)  // ← ここと
+    const v = map(size, 5, 20, 1, 5) // ← ここ
+    snowflakes.push({
+      x: random(width),
+      y: random(height),
+      size: size,
+      op: random(255),
+      r: random(20, 50),
+      velocity: v,
+    });
+```
+
+:::details 実行結果（先ほどとほぼ一緒）
+![](/images/tips_for_p5js/parallax_effect2.gif)
 :::
 
 ### Add Shadow
@@ -237,3 +257,7 @@ function drawHexagonWithTriangles(cx, cy) {
   }
 }
 ```
+
+:::details 実行結果
+![](/images/tips_for_p5js/hexagons.png)
+:::
