@@ -1,5 +1,5 @@
 ---
-title: "ステップ5: ユーザーインターフェース"
+title: 'ステップ5: ユーザーインターフェース'
 ---
 
 # 5.1 スコアの更新
@@ -9,7 +9,7 @@ title: "ステップ5: ユーザーインターフェース"
 ```js
 const updateScore = () => {
   document.querySelector('#score').innerText = player.score;
-}
+};
 ```
 
 スコアの更新を画面に反映させましょう．
@@ -37,7 +37,7 @@ const updateScore = () => {
   }
 ```
 
-ここまでで，ゲームとしてはほぼ完成です💁
+ここまでで，ゲームとしてはほぼ完成です 💁
 
 # 5.3 リスタートボタン
 
@@ -47,20 +47,20 @@ const updateScore = () => {
 
 ```js
 const restartGame = () => {
-  arena.forEach(row => row.fill(0));
+  arena.forEach((row) => row.fill(0));
   player.score = 0;
   updateScore();
   playerReset();
   lastTime = 0;
   update();
-}
+};
 
 document.getElementById('restartButton').addEventListener('click', restartGame);
 ```
 
 今まで実装してきた初期化の処理を，`restartGame` 関数内でもう１回行っています．
 
-以上ですべての実装が完了です！一応完成版のコードも置いておきます💁
+以上ですべての実装が完了です！一応完成版のコードも置いておきます 💁
 
 # 完成版のコード
 
@@ -92,9 +92,9 @@ const draw = () => {
   context.fillStyle = '#000';
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawMatrix(arena, {x: 0, y: 0});
+  drawMatrix(arena, { x: 0, y: 0 });
   drawMatrix(player.matrix, player.pos);
-}
+};
 
 const createPiece = (type) => {
   if (type === 'T') {
@@ -140,7 +140,7 @@ const createPiece = (type) => {
       [0, 0, 0],
     ];
   }
-}
+};
 
 const drawMatrix = (matrix, offset) => {
   matrix.forEach((row, y) => {
@@ -151,7 +151,7 @@ const drawMatrix = (matrix, offset) => {
       }
     });
   });
-}
+};
 
 const createMatrix = (w, h) => {
   const matrix = [];
@@ -159,10 +159,10 @@ const createMatrix = (w, h) => {
     matrix.push(new Array(w).fill(0));
   }
   return matrix;
-}
+};
 
 const player = {
-  pos: {x: 0, y: 0},
+  pos: { x: 0, y: 0 },
   matrix: null,
   score: 0,
 };
@@ -173,9 +173,7 @@ const collide = (arena, player) => {
   const [m, o] = [player.matrix, player.pos];
   for (let y = 0; y < m.length; ++y) {
     for (let x = 0; x < m[y].length; ++x) {
-      if (m[y][x] !== 0 &&
-        (arena[y + o.y] &&
-        arena[y + o.y][x + o.x]) !== 0) {
+      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
         // if (y + o.y <= 0) {
         //   return true; // 荳企Κ縺ｫ蛻ｰ驕�
         // }
@@ -184,29 +182,30 @@ const collide = (arena, player) => {
     }
   }
   return false;
-}
+};
 
 const playerReset = () => {
   const pieces = 'TJLOSZI';
-  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+  player.matrix = createPiece(pieces[(pieces.length * Math.random()) | 0]);
   player.pos.y = 0;
-  player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+  player.pos.x =
+    ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
   if (collide(arena, player)) {
     gameOver();
   }
-}
+};
 
 const gameOver = () => {
   cancelAnimationFrame(animationId);
   document.getElementById('restartButton').style.display = 'block';
-}
+};
 
 const playerMove = (dir) => {
   player.pos.x += dir;
   if (collide(arena, player)) {
     player.pos.x -= dir;
   }
-}
+};
 
 const rotate = (matrix, dir) => {
   for (let y = 0; y < matrix.length; ++y) {
@@ -216,11 +215,11 @@ const rotate = (matrix, dir) => {
   }
 
   if (dir > 0) {
-    matrix.forEach(row => row.reverse());
+    matrix.forEach((row) => row.reverse());
   } else {
     matrix.reverse();
   }
-}
+};
 
 const playerRotate = (dir) => {
   const pos = player.pos.x;
@@ -235,7 +234,7 @@ const playerRotate = (dir) => {
       return;
     }
   }
-}
+};
 
 const update = (time = 0) => {
   const deltaTime = time - lastTime;
@@ -248,7 +247,7 @@ const update = (time = 0) => {
 
   draw();
   animationId = requestAnimationFrame(update);
-}
+};
 
 const playerDrop = () => {
   player.pos.y++;
@@ -260,7 +259,7 @@ const playerDrop = () => {
     updateScore();
   }
   dropCounter = 0;
-}
+};
 
 const merge = (arena, player) => {
   player.matrix.forEach((row, y) => {
@@ -270,7 +269,7 @@ const merge = (arena, player) => {
       }
     });
   });
-}
+};
 
 const arenaSweep = () => {
   outer: for (let y = arena.length - 1; y > 0; --y) {
@@ -286,13 +285,13 @@ const arenaSweep = () => {
 
     player.score += 10;
   }
-}
+};
 
 const updateScore = () => {
   document.querySelector('#score').innerText = player.score;
-}
+};
 
-document.addEventListener('keydown', event => {
+document.addEventListener('keydown', (event) => {
   if (event.keyCode === 37) {
     playerMove(-1);
   } else if (event.keyCode === 39) {
@@ -307,21 +306,21 @@ document.addEventListener('keydown', event => {
 });
 
 const restartGame = () => {
-  arena.forEach(row => row.fill(0));
+  arena.forEach((row) => row.fill(0));
   player.score = 0;
   updateScore();
   playerReset();
-  lastTime = 0;  // Reset lastTime for the animation frame
+  lastTime = 0; // Reset lastTime for the animation frame
   update();
-}
+};
 
 document.getElementById('restartButton').addEventListener('click', restartGame);
 
-playerReset()
-updateScore()
-update()
+playerReset();
+updateScore();
+update();
 ```
+
 :::
 
-
-以上！ではでは(=ﾟωﾟ)ﾉ
+以上！ではでは(=ﾟ ω ﾟ)ﾉ
