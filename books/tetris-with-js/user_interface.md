@@ -75,6 +75,8 @@ let dropCounter = 0;
 let dropInterval = 1000;
 let animationId;
 let lastTime = 0;
+let isGameOver = false;
+
 const colors = [
   null,
   '#FF0D72',
@@ -196,8 +198,15 @@ const playerReset = () => {
 };
 
 const gameOver = () => {
-  cancelAnimationFrame(animationId);
-  document.getElementById('restartButton').style.display = 'block';
+  isGameOver = true;
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+  const restartButton = document.getElementById('restartButton');
+  if (restartButton) {
+    restartButton.style.display = 'block';
+  }
 };
 
 const playerMove = (dir) => {
@@ -237,6 +246,9 @@ const playerRotate = (dir) => {
 };
 
 const update = (time = 0) => {
+  if (isGameOver) {
+    return;
+  }
   const deltaTime = time - lastTime;
   lastTime = time;
 
@@ -288,10 +300,16 @@ const arenaSweep = () => {
 };
 
 const updateScore = () => {
-  document.querySelector('#score').innerText = player.score;
+  const scoreElement = document.querySelector('#score');
+  if (scoreElement) {
+    scoreElement.innerText = player.score;
+  }
 };
 
 document.addEventListener('keydown', (event) => {
+  if (isGameOver) {
+    return;
+  }
   if (event.keyCode === 37) {
     playerMove(-1);
   } else if (event.keyCode === 39) {
@@ -306,15 +324,29 @@ document.addEventListener('keydown', (event) => {
 });
 
 const restartGame = () => {
+  isGameOver = false;
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
   arena.forEach((row) => row.fill(0));
   player.score = 0;
   updateScore();
   playerReset();
   lastTime = 0; // Reset lastTime for the animation frame
+
+  const restartButton = document.getElementById('restartButton');
+  if (restartButton) {
+    restartButton.style.display = 'none';
+  }
+
   update();
 };
 
-document.getElementById('restartButton').addEventListener('click', restartGame);
+const restartButton = document.getElementById('restartButton');
+if (restartButton) {
+  restartButton.addEventListener('click', restartGame);
+}
 
 playerReset();
 updateScore();
