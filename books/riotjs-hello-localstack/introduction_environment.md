@@ -4,12 +4,12 @@ title: '環境構築'
 
 # 環境構築 - ArtVault ギャラリー開発の準備
 
-この章では、デジタルアート作品ギャラリー「ArtVault」を LocalStack を使って構築するための環境を準備します。
+この章では，デジタルアート作品ギャラリー「ArtVault」を LocalStack を使って構築するための環境を準備します．
 
 ## 必要な前提知識
 
 - JavaScript/Node.js の基本知識
-- AWS の基本概念（S3、Lambda、DynamoDB など）への理解
+- AWS の基本概念（S3，Lambda，DynamoDB など）への理解
 - ターミナル操作の基本
 
 ## 開発環境の要件
@@ -21,7 +21,7 @@ title: '環境構築'
 
 ## LocalStack とは
 
-LocalStack は AWS クラウドサービスをローカル環境で再現するツールです。実際の AWS を使わずに開発・テストができるため、以下のメリットがあります：
+LocalStack は AWS クラウドサービスをローカル環境で再現するツールです．実際の AWS を使わずに開発・テストができるため，以下のメリットがあります：
 
 - **コスト削減**: AWS の課金を気にせず開発可能
 - **高速開発**: ネットワーク遅延なしで即座にテスト
@@ -29,7 +29,7 @@ LocalStack は AWS クラウドサービスをローカル環境で再現する�
 
 ## 1. プロジェクト初期化
 
-まず、プロジェクトディレクトリを作成し、必要なパッケージをインストールします。
+まず，プロジェクトディレクトリを作成し，必要なパッケージをインストールします．
 
 ```bash
 $ mkdir artvault-gallery
@@ -89,7 +89,7 @@ $ docker-compose up -d
 $ curl http://localhost:4566/_localstack/health
 ```
 
-正常に起動していれば、各サービスの状態が表示されます。
+正常に起動していれば，各サービスの状態が表示されます．
 
 ## 3. AWS CLI の設定
 
@@ -124,7 +124,7 @@ $ aws --endpoint-url=http://localhost:4566 --profile localstack s3 ls
 
 ## 5. 初期リソースセットアップスクリプト
 
-ArtVault で使用する基本的な AWS リソースを作成するスクリプトを準備します。
+ArtVault で使用する基本的な AWS リソースを作成するスクリプトを準備します．
 
 `scripts/setup-resources.mjs` を作成：
 
@@ -158,7 +158,7 @@ async function setupResources() {
       console.log('✅ S3 バケット "artvault-gallery" を作成しました');
     } catch (error) {
       if (error.name === 'BucketAlreadyOwnedByYou' || error.name === 'BucketAlreadyExists' || error.$metadata?.httpStatusCode === 409) {
-        console.log('ℹ️ S3 バケット "artvault-gallery" は既に存在します。スキップします。');
+        console.log('ℹ️ S3 バケット "artvault-gallery" は既に存在します．スキップします．');
       } else {
         throw error;
       }
@@ -179,7 +179,7 @@ async function setupResources() {
       console.log('✅ DynamoDB テーブル "ArtworkTable" を作成しました');
     } catch (error) {
       if (error.name === 'ResourceInUseException' || error.$metadata?.httpStatusCode === 400) {
-        console.log('ℹ️ DynamoDB テーブル "ArtworkTable" は既に存在します。スキップします。');
+        console.log('ℹ️ DynamoDB テーブル "ArtworkTable" は既に存在します．スキップします．');
       } else {
         throw error;
       }
@@ -273,4 +273,4 @@ artvault-gallery/
 
 ## 次の章へ
 
-環境構築が完了したら、次章では S3 を使ってアートギャラリーのフロントエンドを構築していきます。実際にブラウザで作品を表示できるギャラリーページを作成していきましょう！
+環境構築が完了したら，次章では S3 を使ってアートギャラリーのフロントエンドを構築していきます．実際にブラウザで作品を表示できるギャラリーページを作成していきましょう！
