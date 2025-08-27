@@ -247,7 +247,6 @@ pnpm aws:local s3 ls
 # DynamoDB テーブル確認
 pnpm aws:local dynamodb list-tables
 ```
-```
 
 ## 8. 現在のプロジェクト構成
 
