@@ -1,30 +1,29 @@
-title: 'LocalStack で AWS に入門'
+title: 'LocalStack で学ぶ AWS - デジタルアートギャラリー ArtVault の構築'
 summary: |-
 
-  AWS の学習において，実際の AWS 環境を利用するとコストやリソース制限が課題となる場合があります．
-  その解決策として，LocalStack を使用することでAWSのサービスをローカル環境でシミュレーションできます．
+  デジタルアート作品を管理・展示するギャラリーサイト「ArtVault」を LocalStack を使って段階的に構築します。
 
-  本書籍は，AWS のクローンサービス LocalStack を使って，AWS の基本的な機能を学ぶものです！
+  この本では、静止画・GIF・動画などの多様なメディア形式に対応したアート作品ギャラリーを作りながら、
+  AWS の主要サービス（S3、DynamoDB、Lambda、API Gateway など）の実践的な使い方を学びます。
 
-  https://localstack.cloud/
+  LocalStack を使用することで、実際の AWS 環境を使わずにコスト効率よく開発・学習を進められます。
 
-  完成版のソースコードは GitHub（TBD） にアップしておりますので，何かわからないことがあればこちらのコードを参考にしていただければと思います．
+  ・実際に動作するアートギャラリーアプリケーションを段階的に構築
+  ・各章で新機能を追加し、最終的に本格的なポートフォリオサイトが完成
+  ・LocalStack を使った安全で低コストな学習環境
+  ・実際のアート作品管理に必要な機能を実装
 
-  ・LocalStackのセットアップを最初に行い、以降のサービス学習で活用する
-  ・各章で具体的なハンズオンとサンプルコードを提供
-  ・各サービスは独立して学べるが、一部の章は複数のサービスを組み合わせてアプリを作る
-
-topics: ['riot', 'riotjs', 'localstack', 'AWS']
+topics: ['localstack', 'AWS', 'デジタルアート', 'ギャラリー', 'JavaScript']
 published: false
 price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
 chapters:
   - introduction_environment
-  - s3_web_hosting
-  - dynamodb
-  - lambda_serverless
+  - s3_gallery_frontend
+  - dynamodb_artwork_data
+  - lambda_upload_function
   - api_gateway_rest_api
-  - cloudformation_iaas
-  - sns_sqs
-  - iam_security
-  - diff_localstack_aws
+  - sns_sqs_media_processing
+  - cloudformation_infrastructure
+  - iam_security_policies
+  - production_deployment
