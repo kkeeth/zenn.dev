@@ -2,8 +2,8 @@
 title: "なぜ React 哲学を守らないといけないのか？"
 emoji: "🎃"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["react", "哲学"]
-published: false
+topics: ["react", "哲学", "思想", "純関数"]
+published: true
 ---
 
 こんにちは．年々病気に弱くなってきて体力の低下と年齡を感じる今日このごろです． [Keeth](https://x.com/kuwahara_jsri) こと桑原です．
