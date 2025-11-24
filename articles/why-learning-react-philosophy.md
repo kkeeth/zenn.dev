@@ -1,8 +1,8 @@
 ---
-title: "なぜ React 哲学を守らないといけないのか？"
-emoji: "🎃"
-type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["react", "哲学", "思想", "純関数"]
+title: 'なぜ React 哲学を守らないといけないのか？'
+emoji: '🎃'
+type: 'tech' # tech: 技術記事 / idea: アイデア
+topics: ['react', '哲学', '思想', '純関数']
 published: true
 ---
 
@@ -15,7 +15,6 @@ https://x.com/le_panda_noir/status/1962638427628937481
 こちらの投稿を見たとき「これは読みたい！」と思ったのですが，しっかりリプライで
 
 > 書きたいってか、こういう感じのを誰か書いて使わせてくれ
->
 
 と書かれていました（笑）ただ，自分でもこれは整理してみたくなったので，色々調べつつ自分なりに思うところを書いてみます．むっちゃ遅くなってしもた．
 
@@ -31,12 +30,11 @@ React は良くも悪くも，とても表現力が高い柔軟なライブラ�
 
 React は，UI を `「宣言的」` に（つまり「どうやるか」ではなく「どうあるべきか」を）記述するためのライブラリです．この根本に従うことで，コードはシンプルで理解しやすくなります．React 哲学はこの宣言的な UI 構築を支えるための「ルール」や「お作法」と言ってもよく，だからこそ守るべきだと自分は考えます．
 
-
 ## 具体的にバージョンアップで壊れる危険性のあるコード例
 
 では具体的に，２つほど壊れる危険性のあるコードを考えたので見ていきましょう．
 
-### ① Strict Modeで問題発生
+### ① Strict Mode で問題発生
 
 典型的なのが，**クリーンアップ関数を持たない`useEffect`** です．
 
@@ -58,15 +56,31 @@ const UserProfile = ({ userId }: UserProfileProps) => {
     fetch(`/api/users/${userId}/increment-view-count`, { method: 'POST' });
 
     fetch(`/api/users/${userId}`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setUser);
   }, [userId]);
 
   return <div>{user?.name}</div>;
-}
+};
 ```
 
-このコードは一見問題なく見えますが，`Strict Mode` では React が意図的に `useEffect` を2回実行するため，ページビューが2回カウントされてしまいます．開発環境だけの問題と思われるかもしれませんが，これが将来 production でも実行されるようになれば，閲覧回数の数字が期待値とは異なる結果になってしまいます．
+このコードは一見問題なく見えますが，`Strict Mode` では React が意図的に `useEffect` を 2 回実行するため，ページビューが 2 回カウントされてしまいます．開発環境だけの問題と思われるかもしれませんが，これが将来 production でも実行されるようになれば，閲覧回数の数字が期待値とは異なる結果になってしまいます．
+
+::::details ※一点補足
+[𝕏 で補足いただきました](https://x.com/le_panda_noir/status/1992572743108448492?s=20)．`useEffect` が production で 2 回実行されるような未来はないと言ってよいでしょう．これはあくまで私の妄想ですが，少々過ぎるものでした．
+
+公式ドキュメントの [<StrictMode>](https://ja.react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development) のページの「補足」の項でも太字で強調されておりました．
+
+> Strict Mode は開発中に以下のチェックを有効にします：
+>
+> - コンポーネントは、純粋でない (impure) レンダーによって引き起こされるバグを見つけるために、レンダーを追加で 1 回行います。
+> - コンポーネントは、エフェクトのクリーンアップし忘れによるバグを見つけるために、エフェクトの実行を追加で 1 回行います。
+> - コンポーネントは、ref のクリーンアップし忘れによるバグを見つけるために、ref コールバックの実行を追加で 1 回行います。
+> - コンポーネントが非推奨の API を使っていないかチェックします。
+>
+> **これらのチェックはすべて開発環境専用であり、本番用ビルドには影響しません。**
+
+::::
 
 さらに [`Activity`](https://ja.react.dev/reference/react/Activity) という機能を使っているときも，この問題は発生する可能性があります．
 
@@ -139,7 +153,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
 
 このように，React の `useEffect` を正しく使うには，「一度きりの処理」をどう実現するかではなく， **「何度実行されても最終的な結果が正しくなるように処理を設計する」** という考え方が重要だなぁと思います．
 
-### ② React Concurrent Featuresで問題発生
+### ② React Concurrent Features で問題発生
 
 ```tsx
 let globalCounter = 0;
@@ -159,7 +173,7 @@ const ImpureComponent = ({ items }: ImpureComponentProps) => {
   globalCounter++;
 
   // 外部の状態を直接変更
-  items.forEach(item => {
+  items.forEach((item) => {
     item.processed = true;
   });
 
@@ -167,13 +181,13 @@ const ImpureComponent = ({ items }: ImpureComponentProps) => {
     <div>
       <p>Rendered {globalCounter} times</p>
       <ul>
-        {items.map(item => (
+        {items.map((item) => (
           <li key={item.id}>{item.name}</li>
         ))}
       </ul>
     </div>
   );
-}
+};
 ```
 
 このコードでは，React 18 の Concurrent Rendering でレンダリングが中断・再開される際に，純粋なコンポーネントではないため予期しない動作を引き起こします．また，グローバル変数の値が予測不能になります．さらに，props を直接変更することで，親コンポーネントに予期しない影響を与えてしまいます．
@@ -228,18 +242,122 @@ const ImpureComponent = ({ items }: ImpureComponentProps) => {
  }
 ```
 
-## React哲学を守る = コンポーネントを「純粋」に保つ
+### ③ `useEffect` の `deps` に `useMemo` 等でメモ化した値を使う
+
+React 公式ブログの「[React Compiler のアップグレード](https://ja.react.dev/blog/2024/12/05/react-compiler-beta-release#upgrade-guide)」という記事の中で，以下のような記述があります．
+
+> ただし、プロダクトコードは JavaScript では必ずしも静的に検出できない形で React のルールに違反することがあるため、メモ化を変更することで予期しない結果が生じることがあります。例えば、メモ化済みの値がコンポーネントツリーのどこかで useEffect の依存値として使用されているかもしれません。このような値のメモ化の有無や挙動が変化することで、対応する useEffect の実行が過剰あるいは過少になる可能性があるのです。useEffect は同期のためだけに使用することを推奨していますが、あなたのコードベースには、特定の値の変更にのみ反応する必要があるエフェクトなど、他のユースケースのための useEffect が含まれているかもしれません。
+
+書かれているとおり，**メモ化された値を `useEffect` の依存配列に入れると，メモ化の挙動変更によって Effect の実行タイミングが変わってしまう** 可能性があります．
+
+```tsx
+type SearchParams = {
+  query: string;
+  category: string;
+};
+
+type SearchResultsProps = {
+  query: string;
+  category: string;
+};
+
+type Result = {
+  id: string;
+  title: string;
+};
+
+const SearchResults = ({ query, category }: SearchResultsProps) => {
+  const [results, setResults] = useState<Result[]>([]);
+
+  // 検索パラメータをメモ化
+  const searchParams = useMemo(() => ({ query, category }), [query, category]);
+
+  useEffect(() => {
+    // メモ化された値に依存してAPIを呼び出す
+    fetch(`/api/search?q=${searchParams.query}&cat=${searchParams.category}`)
+      .then((res) => res.json())
+      .then(setResults);
+  }, [searchParams]); // メモ化された値を依存配列に入れている
+
+  return (
+    <ul>
+      {results.map((result) => (
+        <li key={result.id}>{result.title}</li>
+      ))}
+    </ul>
+  );
+};
+```
+
+このコードでは，`searchParams` がメモ化されているため，`query` や `category` が変わらない限り同じオブジェクト参照を返します．しかし，将来的に React Compiler の最適化や内部実装の変更により：
+
+- メモ化の挙動が変わる（再計算のタイミングが変わる）
+- メモ化が自動的に追加/削除される
+- メモ化の粒度が変わる
+
+といった変更があったとしましょう．その結果，`useEffect` が期待通りに実行されなくなる（実行されすぎる，あるいは実行されない）リスクがあると上記の記述を読むと解釈できると思います．
+
+#### 変更後のコード
+
+メモ化された値ではなく，**元の依存値を直接依存配列に入れる** ことで，React の内部実装変更の影響を受けにくくなります．
+
+```diff tsx
+ type SearchParams = {
+   query: string;
+   category: string;
+ };
+
+ type SearchResultsProps = {
+   query: string;
+   category: string;
+ };
+
+ type Result = {
+   id: string;
+   title: string;
+ };
+
+ const SearchResults = ({ query, category }: SearchResultsProps) => {
+   const [results, setResults] = useState<Result[]>([]);
+
+-  // 検索パラメータをメモ化
+-  const searchParams = useMemo(() => ({ query, category }), [query, category]);
+
+   useEffect(() => {
+-    // メモ化された値に依存してAPIを呼び出す
+-    fetch(`/api/search?q=${searchParams.query}&cat=${searchParams.category}`)
++    // 元の値を直接使用
++    fetch(`/api/search?q=${query}&cat=${category}`)
+       .then(res => res.json())
+       .then(setResults);
+-  }, [searchParams]); // メモ化された値を依存配列に入れている
++  }, [query, category]); // 元の依存値を直接指定
+
+   return (
+     <ul>
+       {results.map(result => (
+         <li key={result.id}>{result.title}</li>
+       ))}
+     </ul>
+   );
+ }
+```
+
+このように，`useEffect` の依存配列には **プリミティブな値や，直接的な依存関係を持つ値を入れる** ことが良いのかなと考えます．メモ化は主にレンダリングのパフォーマンス最適化のために使うべきで，Effect の実行制御のために使うべきではないと私は理解しています．
+
+## React 哲学を守る = コンポーネントを「純粋」に保つ
 
 これまでの記述から想像できるように，React 哲学の核となる考え方は公式ドキュメントにも書いてありますが，**[コンポーネントを純粋に保つ](https://ja.react.dev/learn/keeping-components-pure)** ことです．ドキュメント内で使われている言葉をお借りすると，[純関数 (pure function)](https://wikipedia.org/wiki/Pure_function) のように保つということです．
 
 ドキュメントでは，コンポーネントの純粋性について以下のように述べられています．
 
-> * コンポーネントは純粋である必要がある。すなわち：
->   * **コンポーネントは自分の仕事に集中する**。レンダー前に存在していたオブジェクトや変数を書き換えない。
->   * **入力が同じなら出力も同じ**。同じ入力に対しては、常に同じ JSX を返すようにする。
-> - レンダーはいつでも起こる可能性があるため，コンポーネントは相互の呼び出し順に依存してはいけない
-> - コンポーネントがレンダーに使用する入力値を書き換えない。これには props，state，コンテクストが含まれる。画面を更新するためには既存のオブジェクトを書き換えるのではなく，代わりに [state をセットする](https://ja.react.dev/learn/state-a-components-memory)。
-> - コンポーネントのロジックはできるだけコンポーネントが返す JSX の中で表現する。何かを「変える」必要がある場合，通常はイベントハンドラで行う。最終手段として `useEffect` を使用する
+> - コンポーネントは純粋である必要がある。すなわち：
+>   - **コンポーネントは自分の仕事に集中する**。レンダー前に存在していたオブジェクトや変数を書き換えない。
+>   - **入力が同じなら出力も同じ**。同じ入力に対しては、常に同じ JSX を返すようにする。
+>
+> * レンダーはいつでも起こる可能性があるため，コンポーネントは相互の呼び出し順に依存してはいけない
+> * コンポーネントがレンダーに使用する入力値を書き換えない。これには props，state，コンテクストが含まれる。画面を更新するためには既存のオブジェクトを書き換えるのではなく，代わりに [state をセットする](https://ja.react.dev/learn/state-a-components-memory)。
+> * コンポーネントのロジックはできるだけコンポーネントが返す JSX の中で表現する。何かを「変える」必要がある場合，通常はイベントハンドラで行う。最終手段として `useEffect` を使用する
 >
 > 以上，「まとめ」より抜粋
 
@@ -266,8 +384,12 @@ type CounterProps = {
 
 const Counter = ({ count }: CounterProps) => {
   renderCount++; // レンダリング中にコンポーネント外の変数を変更
-  return <div>Count: {count}, Rendered: {renderCount} times</div>;
-}
+  return (
+    <div>
+      Count: {count}, Rendered: {renderCount} times
+    </div>
+  );
+};
 ```
 
 ```tsx
@@ -286,10 +408,12 @@ const TodoList = ({ todos }: TodoListProps) => {
   todos.sort((a, b) => a.priority - b.priority); // propsを直接変更
   return (
     <ul>
-      {todos.map(todo => <li key={todo.id}>{todo.title}</li>)}
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
     </ul>
   );
-}
+};
 ```
 
 ```tsx
@@ -304,10 +428,11 @@ type UserProfileProps = {
 
 const UserProfile = ({ userId }: UserProfileProps) => {
   // 型エラー：Promise<any> を User 型に代入できない
-  const user: User = fetch(`/api/users/${userId}`).then(r => r.json()); // レンダリング中に副作用
+  const user: User = fetch(`/api/users/${userId}`).then((r) => r.json()); // レンダリング中に副作用
   return <div>{user?.name}</div>;
-}
+};
 ```
+
 :::
 
 何度も登場している，この「純粋性」こそが React 哲学の土台です．そもそもドキュメントの冒頭に，
@@ -325,13 +450,13 @@ https://ja.react.dev/learn/keeping-components-pure
 
 ある程度書いてからこのドキュメントと照らし合わせ，修正していったら，「あれ，この記事いらなくね？」と思うなどしましたが，途中まで書いたので自分の学習の意味でも書ききってしまおうかなと．インターネットを更に散らかしてすんません！
 
-また，純粋性については，私よりもよっぽど知見のある uhyo さんの [**Reactコンポーネントが「純粋である」とはどういうことか？　丁寧な解説**](https://zenn.dev/uhyo/articles/react-pure-components#%E3%83%95%E3%83%83%E3%82%AF%E3%81%AE%E4%B8%AD%E3%81%AB%E5%89%AF%E4%BD%9C%E7%94%A8%E3%82%92%E6%9B%B8%E3%81%84%E3%81%A6%E3%81%84%E3%81%84%EF%BC%9F) という記事がとても素晴らしいので，是非こちらを読まれることをおすすめします！
+また，純粋性については，私よりもよっぽど知見のある uhyo さんの [**React コンポーネントが「純粋である」とはどういうことか？　丁寧な解説**](https://zenn.dev/uhyo/articles/react-pure-components) という記事がとても素晴らしいので，是非こちらを読まれることをおすすめします！
 
-https://zenn.dev/uhyo/articles/react-pure-components#%E3%83%95%E3%83%83%E3%82%AF%E3%81%AE%E4%B8%AD%E3%81%AB%E5%89%AF%E4%BD%9C%E7%94%A8%E3%82%92%E6%9B%B8%E3%81%84%E3%81%A6%E3%81%84%E3%81%84%EF%BC%9F
+https://zenn.dev/uhyo/articles/react-pure-components
 :::
 
 ## まとめ
 
 以上，React 哲学を守ることは，単に「ルールだから」という形式的なものではなく，React というライブラリの恩恵を最大限に受け，将来の進化にも耐えうる堅牢で予測可能な UI を構築するための最も合理的な方法なのだと理解しました．
 
-ではでは(=ﾟωﾟ)ﾉ
+ではでは 👋
