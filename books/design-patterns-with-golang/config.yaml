@@ -1,0 +1,51 @@
+title: "Golang で学ぶデザインパターン"
+summary: |-
+
+  GoF（Gang of Four）が提唱した23のデザインパターンを、Golangのサンプルコードを通じて学びます。
+
+  デザインパターンはオブジェクト指向設計における再利用可能なソリューションのカタログです。
+  本書では、各パターンの目的・構造・実装方法を、Go言語の特性（インターフェース、構造体、ゴルーチンなど）を
+  活かしたコードで解説します。
+
+  Go言語は従来のクラスベースのOOP言語とは異なるアプローチを取りますが、
+  デザインパターンの本質的な考え方は十分に適用できます。
+  本書を通じて、デザインパターンとGo言語の両方への理解を深めましょう。
+
+topics: ["Go", "デザインパターン", "GoF", "設計"]
+published: false
+price: 0
+chapters:
+  # 導入
+  - introduction
+  - go-basics
+  # 生成に関するパターン (Creational Patterns)
+  - creational-overview
+  - singleton
+  - factory-method
+  - abstract-factory
+  - builder
+  - prototype
+  # 構造に関するパターン (Structural Patterns)
+  - structural-overview
+  - adapter
+  - bridge
+  - composite
+  - decorator
+  - facade
+  - flyweight
+  - proxy
+  # 振る舞いに関するパターン (Behavioral Patterns)
+  - behavioral-overview
+  - chain-of-responsibility
+  - command
+  - interpreter
+  - iterator
+  - mediator
+  - memento
+  - observer
+  - state
+  - strategy
+  - template-method
+  - visitor
+  # まとめ
+  - conclusion
