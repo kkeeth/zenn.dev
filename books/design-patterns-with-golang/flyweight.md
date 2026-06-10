@@ -6,7 +6,7 @@ title: "Flyweight パターン"
 
 ## 概要
 
-Flyweightパターンは、多数の細粒度オブジェクトを効率的に共有することで、メモリ使用量を削減するパターンです。
+Flyweightパターンは，多数の細粒度オブジェクトを効率的に共有することで，メモリ使用量を削減するパターンです．
 
 ## 問題
 
@@ -473,7 +473,7 @@ func main() {
 
 ### sync.Poolの活用
 
-Goの標準ライブラリには`sync.Pool`があり、Flyweightの一形態として使えます：
+Goの標準ライブラリには`sync.Pool`があり，Flyweightの一形態として使えます：
 
 ```go
 var bufferPool = sync.Pool{
@@ -523,4 +523,4 @@ func Intern(s string) string {
 - 内部状態（共有可能）と外部状態（クライアント管理）を分離
 - Goでは`sync.Pool`や独自のキャッシュで実装
 
-次章では、オブジェクトへのアクセスを制御するProxyパターンを学びます。
+次章では，オブジェクトへのアクセスを制御するProxyパターンを学びます．

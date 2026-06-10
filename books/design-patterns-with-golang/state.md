@@ -6,7 +6,7 @@ title: "State パターン"
 
 ## 概要
 
-Stateパターンは、オブジェクトの内部状態が変化したときに、オブジェクトの振る舞いを変更できるようにするパターンです。状態をオブジェクトとしてカプセル化します。
+Stateパターンは，オブジェクトの内部状態が変化したときに，オブジェクトの振る舞いを変更できるようにするパターンです．状態をオブジェクトとしてカプセル化します．
 
 ## 問題
 
@@ -118,16 +118,16 @@ func (s *HasCoinState) Dispense(v *VendingMachine) {
 type DispensingState struct{}
 
 func (s *DispensingState) InsertCoin(v *VendingMachine) {
-    fmt.Println("払い出し中です。お待ちください")
+    fmt.Println("払い出し中です．お待ちください")
 }
 
 func (s *DispensingState) SelectProduct(v *VendingMachine) {
-    fmt.Println("払い出し中です。お待ちください")
+    fmt.Println("払い出し中です．お待ちください")
 }
 
 func (s *DispensingState) Dispense(v *VendingMachine) {
     v.balance -= 100
-    fmt.Printf("商品を払い出しました。残高: %d円\n", v.balance)
+    fmt.Printf("商品を払い出しました．残高: %d円\n", v.balance)
     if v.balance > 0 {
         v.SetState(&HasCoinState{})
     } else {
@@ -190,7 +190,7 @@ func (s *ClosedState) Close(c *TCPConnection) {
 }
 
 func (s *ClosedState) Send(c *TCPConnection, data string) {
-    fmt.Println("接続が閉じています。先にOpenしてください")
+    fmt.Println("接続が閉じています．先にOpenしてください")
 }
 
 // OpenState
@@ -259,7 +259,7 @@ func RunningState(event string) State {
 ## まとめ
 
 - Stateは内部状態に応じてオブジェクトの振る舞いを変更する
-- 状態遷移を明確にし、if-else地獄を避けられる
+- 状態遷移を明確にし，if-else地獄を避けられる
 - Goでは構造体とインターフェースで自然に実装できる
 
-次章では、アルゴリズムを交換可能にするStrategyパターンを学びます。
+次章では，アルゴリズムを交換可能にするStrategyパターンを学びます．

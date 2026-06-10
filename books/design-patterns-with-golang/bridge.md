@@ -6,7 +6,7 @@ title: "Bridge パターン"
 
 ## 概要
 
-Bridgeパターンは、抽象化（Abstraction）と実装（Implementation）を分離し、それぞれを独立して変更できるようにするパターンです。
+Bridgeパターンは，抽象化（Abstraction）と実装（Implementation）を分離し，それぞれを独立して変更できるようにするパターンです．
 
 ## 問題
 
@@ -404,8 +404,8 @@ func NewService(db Database, cache Cache, logger Logger) *Service {
 
 ## まとめ
 
-- Bridgeは抽象と実装を分離し、独立して拡張可能にする
+- Bridgeは抽象と実装を分離し，独立して拡張可能にする
 - 「継承」ではなく「委譲」を使う
 - Goのインターフェースと構造体で自然に実装できる
 
-次章では、部分-全体の階層構造を表現するCompositeパターンを学びます。
+次章では，部分-全体の階層構造を表現するCompositeパターンを学びます．
