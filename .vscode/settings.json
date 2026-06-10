@@ -1,4 +1,5 @@
 {
   "editor.formatOnSave": true,
-  "diffEditor.maxComputationTime": 10000
+  "diffEditor.maxComputationTime": 10000,
+  "cSpell.words": ["Keeth", "keeth", "kkeeth"]
 }
