@@ -3,87 +3,141 @@ title: '個人ポッドキャストにプレミアム配信を自前で作った
 emoji: '🎙️'
 type: 'tech'
 topics: ['cloudflare', 'firebase', 'podcast', 'substack', 'architecture']
-published: false
+published: true
 ---
 
 ## はじめに
 
-ポッドキャスト「雨宿りとWEBの小噺」を運営しています。有料メンバーシップで限定エピソードを配信したいと思い立ったのですが、実装を進めるうちに「思ったより簡単ではない」ことに気づきました。
+ポッドキャスト「[雨宿りとWEBの小噺.fm](https://open.spotify.com/show/4ZqUQtob7eJrz9DQV7lPVd)」を運営しています．前々から有料メンバーシップで限定エピソードを配信したいと思っていたのですが，どういうシステムにするか．どうせならこれを機に CloudFlare を触ってみようと思っていたので自前実装をしてみようと思い，Claude Code を用いて実装を進めていましたが，これが「思った以上に難しい」ことに気づきました．
 
-この記事では、技術選定の過程で何を考え、何を試し、何を捨て、最終的にどういうアーキテクチャに着地したかを、思考の変遷も含めて書きます。
-
----
+本記事では，技術選定の過程で何を考え，何を試し，何を捨て，最終的にどういうアーキテクチャに着地したか，思考の変遷も含めて書きます．
 
 ## TL;DR
 
-- 配信プラットフォーム Art19 の Alternate Feed（プレミアム用フィード）を使う
+- 配信プラットフォーム [Art19](https://art19.com/) の Alternate Feed（プレミアム用フィード）を使う
 - 音声ファイルの URL を直接リスナーに渡すとコンテンツ保護できない
-- `Cloudflare Workers` でフィードと音声の両方をプロキシし、署名付き URL + KV でアクセス制御
-- 課金は `Stripe`，認証・ユーザー管理は `Firebase`、エッジでの認可は `Cloudflare KV`
-- 既存サービス（`Memberful`, `Supercast` 等）を使わず自前構築した理由と、そのトレードオフ
+- `Cloudflare Workers` でフィードと音声の両方をプロキシし，署名付き URL + KV でアクセス制御
+- 課金は `Stripe`，認証・ユーザー管理は `Firebase`，エッジでの認可は `Cloudflare KV`
+- 既存サービス（`Memberful`, `Supercast` 等）を使わず自前構築した理由と，そのトレードオフ
   - **素直に Memberful, Supercast 等を使った方が楽**
 
-> **追記（最終結論）**：上記の設計を実装途中まで進めたあと、結局すべて捨てて **Substack** に一本化した。その経緯は Phase 6 で。
+**が，上記の設計を実装途中まで進めたあと，結局すべて捨てて **Substack** に一本化．その経緯は Phase 6 で．**
 
 ---
 
 ## 前提：やりたかったこと
 
 1. Art19 で配信しているポッドキャストに**プレミアム限定エピソード**を追加
-2. 公式サイト（Riot.js SPA）で通常エピソードとプレミアムエピソードを**時系列マージ表示**
+2. 公式サイト（[Riot.js](https://riot.js.org/) + [vite](https://ja.vite.dev/) 製の SPA）で通常エピソードとプレミアムエピソードを**時系列マージ表示**
 3. Podcast アプリ（Apple Podcasts, Overcast 等）でもプレミアムフィードを**購読可能に**
-4. 解約したら**即時アクセス停止**
+4. 解約したらプレミアムフィードを **即時アクセス停止**
 
----
-
-## Phase 1：素朴な実装 — そしてすぐ壁にぶつかる
+## Phase 1：素朴に実装してみる
 
 ### 最初のアイデア
 
-Art19 には Primary Feed（通常公開）と Alternate Feed（限定用）がある。クライアント側で両方取得してマージすればいいのでは？
+Art19 には Primary Feed（通常公開）と Alternate Feed（限定用）があるので，クライアント側で両方取得してマージ，時系列にソートして表示すれば良いのでは？と．
 
-```
-クライアント → Art19 Primary Feed（公開）
-クライアント → Art19 Alternate Feed（プレミアム）
-→ マージして時系列ソート → 表示
+やってみたら実装は簡単だった．`fetchMergedFeeds()` と言うメソッドを生やし，この中で `Promise.allSettled` を使い，片方が失敗しても表示が止まらないように少し工夫した．
+
+:::details 実際の`fetchMergedFeeds()`メソッドのコード
+
+```js
+/**
+ * Primary Feed と Premium Feed をマージして時系列でソートする。
+ * premiumEpisodesPromise が未指定または失敗時は Primary のみで継続。
+ */
+export async function fetchMergedFeeds(
+  primaryUrl: string,
+  premiumEpisodesPromise?: Promise<Episode[]>,
+): Promise<Episode[]> {
+  const primaryPromise = fetchRSSFeed(primaryUrl);
+
+  if (!premiumEpisodesPromise) {
+    return primaryPromise;
+  }
+
+  const [primary, premium] = await Promise.allSettled([
+    primaryPromise,
+    premiumEpisodesPromise,
+  ]);
+
+  const primaryEpisodes = primary.status === 'fulfilled' ? primary.value : [];
+  const premiumEpisodes = premium.status === 'fulfilled' ? premium.value : [];
+
+  if (premium.status === 'rejected') {
+    console.error('[fetchMergedFeeds] premium feed error:', premium.reason);
+  }
+
+  // Premium フィードには <link> がないため、同じタイトルのエピソードが
+  // 両方のフィードに存在する場合、primary の link を保持しつつ
+  // premium の audioUrl と isPremium フラグをマージして重複を除去する
+  const premiumByTitle = new Map<string, Episode>();
+  for (const ep of premiumEpisodes) {
+    premiumByTitle.set(ep.title, ep);
+  }
+
+  const mergedPrimary = primaryEpisodes.map((ep) => {
+    const premiumEp = premiumByTitle.get(ep.title);
+    if (premiumEp) {
+      premiumByTitle.delete(ep.title);
+      return {
+        ...ep,
+        isPremium: true,
+        audioUrl: premiumEp.audioUrl || ep.audioUrl,
+      };
+    }
+    return ep;
+  });
+
+  const merged = [...mergedPrimary, ...premiumByTitle.values()].sort(
+    (a, b) => b.pubDateObj.getTime() - a.pubDateObj.getTime(),
+  );
+  return merged;
+}
 ```
 
-実装は簡単だった。`fetchMergedFeeds()` で `Promise.allSettled` を使い、片方が失敗しても表示が止まらないようにした。
+:::
+
+が，すぐに壁に気付く．
 
 ### 壁 1：Art19 の Embed Player が Alternate Feed で 404
 
-Art19 の通常エピソードは `https://art19.com/shows/.../episodes/{id}/embed` で iframe プレイヤーが使える。しかし **Alternate Feed のエピソードは同じ URL にアクセスしても 404 が返る**。
-
-→ プレミアムエピソードは HTML5 の `<audio>` タグで直接再生するしかない。RSS の `<enclosure>` から音声 URL を取得して使うことにした。
+Art19 の通常エピソードは `https://art19.com/shows/.../episodes/{id}/embed` で iframe プレイヤーが使えるが， **Alternate Feed のエピソードは同じ URL にアクセスしても 404 が返る**．となると，プレミアムエピソードは HTML5 の `<audio>` タグで直接再生するしかないので，RSS の `<enclosure>` から音声 URL を取得して使うことにした．
 
 ### 壁 2：Alternate Feed の URL がクライアント JS に丸見え
 
-Vite でビルドすると `VITE_` prefix の環境変数はバンドルに含まれる。つまり **Alternate Feed の URL が誰でも見れてしまう**。Feed URL を知っていれば、全エピソードの音声 URL も RSS から取得可能。
+Vite でビルドすると `VITE_` プレフィックスの環境変数はバンドルに含まれる．つまり **Alternate Feed の URL が誰でも見れてしまう** ので，Feed URL を知っていれば，全エピソードの音声 URL も RSS から取得可能となる．
 
-これではプレミアムの意味がない。
+**これではプレミアムの意味がない．**
 
----
+## Phase 2：サーバーサイドに逃がす
 
-## Phase 2：サーバーサイドに逃がす — Firebase Cloud Functions
+フィード取得をクライアントからサーバーサイド（`Firebase Cloud Functions` を利用）に移した．
 
-フィード取得をクライアントからサーバーに移した。
-
+```mermaid
+flowchart TD
+    A[ブラウザ SPA] -->|GET /getPremiumEpisodes| B[Cloud Function]
+    B --> C{Firebase Auth\nuid 検証}
+    C -->|認証失敗| D[401 Unauthorized]
+    C -->|認証成功| E[(Firestore\nusers/uid.plan)]
+    E --> F{plan === 'premium'?}
+    F -->|Yes| G[Art19 Alternate Feed 取得]
+    G --> H[エピソード一覧\naudioUrl あり]
+    F -->|No| I[エピソード一覧\naudioUrl 空文字]
+    H --> J[ブラウザ SPA]
+    I --> J
 ```
-クライアント → Cloud Function（getPremiumEpisodes）→ Art19 Alternate Feed
-                   ↓
-           認証チェック：Firebase Auth uid → Firestore plan === 'premium'
-           非プレミアムユーザーには audioUrl を空文字で返す
-```
 
-**解決したこと：** Feed URL がクライアントから消えた（`grep alternate_feeds` でバンドルを確認）。
+**解決したこと：** Feed URL がクライアントから消えた（`grep alternate_feeds` でバンドルを確認）．
 
-**解決していないこと：** 返された `audioUrl`（Art19 の直 URL）をプレミアムユーザーがコピーして共有すれば、誰でもアクセスできてしまう。
+**解決していないこと：** 返された `audioUrl`（Art19 の直 URL）をプレミアムユーザーがコピーして共有すれば，誰でもアクセスできてしまう．
 
----
+ということでまだ課題あり．
 
 ## Phase 3：他のポッドキャストはどうしている？
 
-ここで一度立ち止まって、他のサービスやポッドキャストの方式を調査した。
+ここで一度立ち止まって，他のサービスやポッドキャストの方式を調査した．
 
 ### サービス比較
 
@@ -94,24 +148,23 @@ Vite でビルドすると `VITE_` prefix の環境変数はバンドルに含�
 | **Patreon**        | $0           | 5〜12%                      | 独自プラットフォーム | ポッドキャスト特化ではない   |
 | **Apple Podcasts** | $19.99/年    | Apple 15〜30%               | Apple 独自           | Apple ユーザー限定           |
 | **Spotify**        | $0           | 未公開                      | Spotify 独自         | Spotify ユーザー限定         |
+| **rooom**          | $0           | 売上の 8% + 決済手数料      | 独自プラットフォーム | 日本のポッドキャスト特化     |
 | **自前構築**       | インフラ実費 | Stripe 3.6%                 | 完全カスタム         | 開発・メンテコスト           |
 
 ### 他番組の方式
 
 - **Rebuild.fm**：Web ポータルからダウンロード（RSS ではなくブラウザ経由）
-- **backspace.fm（BSM）**：プラットフォームが管理するプレミアムフィード
+- **backspace.fm（BSM）**： [Ghost](https://ghost.org/) 製．プラットフォームが管理するプレミアムフィード
 
 ### 判断
 
-個人ポッドキャストで月額 $25 や 5.5% の手数料は厳しい。Art19 を使い続ける制約もある。**自前で Supercast 相当のものを作る** 方向に舵を切った。
-
----
+理想は Memberful 等を使って面倒なものやセキュリティを押し付けたいが，個人ポッドキャストで月額 $25 や 5.5% の手数料は厳しい．契約の関係上 Art19 を使い続ける制約もある．ということで，改めて **自前で Supercast 相当のものを作る** 方向に舵を切った．
 
 ## Phase 4：Art19 の認証機能を検討 → 断念
 
-Art19 側にもフィードの保護機能がある。サポートに問い合わせたところ、2つの方式を提案された。
+色々調べると，Art19 側にもフィードの保護機能がある．実際サポートに問い合わせた（英語メール）ところ，2つの方式を提案された．
 
-### Access Token 方式
+### `Access Token` 方式
 
 フィードと音声 URL にクエリパラメータとして共有トークンを付与：
 
@@ -120,17 +173,17 @@ https://rss.art19.com/alternate_feeds/...?token=SHARED_SECRET
 https://rss.art19.com/episodes/{id}.mp3?token=SHARED_SECRET
 ```
 
-**問題：** トークンは全ユーザー共通。1人がURLを共有すれば全エピソードにアクセスできる。ローテーションは可能だが、既存の Podcast アプリに登録済みの URL が無効になってしまう。
+**問題：** トークンは全ユーザー共通．1人が URL を共有すれば全エピソードにアクセスできる問題が解決しない．ローテーションは可能だが，既存の Podcast アプリに登録済みの URL が無効になってしまう．
 
-### JWT 方式
+### `JWT` 方式
 
-Art19 に事前に公開鍵を登録し、リクエスト時に JWT を `Authorization` ヘッダーで送る。
+Art19 に事前に公開鍵を登録し，リクエスト時に JWT を `Authorization` ヘッダーで送る．
 
 ```
 Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
 ```
 
-**致命的な問題：** `<audio>` タグや Podcast アプリは HTTP リクエストに任意のヘッダーを付与できない。つまり **JWT を使うにはどのみちプロキシが必要** になる。プロキシを立てるなら JWT の意味が薄れる（プロキシ↔Art19 間はサーバー間通信なので、他の方法でも保護できる）。
+**致命的な問題：** `<audio>` タグや Podcast アプリは HTTP リクエストに任意のヘッダーを付与できない．つまり **JWT を使うにはどのみちプロキシが必要** になる．プロキシを立てるなら JWT の意味が薄れる（プロキシ ↔ Art19 間はサーバー間通信なので，他の方法でも保護できる）．
 
 ```
 ❌ <audio src="https://art19.com/..."> → Authorization ヘッダーを付けられない
@@ -140,11 +193,11 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
 
 ### 結論
 
-どちらの方式も「プロキシなしでクライアント/Podcast アプリから直接アクセス」を実現できない。**プロキシを立てるなら、Art19 の認証機能に依存せず自前で制御した方がシンプル**。
+どちらの方式も「プロキシなしでクライアント / Podcast アプリから直接アクセス」を実現できない．**プロキシを建てるなら，Art19 の認証機能に依存せず自前で制御した方がシンプル**．
 
----
+## Phase 5：自前プロキシ設計
 
-## Phase 5：自前プロキシ設計 — Cloudflare Workers
+じゃあどうするか，色々 Claude Code 君と検討していたが，[Cloudflare Workers](https://www.cloudflare.com/ja-jp/developer-platform/products/workers/) でいくことにした．
 
 ### なぜ Cloudflare Workers か
 
@@ -162,11 +215,11 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
 - **ストリーミング転送**（音声ファイル全体をメモリに載せない）
 - **低レイテンシ認証**（毎リクエスト KV を参照）
 
-Workers は全て満たしていた。
+以上を Workers が全て満たしていた．
 
 ### R2 を使わなかった理由
 
-当初は Art19 の音声を Cloudflare R2 にコピーしてから配信することも検討した。
+当初は Art19 の音声を Cloudflare R2 にコピーしてから配信することも検討した．
 
 ```
 （検討案）Art19 → R2 にコピー → R2 から署名付き URL で配信
@@ -175,45 +228,70 @@ Workers は全て満たしていた。
 
 **R2 を選ばなかった理由：**
 
-- Art19 に新エピソードが追加されたとき、R2 への同期が必要（cron? webhook?）
+- Art19 に新エピソードが追加されたとき，R2 への同期が必要（cron? webhook?）
 - Art19 側でエピソードが更新・削除されたときの同期問題
 - R2 のストレージコスト（音声ファイルは大きい）
-- **プロキシで十分**：Workers は Art19 からストリーミングでそのままクライアントに転送するので、メモリにも載らない
+- **プロキシで十分**：Workers は Art19 からストリーミングでそのままクライアントに転送するので，メモリにも載らない
 
 ### 全体像
 
-<!-- TODO: draw.io で作図 -->
+ということで，まとめるとこうなった．
 
+```mermaid
+graph LR
+  subgraph Stripe["💳 Stripe"]
+    S_PL["Payment Link"]
+    S_WH["⚡ Webhook"]
+    S_CP["Customer Portal"]
+  end
+
+  subgraph Cloudflare["☁️ Cloudflare"]
+    CF_KV[("🗄️ KV\nSUBSCRIBERS")]
+    CF_WF{{"⬡ Worker\n/feed/:userToken"}}
+    CF_WA{{"⬡ Worker\n/audio/:episodeId"}}
+  end
+
+  subgraph Firebase["🔥 Firebase"]
+    FB_FN["⚙️ Cloud Functions\n(stripeWebhook)"]
+    FB_AUTH["🔒 Auth\n(Magic Link)"]
+    FB_FS[("📁 Firestore\nusers/{uid}")]
+  end
+
+
+  subgraph Art19["🎙️ Art19"]
+    A19_RSS["📄 Alternate Feed\n(Premium RSS)"]
+    A19_MP3["🎵 Audio\n(.mp3)"]
+  end
+
+  USER(("👤 User"))
+  APP["📱 Podcast App"]
+  WEB["💻 Web Client\n(Riot.js SPA)"]
+
+  S_WH -->|"checkout / cancel"| FB_FN
+  FB_FN -->|write| FB_FS
+  FB_FN -.->|"REST API PUT/DELETE"| CF_KV
+
+  CF_WF -->|check| CF_KV
+  CF_WA -->|check| CF_KV
+
+  CF_WF -->|fetch RSS| A19_RSS
+  CF_WA -->|"Range proxy (206)"| A19_MP3
+
+  USER -->|決済| S_PL
+  USER -->|解約| S_CP
+  USER --> WEB
+  WEB -->|login| FB_AUTH
+  WEB -->|get token| FB_FS
+  WEB -.->|"/feed/:token"| CF_WF
+  APP -->|"/feed/:userToken"| CF_WF
+  APP -->|"/audio/:id?sig=..."| CF_WA
 ```
-┌─────────────┐     ┌──────────┐     ┌───────────────────┐
-│  Stripe     │────→│ Firebase │────→│  Cloudflare KV    │
-│  Webhook    │     │ Functions│     │  userToken:active  │
-└─────────────┘     └──────────┘     └───────────────────┘
-                         │                     ↑
-                    Firestore に             Workers が
-                    premiumFeedToken        毎リクエスト参照
-                    を保存                      │
-                         │              ┌──────┴──────┐
-                         ↓              │             │
-                    ┌─────────┐   /feed/:token  /audio/:id
-                    │  Web    │         │             │
-                    │  Client │    ┌────┴────┐  ┌────┴────┐
-                    └─────────┘    │ Workers │  │ Workers │
-                                   │ (Feed)  │  │ (Audio) │
-                                   └────┬────┘  └────┬────┘
-                                        │            │
-                                   Art19 Feed   Art19 Audio
-                                   (fetch+     (Range proxy)
-                                    rewrite)
-```
 
----
+## Phase 6：設計を全部捨てて `Substack` に一本化
 
-## Phase 6：設計を全部捨てた — Substack に一本化
+### 壁にぶつかったのは技術ではなく「メンテナンスコストと維持コスト，セキュリティ」
 
-### 壁にぶつかったのは技術ではなく「コストと維持コスト」だった
-
-Phase 5 の設計を実装し始めたとき、改めて月額ランニングコストを試算した。
+Phase 5 の設計を実装し始めたとき，改めて月額ランニングコストを試算した．
 
 | 項目                                | 月額概算                 |
 | ----------------------------------- | ------------------------ |
@@ -223,18 +301,24 @@ Phase 5 の設計を実装し始めたとき、改めて月額ランニングコ
 | Firestore（リード数次第）           | $0〜数百円               |
 | Stripe 手数料                       | 売上の 3.6%              |
 
-金額だけなら許容範囲だった。問題は **メンテナンスコスト**：
+金額だけなら許容範囲だった．問題は **メンテナンスコスト**．
 
 - Cloudflare Workers × Firebase Functions の **クロスクラウド同期** のバグリスク
-- HMAC 署名の鍵ローテーション、KV の TTL 管理
-- Stripe Webhook の冪等性保証、失敗時リトライ
+- HMAC 署名の鍵ローテーション，KV の TTL 管理
+- Stripe Webhook の冪等性保証，失敗時リトライ
 - セキュリティ監査（誰が触っても把握できる人間が自分一人）
 
-「個人ポッドキャストのプレミアム配信のために、これを全部自分で運用するのか」と冷静に考えたとき、**本来やりたいことは配信であって、インフラの運用ではない** という当たり前の事実に行き着いた。
+「個人ポッドキャストのプレミアム配信のために，これを全部自分で運用するのか」と冷静に考えたとき，**本来やりたいことは配信であって，インフラの運用ではない** という当たり前の事実に行き着いた．また，昨今の AI の進化によるサプライチェーン攻撃の恐怖が凄まじく，自分でリスクを背負うのはやはり止めたほうが良いと判断．
 
-### Substack の発見
+ということで，外部のサービスの比較検討にシフト．
 
-月額コストを下げる選択肢を探していたとき、Substack がポッドキャスト配信に対応していると知った。
+### Substack に決定
+
+月額コストを下げる選択肢を探していたとき，Substack が真っ先に浮かんだ．自分も [別のポッドキャスト番組](https://kkeeth.substack.com/podcast) の配信を Substack からしていたからだ．
+
+:::details ちなみに
+私が Substack のアカウントを作ったのは 2024年10月で，昨今のとあるインフルエンサーが使い始めた事による流行以前から利用している．何となくこのウェーブに乗っかったと思われるのが癪だったので一応．
+::::
 
 | 項目               | Substack                        |
 | ------------------ | ------------------------------- |
@@ -245,11 +329,21 @@ Phase 5 の設計を実装し始めたとき、改めて月額ランニングコ
 | RSS フィード       | あり（公開）                    |
 | Podcast アプリ対応 | あり                            |
 
-手数料 10% は Supercast の 5.5% より高い。ただし **月額固定費がゼロ** なので、配信が軌道に乗るまでは圧倒的に低コスト。
+手数料 10% は Supercast の 5.5% より高い．ただし **月額固定費がゼロ** なので，配信が軌道に乗るまでは圧倒的に低コスト．
+
+さらに，決済と会員登録・ログイン認証を全て Substack に押し付けられるので，自前で持つ攻撃対象領域をほぼゼロにした．
+
+:::message
+
+- オウンドメディアで利用しているライブラリへのサプライチェーン攻撃
+- Substack の RSS に悪意あるコンテンツが含まれた場合の XSS（可能性は極めて低い）
+
+などは残っている
+:::
 
 ### RSS フィードの「仕様」が全てを解決した
 
-Substack の公開 RSS フィードを確認したところ、決定的な事実がわかった。
+Substack の公開 RSS フィードを確認したところ，
 
 ```xml
 <!-- 無料エピソード：<enclosure> あり（音声 URL が公開される） -->
@@ -265,13 +359,13 @@ Substack の公開 RSS フィードを確認したところ、決定的な事実
 </item>
 ```
 
-**`<enclosure>` の有無だけでプレミアム判定できる。** これはつまり：
+**`<enclosure>` の有無だけでプレミアム判定できる．** これはつまり：
 
 ```typescript
 const isPremium = !audioUrl; // enclosure なし = locked
 ```
 
-認証も署名も KV も不要。RSS を取得して `audioUrl` が空かどうかを見るだけ。
+認証も署名も KV も不要．RSS を取得して `audioUrl` が空かどうかを見るだけ．
 
 ### 最終アーキテクチャ（シンプル版）
 
@@ -281,13 +375,11 @@ ART19 RSS（公開）──────────────────┐
 Substack RSS（公開）───────────────┘
 
 無料エピソード（ART19）   → HTML5 <audio> で再生
-有料エピソード（Substack）→ 鍵アイコン + Substack へのリンク
+有料エピソード（Substack）→ 鍵アイコン + Substack へのリンク　※一部はサンプルとして無料公開予定
                             （認証・再生は Substack 側に委譲）
 ```
 
-自サイトは **「RSS をマージして表示するだけ」** になった。Workers も Firebase も Stripe も Cloudflare KV も、全部不要になった。
-
-Phase 5 で作りかけていたコードはすべて捨てた。
+自サイトは **「RSS をマージして表示するだけ」** になった．Workers も Firebase も Stripe も Cloudflare KV も全て不要になったため，Phase 5 で作りかけていたコードはすべて捨てた．
 
 ### 捨てたもの
 
@@ -302,7 +394,7 @@ Phase 5 で作りかけていたコードはすべて捨てた。
 
 ### トレードオフ
 
-自前構築を捨てたことで失ったものもある。
+自前構築を捨てたことで失ったものもある．
 
 | 失ったこと                                         | 影響                            |
 | -------------------------------------------------- | ------------------------------- |
@@ -311,162 +403,9 @@ Phase 5 で作りかけていたコードはすべて捨てた。
 | アクセス解析の完全な把握                           | Substack のダッシュボードに依存 |
 | Podcast アプリで会員限定フィードを購読させるフロー | Substack の仕組みに従う         |
 
-**ただし今の段階では、これらは全てトレードオフとして許容できる。**
+**ただし今の段階では，これらは全てトレードオフとして許容できる．**
 
-月額固定費ゼロ・開発工数ゼロ・メンテナンスコストゼロ（自前インフラとして）と比較すれば、10% の手数料は「配信が軌道に乗るまでの保険料」と考えられる。
-
----
-
-## 処理フロー
-
-### 購読開始フロー
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant Stripe
-    participant Functions as Firebase Functions
-    participant Firestore
-    participant KV as Cloudflare KV
-
-    User->>Stripe: Payment Link で決済
-    Stripe->>Functions: checkout.session.completed webhook
-    Functions->>Functions: メールから Firebase Auth ユーザー特定/作成
-    Functions->>Functions: premiumFeedToken = randomUUID()
-    par Firestore と KV に並列書き込み
-        Functions->>Firestore: plan: premium, premiumFeedToken 保存
-        Functions->>KV: PUT userToken → "active"
-    end
-    Functions->>Stripe: 200 OK
-```
-
-### フィード取得フロー（Podcast アプリ）
-
-```mermaid
-sequenceDiagram
-    actor App as Podcast App
-    participant Worker as CF Worker
-    participant KV as Cloudflare KV
-    participant Art19
-
-    App->>Worker: GET /feed/{userToken}
-    Worker->>KV: get(userToken)
-    KV-->>Worker: "active"
-    Worker->>Art19: fetch(Alternate Feed URL)
-    Art19-->>Worker: RSS XML
-    Worker->>Worker: enclosure URL を署名付き Worker URL に書き換え
-    Worker-->>App: RSS XML（書き換え済み）
-```
-
-### 音声再生フロー
-
-```mermaid
-sequenceDiagram
-    actor App as Podcast App / Browser
-    participant Worker as CF Worker
-    participant KV as Cloudflare KV
-    participant Art19
-
-    App->>Worker: GET /audio/{episodeId}?userToken=...&expires=...&sig=...
-    Worker->>Worker: HMAC 署名検証
-    Worker->>Worker: 有効期限チェック
-    Worker->>KV: get(userToken)
-    KV-->>Worker: "active"
-    Worker->>Art19: fetch(audio URL) + Range ヘッダー転送
-    Art19-->>Worker: 206 Partial Content + audio stream
-    Worker-->>App: 206 + ストリーミング転送
-```
-
-### 解約フロー
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant Stripe
-    participant Functions as Firebase Functions
-    participant Firestore
-    participant KV as Cloudflare KV
-
-    User->>Stripe: カスタマーポータルから解約
-    Stripe->>Functions: customer.subscription.deleted webhook
-    Functions->>Firestore: premiumFeedToken 取得
-    par
-        Functions->>Firestore: plan: free, premiumFeedToken: null
-        Functions->>KV: DELETE userToken
-    end
-    Note over KV: 次のリクエストから即 401
-```
-
----
-
-## 設計で悩んだポイント
-
-### 1. 二重認証：署名付き URL だけでは不十分
-
-署名付き URL（HMAC-SHA256 + 有効期限）だけではダメ。URL が有効期限内に共有されたら、誰でもアクセスできる。
-
-→ **署名 + KV の二重チェック** にした。音声リクエストごとに KV で購読状態を確認する。解約後は KV から削除するので、署名が有効でもアクセスできない。
-
-```typescript
-// 署名検証だけでなく…
-const valid = await hmacVerify(env.SIGNING_KEY, data, sig);
-if (!valid) return new Response('Invalid signature', { status: 403 });
-
-// KV でリアルタイムの購読状態もチェック
-const status = await env.SUBSCRIBERS.get(userToken);
-if (status !== 'active')
-  return new Response('Subscription inactive', { status: 403 });
-```
-
-KV の読み取りレイテンシは P50 で数 ms なので、音声再生に影響はない。
-
-### 2. Firestore と KV の使い分け
-
-|          | Firestore          | Cloudflare KV           |
-| -------- | ------------------ | ----------------------- |
-| 用途     | ユーザー情報の正本 | エッジでの認可判定      |
-| 書き込み | Stripe Webhook 時  | 同上（Functions 経由）  |
-| 読み取り | Web クライアント   | Workers（毎リクエスト） |
-| 整合性   | 強整合             | 結果整合（数秒ラグ）    |
-
-KV は「キャッシュ」ではなく「認可のための射影」。Firestore が正、KV は Functions が同期する。
-
-### 3. Range ヘッダーの透過的プロキシ
-
-Podcast アプリは音声の部分ダウンロードやシークに `Range` ヘッダーを使う。Workers はこれを Art19 にそのまま転送し、`206 Partial Content` + `Content-Range` もそのまま返す。
-
-```typescript
-const rangeHeader = request.headers.get('Range');
-if (rangeHeader) {
-  headers.set('Range', rangeHeader);
-}
-// ...
-return new Response(upstream.body, {
-  status: upstream.status, // 200 or 206
-  headers: responseHeaders,
-});
-```
-
-`upstream.body`（ReadableStream）をそのまま返すことで、Workers のメモリには音声データが載らない。
-
-### 4. Firebase → Cloudflare KV のクロスクラウド同期
-
-Firebase Functions から Cloudflare KV への書き込みは REST API で行う。SDK ではなく直接 `fetch` する。
-
-```typescript
-async function kvPut(key: string, value: string): Promise<void> {
-  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
-  await fetch(url, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${apiToken}` },
-    body: value,
-  });
-}
-```
-
-Firebase と Cloudflare という 2 つのクラウドにまたがるが、同期タイミングは Stripe Webhook のみ（頻度は低い）なので問題にならない。
-
----
+月額固定費ゼロ・開発工数ゼロ・メンテナンスコストゼロ（自前インフラとして）と比較すれば，10% の手数料は「配信が軌道に乗るまでの保険料」と考えられる．
 
 ## 思考の変遷まとめ
 
@@ -477,13 +416,13 @@ Firebase と Cloudflare という 2 つのクラウドにまたがるが、同�
     ↓
 「HTML5 <audio> で直接再生しよう」
     ↓
-「待って、Feed URL がクライアントの JS に丸見えだ」
+「待って，Feed URL がクライアントの JS に丸見えだ」
     ↓
 「Cloud Functions 経由にして URL を隠そう」
     ↓
 「audioUrl を返してもユーザーが共有したら意味ないじゃん…」
     ↓
-「Supercast とか使えば？→ 手数料高い。自前で作ろう」
+「Supercast とか使えば？→ 手数料高い．自前で作ろう」
     ↓
 「Art19 の Access Token？→ 共有トークンだから漏れたら全滅」
     ↓
@@ -491,7 +430,7 @@ Firebase と Cloudflare という 2 つのクラウドにまたがるが、同�
     ↓
 「結局プロキシが必要 → それなら Cloudflare Workers で全部やろう」
     ↓
-「R2 に音声コピー？→ 同期が面倒。直接プロキシで十分」
+「R2 に音声コピー？→ 同期が面倒．直接プロキシで十分」
     ↓
 「Workers (署名付き URL + KV 認可) + Firebase (認証 + 課金) の二段構成」
     ↓
@@ -503,36 +442,16 @@ Firebase と Cloudflare という 2 つのクラウドにまたがるが、同�
     ↓
 「isPremium = !audioUrl だけで判定できる → 認証もプロキシも不要」
     ↓
-「認証・課金・再生を全部 Substack に委譲。自サイトは RSS をマージして表示するだけ」
+「認証・課金・再生を全部 Substack に委譲．自サイトは RSS をマージして表示するだけ」
     ↓
 「作りかけていた Workers / Firebase / Stripe / KV を全部削除」
 ```
 
-振り返ると、各段階で「これで完璧」と思っていたものが、次の問題を発見するたびに覆されていく過程だった。
-
----
-
-## やりたかったけどできなかった（まだやっていない）こと
-
-### Art19 の embed プレイヤーをプレミアムでも使いたかった
-
-Art19 の embed プレイヤー（iframe）は再生速度変更やチャプターなど多機能。しかし Alternate Feed のエピソードは embed URL が 404 を返すため使えなかった。HTML5 `<audio>` はシンプルだが機能が少ない。
-
-### Podcast アプリへの自動登録
-
-Supercast は「メール送信 → ワンタップでアプリに追加」のフローがある。自前だと `/feed/:userToken` の URL をユーザーに手動で Podcast アプリに登録してもらう必要がある。UX は劣る。`podcast://` や `overcast://` スキームの活用は今後検討。
-
-### 分析・統計
-
-Art19 には配信分析機能があるが、Workers 経由だとリスナー数などの統計が Art19 側に正しく記録されない可能性がある。Workers 側で独自にログを取る仕組みが将来必要。
-
-### CDN キャッシュ
-
-現状、Workers は毎回 Art19 に音声をフェッチしている。同じエピソードの同じ Range への連続アクセスは Cache API でキャッシュできるはず。ただし、署名付き URL のクエリパラメータが毎回異なるため、キャッシュキーの設計が必要。
-
----
+振り返ると，各段階で「これでいける！」と思っていたものが，次の問題を発見するたびに覆されていく過程だった．
 
 ## 技術的制約とその影響
+
+これも改めて表にまとめてみました．参考に．
 
 | 制約                                         | 影響                                 | 対応                                        |
 | -------------------------------------------- | ------------------------------------ | ------------------------------------------- |
@@ -546,11 +465,11 @@ Art19 には配信分析機能があるが、Workers 経由だとリスナー数
 
 ## 最終的な技術スタック
 
-### 当初設計（Phase 5・没）
+### 当初設計（Phase 5まで・没）
 
 | レイヤー       | 技術                 | 役割                             |
 | -------------- | -------------------- | -------------------------------- |
-| フロントエンド | Riot.js + Vite       | SPA、エピソード表示              |
+| フロントエンド | Riot.js + Vite       | SPA，エピソード表示              |
 | 認証           | Firebase Auth        | マジックリンクログイン           |
 | ユーザー DB    | Firestore            | 購読状態・premiumFeedToken 保存  |
 | 課金           | Stripe Payment Links | サブスクリプション管理           |
@@ -564,41 +483,32 @@ Art19 には配信分析機能があるが、Workers 経由だとリスナー数
 
 | レイヤー       | 技術                                    | 役割                                                      |
 | -------------- | --------------------------------------- | --------------------------------------------------------- |
-| フロントエンド | Riot.js + Vite                          | SPA、エピソード表示                                       |
+| フロントエンド | Riot.js + Vite                          | SPA，エピソード表示                                       |
 | 公開フィード   | ART19                                   | 通常エピソードの RSS + 音声ホスティング                   |
 | 会員フィード   | Substack                                | 会員限定エピソードの RSS + 認証 + 課金 + 音声ホスティング |
 | CORS プロキシ  | Cloudflare Workers（1ファイル・約45行） | Substack RSS の CORS 回避のみ                             |
 | ホスティング   | Firebase Hosting                        | SPA の配信                                                |
 
-Workers は CORS プロキシに特化したシンプルな実装になった。
+Workers は CORS プロキシに特化したシンプルな実装になった．
 
 ---
 
 ## 感想
 
-最初は「RSS フィードを2つマージするだけ」だと思っていた。それが、セキュリティを考え始めた途端に芋づる式に問題が出てきて、最終的には Cloudflare Workers で認証プロキシを自作する羽目になった。
+### Phase 5 まで
 
-一番の学びは **「`<audio>` タグは HTTP ヘッダーを送れない」** という、言われてみれば当たり前だが見落としがちな制約。これがわかった瞬間に、Art19 の JWT 方式も、ブラウザから直接認証付きアクセスする方式も全て不可能だとわかり、プロキシ一択になった。
+最初は「RSS フィードを2つマージするだけ」だと思っていた．それが，セキュリティを考え始めた途端に芋づる式に問題が出てきて，最終的には Cloudflare Workers で認証プロキシを自作する羽目になった．
 
-もう一つは **Firestore と KV の役割分担**。「正本はどこか」「エッジで何を見るか」を最初から設計していたわけではなく、試行錯誤の結果として自然にこの形になった。結果的に、Stripe Webhook を起点として Firestore と KV の両方に書き込む「イベント駆動の射影パターン」になっている。
+一番の学びは **「`<audio>` タグは HTTP ヘッダーを送れない」** という，言われてみれば当たり前だが見落としがちな制約．これがわかった瞬間に，Art19 の JWT 方式も，ブラウザから直接認証付きアクセスする方式も全て不可能だとわかり，プロキシ一択になった．
 
-Supercast に月額を払えばこの苦労は全て不要だった。でも、自前で作ったことで Cloudflare Workers の実力を体感できたし、音声ストリーミングにおける Range ヘッダーの重要性や、クロスクラウドでの認可設計など、プレミアムポッドキャスト配信という実は複雑なドメインの解像度が格段に上がった。
+もう一つは **Firestore と KV の役割分担**．「音源はどこか」「エッジで何を見るか」を最初から設計していたわけではなく，試行錯誤の結果として自然にこの形になった．結果的に，Stripe Webhook を起点として Firestore と KV の両方に書き込む「イベント駆動の射影パターン」になっている．
 
----
+Supercast 等に月額を払えばこの苦労は全て不要だった．でも，自前で作ったことで Cloudflare Workers の実力を体感できたし，音声ストリーミングにおける Range ヘッダーの重要性や，クロスクラウドでの認可設計など，プレミアムポッドキャスト配信という実は複雑なドメインの解像度が格段に上がった．
 
-**設計を捨てる判断について**
+### 設計を捨てる判断について
 
-Phase 5 まで「自前で Supercast を作る」方向で進めていたが、実装途中で手を止めた。Substack という選択肢に気づいたとき、「ここまで設計したのに捨てるのは勿体ない」というサンクコスト的な感情があった。
+Phase 5 まで「自前で Supercast を作る」方向で進めていたが，コスト・セキュリティの観点で捨てることにした．まぁこれが今のところはこれが無難だろうなと満足している．これから自前実装をしようと考えている方の参考になれば幸い．ちなみに「ここまで設計したのに捨てるのは勿体ない」というサンクコスト的な感情も未だにある笑
 
-ただ冷静に見ると、**自分がやりたいのは配信であってインフラの運用ではない** という事実は変わらない。Phase 1〜5 で積み上げた設計と実装は、「何がなぜ問題になるか」を深く理解するための過程として意味があった。その理解があったからこそ、Substack の RSS フィードを見た瞬間に「これで十分だ」と判断できた。
+ただ冷静に見ると，**自分がやりたいのは配信であってインフラの運用ではない** という事実は変わらない．Phase 1〜5 で積み上げた設計と実装は，「何がなぜ問題になるか」を深く理解するための過程として意味があった．問題の解像度が上がったことで，「もっとシンプルな解答」を受け入れられるようになっただけだ．個人開発だからこそできる，「最適解より学びを取る」判断だったと思う．
 
-設計を捨てることは、設計が無駄だったということではない。問題の解像度が上がったことで、「もっとシンプルな解答」を受け入れられるようになっただけだ。個人開発だからこそできる、「最適解より学びを取る」判断だったと思う。
-
----
-
-<!-- TODO:
-- draw.io でアーキテクチャ図を作成して画像に差し替え
-- Mermaid のシーケンス図は Zenn のプレビューで動作確認
-- コード例はもう少し削ってもいいかも
-- Art19 サポートとのやり取りのスクショ（許可取れれば）
--->
+ではでは．
