@@ -3,7 +3,7 @@ title: '純関数・参照透過性・冪等性の違いが分からなくなっ
 emoji: '💡'
 type: 'tech' # tech: 技術記事 / idea: アイデア
 topics: ['関数型プログラミング', 'typescript', 'react', '純関数', '冪等性']
-published: false
+published: true
 ---
 
 こんにちは．最近関数型プログラミングの概念をちゃんと理解したい欲が出てきました．[Keeth](https://x.com/kuwahara_jsri) こと桑原です．
