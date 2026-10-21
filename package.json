@@ -20,6 +20,9 @@
     "url": "https://github.com/kkeeth/zenn.dev/issues"
   },
   "homepage": "https://github.com/kkeeth/zenn.dev#readme",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "dependencies": {
     "zenn-cli": "^0.5.2"
   },
